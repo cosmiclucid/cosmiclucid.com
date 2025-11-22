@@ -1,0 +1,148 @@
+/* Scoped to this page only (CSS Modules) */
+
+.page {
+  min-height: 100vh;
+  overflow-x: hidden;
+  color: #fff;
+}
+
+/* ——— Hero ——— */
+.hero {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr; /* text left, image right */
+  gap: 3rem;
+  align-items: center;
+  padding: clamp(48px, 6vw, 96px) clamp(20px, 6vw, 80px);
+}
+
+.heroTitle {
+  font-size: clamp(32px, 6vw, 64px);
+  line-height: 1.05;
+  margin: 0 0 16px 0;
+}
+
+.heroSub {
+  font-size: clamp(16px, 2.2vw, 22px);
+  opacity: 0.9;
+  max-width: 48ch;
+}
+
+.cta {
+  display: inline-block;
+  margin-top: 28px;
+  padding: 14px 22px;
+  border-radius: 999px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  text-decoration: none;
+  transition: transform .2s ease, box-shadow .2s ease, opacity .2s ease;
+  background: linear-gradient(135deg, #7c3aed, #2563eb);
+  color: #fff;
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.35);
+}
+
+.cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 36px rgba(124, 58, 237, 0.45);
+}
+
+/* image wraps */
+.heroMedia {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.heroImg {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+/* ——— Two Columns ——— */
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(24px, 3vw, 48px);
+  padding: clamp(48px, 6vw, 96px) clamp(20px, 6vw, 80px);
+}
+
+.card {
+  border-radius: 16px;
+  padding: clamp(20px, 3vw, 32px);
+  /* let your global colors shine; only layout here */
+  transition: transform .25s ease, box-shadow .25s ease, opacity .35s ease;
+}
+
+/* ——— Timeline ——— */
+.timeline {
+  position: relative;
+  padding: clamp(48px, 6vw, 96px) clamp(20px, 6vw, 80px);
+}
+
+.timelineInner {
+  max-width: 980px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.spine {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  transform: translateX(-50%);
+  opacity: 0.25; /* color comes from theme */
+}
+
+.items {
+  display: grid;
+  gap: clamp(24px, 3vw, 40px);
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
+}
+
+.itemLeft { grid-column: 1 / 2; padding-right: clamp(12px, 2vw, 24px); }
+.itemRight { grid-column: 2 / 3; padding-left: clamp(12px, 2vw, 24px); }
+
+.bubble {
+  border-radius: 16px;
+  padding: clamp(16px, 2.5vw, 24px);
+  position: relative;
+}
+
+.dotWrap {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  width: 14px; height: 14px;
+  border-radius: 999px;
+}
+
+/* ——— Reveal-on-scroll ——— */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity .5s ease, transform .5s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ——— Responsive ——— */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; }
+  .split { grid-template-columns: 1fr; }
+  .item { grid-template-columns: 1fr; }
+  .itemLeft, .itemRight { padding: 0; }
+  .spine { left: 8px; transform: none; }
+}
