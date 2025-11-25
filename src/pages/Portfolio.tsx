@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { PortfolioCard } from '../components/PortfolioCard';
 import { useNavigate } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
+import AuroraButton from '../components/ui/AuroraButton';
 
 export default function Portfolio() {
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
@@ -224,6 +225,23 @@ export default function Portfolio() {
             </div>
           ))}
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.7, ease: 'easeOut' }}
+          className="mt-16 flex w-full justify-center px-6"
+          style={{ marginTop: '4rem', marginBottom: '6rem' }}
+        >
+          <motion.div whileHover={{ scale: 1.04, y: -4 }} whileTap={{ scale: 0.97 }}>
+            <AuroraButton
+              label="BRING YOUR VISION TO LIFE"
+              className="px-12 sm:px-16 py-5 text-lg tracking-[0.32em]"
+              onClick={() => navigate('/contact')}
+            />
+          </motion.div>
+        </motion.div>
 
         {/* Footer hint */}
         <motion.div

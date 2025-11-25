@@ -32,21 +32,21 @@ const categories = [
     color: 'cyan' as const,
     delay: 0.35,
     videoIds: [
-      'https://www.youtube.com/watch?v=aqz-KE-bpKQ',
-      'https://www.youtube.com/watch?v=FTQbiNvZqaY',
+      'https://www.youtube.com/watch?v=vU2lWOaB5yI',
+      'https://www.youtube.com/watch?v=WfrPoyAVnF0&list=PLiaJ9onQC8P1jYGX85nY4YqA7oxTPgM-y&index=8',
     ],
   },
   {
     id: 'cosmic-concerts',
     icon: null,
     title: 'COSMIC CONCERTS',
-    subline: 'Techno & trance sets that move bodies and elevate rooms worldwide.',
-    description: '',
+    subline: 'DJ SETS AND ARTISTIC PERFORMANCES',
+    description: '— I perform high-energy DJ sets and live shows that blend my own music, selected tracks, and performance art into an energetic experience. —',
     color: 'gold' as const,
     delay: 0.55,
     videoIds: [
-      'https://www.youtube.com/watch?v=ZZ5LpwO-An4',
-      'https://www.youtube.com/watch?v=R7uC5m-IRns',
+      'https://www.youtube.com/watch?v=7F3Ady08O8c&t=37s',
+      'https://www.youtube.com/watch?v=PFDPVj7wT-M',
     ],
   },
 ];
@@ -167,8 +167,8 @@ export default function Audio() {
             className="mx-auto h-[2px] w-full max-w-[460px] rounded-full"
             style={{
               background:
-                'linear-gradient(90deg, rgba(81,21,140,0.18) 0%, rgba(124,58,237,0.95) 50%, rgba(81,21,140,0.18) 100%)',
-              boxShadow: '0 0 20px rgba(124, 58, 237, 0.9)',
+                'linear-gradient(90deg, rgba(245, 158, 11, 0.18) 0%, rgba(251, 191, 36, 0.95) 50%, rgba(245, 158, 11, 0.18) 100%)',
+              boxShadow: '0 0 20px rgba(251, 191, 36, 0.9)',
             }}
           />
 
@@ -521,23 +521,84 @@ LUCID’s production quality competes with top-tier industry tracks — at a fra
                   initial={{ opacity: 0, y: 18 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8 }}
-                  className="text-center space-y-5 text-white"
+                  className="text-white space-y-8 text-center"
                 >
-                  <h3 className="text-white text-lg uppercase tracking-[0.22em]">
-                    SUPREME SOUND DESIGN
-                  </h3>
-                  <p className="text-white/85 text-sm leading-relaxed">
-                    I craft cinematic soundscapes, atmospheres, and immersive audio experiences for films, brands, commercials, trailers, and storytellers who want their visuals to resonate on a deeper emotional level.
-                  </p>
-                  <p className="text-white/85 text-sm leading-relaxed">
-                    From abstract textures to powerful sound effects, every project receives handcrafted audio that enhances emotion, tension, depth, and storytelling.
-                  </p>
-                  <div className="flex justify-center pt-2">
-                    <AuroraButton
-                      label="GET YOUR SUPREME SOUNDDESIGN"
-                      className="px-10 py-5 tracking-[0.24em]"
-                      onClick={() => navigate('/contact')}
-                    />
+                  <div
+                    className="flex w-full max-w-4xl mx-auto flex-row flex-wrap items-stretch justify-center"
+                    style={{
+                      gap: '16rem',
+                      marginTop: '1rem',
+                      marginBottom: '4rem',
+                    }}
+                  >
+                    {/* Left Column */}
+                    <div className="flex-1 min-w-[260px] flex flex-col items-center text-center gap-3">
+                      <h3 className="text-white text-lg uppercase tracking-[0.22em]">
+                        FILM &amp; CINEMATIC SOUND
+                      </h3>
+                      <p className="text-white/85 text-sm leading-relaxed whitespace-pre-line">
+                        I design cinematic atmospheres, emotional sound textures, and handcrafted SFX
+                          <br />that elevate your film's storytelling, tension, and visual impact.
+                         <br />Every detail is shaped to amplify emotion and immersion.
+                      </p>
+                      <AuroraButton
+                        label="GET YOUR SUPREME SOUND"
+                        className="px-10 py-5 text-lg tracking-[0.28em]"
+                        onClick={() => navigate('/contact')}
+                      />
+                    </div>
+
+                    {/* Right Column */}
+                    <div className="flex-1 min-w-[260px] flex flex-col items-center text-center gap-3">
+                      <h3 className="text-white text-lg uppercase tracking-[0.22em]">
+                        BRANDS &amp; CREATORS
+                      </h3>
+                      <p className="text-white/85 text-sm leading-relaxed whitespace-pre-line">
+                       I craft high-end audio identities, product SFX, and sonic textures that 
+                         <br />transform your videos into premium, scroll-stopping experiences. 
+                         <br />I help your visuals feel more emotional and more memorable.
+                      
+                      </p>
+                      <AuroraButton
+                        label="GET YOUR SIGNATURE SOUND"
+                        className="px-10 py-5 text-lg tracking-[0.28em]"
+                        onClick={() => navigate('/contact')}
+                      />
+                    </div>
+                  </div>
+                  {/* Trusted by badge */}
+                  <div className="mt-10 flex flex-col items-center gap-3 text-center">
+                    <div
+                      className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/10 px-8 py-3 text-[0.75rem] font-semibold uppercase tracking-[0.28em] text-white shadow-[0_0_24px_rgba(56,189,248,0.65)] backdrop-blur-xl"
+                      style={{ marginBottom: '0.35rem' }}
+                    >
+                      <span className="mr-2 text-base">✨</span>
+                      <span>TRUSTED BY FILMMAKERS, CREATORS &amp; BRANDS WORLDWIDE</span>
+                    </div>
+
+                    <div
+                      className="flex items-center justify-center gap-3 text-[0.8rem] tracking-[0.28em] text-white/80"
+                      style={{ marginBottom: '0.25rem' }}
+                    >
+                      <div className="inline-flex items-center gap-2">
+                        <CountUp
+                          value={200}
+                          suffix="+"
+                          duration={5}
+                          animationStyle="default"
+                          easing="easeInOut"
+                          triggerOnView={true}
+                          colorScheme="gradient"
+                          className="text-[0.95rem] font-semibold tracking-[0.3em]"
+                          numberClassName="mx-1"
+                        />
+                        <span>PROJECTS DELIVERED</span>
+                      </div>
+                      <span className="opacity-60">•</span>
+                      <span>CINEMATIC QUALITY</span>
+                      <span className="opacity-60">•</span>
+                      <span>FAST, RELIABLE TURNAROUNDS</span>
+                    </div>
                   </div>
                 </motion.div>
               ) : (
@@ -545,23 +606,73 @@ LUCID’s production quality competes with top-tier industry tracks — at a fra
                   initial={{ opacity: 0, y: 18 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8 }}
-                  className="text-center space-y-5 text-white"
+                  className="text-white space-y-8 text-center"
                 >
-                  <h3 className="text-white text-lg uppercase tracking-[0.22em]">
-                    COSMIC CONCERTS & DJ SETS
-                  </h3>
-                  <p className="text-white/85 text-sm leading-relaxed">
-                    As a DJ and performer, I bring techno, trance, and energetic live sets to clubs, rooftops, festivals, and venues across the world — from Dubai to Vietnam to Germany — always spreading high-frequency energy.
-                  </p>
-                  <p className="text-white/85 text-sm leading-relaxed">
-                    My mission: unite people through rhythm, movement, and cosmic flow. Every set is a journey — a transformation — an activation.
-                  </p>
-                  <div className="flex justify-center pt-2">
-                    <AuroraButton
-                      label="BOOK ME FOR YOUR VENUE"
-                      className="px-10 py-5 tracking-[0.24em]"
-                      onClick={() => navigate('/contact')}
-                    />
+                  <div
+                    className="flex w-full max-w-4xl mx-auto flex-row flex-wrap items-stretch justify-center"
+                    style={{
+                      gap: '16rem',
+                      marginTop: '1rem',
+                      marginBottom: '4rem',
+                    }}
+                  >
+                    {/* Left Column – DJ Sets */}
+                    <div className="flex-1 min-w-[260px] flex flex-col items-center text-center gap-3">
+                      <h3 className="text-white text-lg uppercase tracking-[0.22em]">
+                        DJ SETS
+                      </h3>
+                      <p className="text-white/85 text-sm leading-relaxed whitespace-pre-line">
+                        I turn every event into cosmic dance experiences, mixing LUCID originals with high-energy selections
+                        <br />to ignite any venue, from secret rave basements to sky-high penthouses all over the world.
+                      </p>
+                      <AuroraButton
+                        label="MORE DJ SETS"
+                        className="px-10 py-5 text-lg tracking-[0.28em]"
+                        onClick={() =>
+                          window.open(
+                            'https://soundcloud.com/cosmiclucid/sets/techno?si=deac761bcf91496681eb74aae900531e&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing',
+                            '_blank'
+                          )
+                        }
+                      />
+                      <p className="mt-3 text-white/70 text-xs leading-relaxed whitespace-pre-line">
+                        🌍 Played in multiple countries
+                           <br /> {'\n'}🎧 Perfect for clubs, rooftops, private events
+                      </p>
+                    </div>
+
+                    {/* Right Column – Artistic Performances */}
+                    <div className="flex-1 min-w-[260px] flex flex-col items-center text-center gap-3">
+                      <h3 className="text-white text-lg uppercase tracking-[0.22em]">
+                        ARTISTIC PERFORMANCES
+                      </h3>
+                      <p className="text-white/85 text-sm leading-relaxed whitespace-pre-line">
+                        A fusion of live singing, performance art, and storytelling — solo or with my band —
+                        <br />bringing high-emotion, cinematic energy to concerts, festivals, and immersive shows.
+                      </p>
+                      <AuroraButton
+                        label="BOOK ME"
+                        className="px-10 py-5 text-lg tracking-[0.28em]"
+                        onClick={() => navigate('/contact')}
+                      />
+                      <p className="mt-3 text-white/70 text-xs leading-relaxed whitespace-pre-line">
+                        🎤 Live vocals
+                           <br /> {'\n'}🎵 Originals + artistic covers
+                      </p>
+                    </div>
+                  </div>
+                  {/* Trusted by clubs badge */}
+                  <div className="mt-10 flex flex-col items-center gap-3 text-center">
+                    <div
+                      className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/10 px-8 py-3 text-[0.75rem] font-semibold uppercase tracking-[0.28em] text-white shadow-[0_0_20px_rgba(245,158,11,0.75)] backdrop-blur-xl"
+                    >
+                      <span className="mr-2 text-base">✨</span>
+                      <span>TRUSTED BY CLUBS, CREATORS &amp; EVENT ORGANIZERS WORLDWIDE</span>
+                    </div>
+
+                    <div className="text-[0.8rem] tracking-[0.26em] text-white/80 uppercase">
+                      Clubs • Rooftops • Art Galleries • Festivals • Private Events
+                    </div>
                   </div>
                 </motion.div>
               );
@@ -598,11 +709,11 @@ LUCID’s production quality competes with top-tier industry tracks — at a fra
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
           className="flex w-full justify-center px-6"
-          style={{ marginTop: '6rem', marginBottom: '8rem' }}
+          style={{ marginTop: '4rem', marginBottom: '10rem' }}
         >
           <motion.div whileHover={{ scale: 1.04, y: -4 }} whileTap={{ scale: 0.97 }}>
             <AuroraButton
-              label="LET'S MAKE MUSIC"
+              label="BRING YOUR VISION TO LIFE"
               className="px-12 sm:px-20 py-6 text-lg tracking-[0.32em]"
               onClick={() => navigate('/contact')}
             />

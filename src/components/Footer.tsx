@@ -9,7 +9,7 @@ export function Footer() {
     { icon: Mail, label: 'Email', href: 'mailto:louiskuschnir@gmail.com' },
   ];
 
-  const navLinks = ['Home', 'Portfolio', 'Coaching', 'Academy', 'Contact'];
+  const navLinks = ['Home', 'About', 'Contact', 'Impressum (Imprint)', 'Datenschutzerklärung (Privacy Policy)'];
 
   return (
     <footer className="relative pt-32 pb-12 overflow-hidden">
@@ -83,7 +83,13 @@ export function Footer() {
           {navLinks.map((link) => (
             <a
               key={link}
-              href={`#${link.toLowerCase()}`}
+              href={
+                link.startsWith('Impressum')
+                  ? '/impressum'
+                  : link.startsWith('Datenschutzerklärung')
+                  ? '/datenschutz'
+                  : `/${link.toLowerCase().split(' ')[0]}`
+              }
               className="text-white/60 hover:text-white transition-colors duration-300 tracking-wide"
             >
               {link}

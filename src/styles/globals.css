@@ -94,6 +94,28 @@
   }
 }
 
+.heavy-blur {
+  /* Used to reduce GPU-heavy glassmorphism; trimmed on small screens */
+}
+
+@media (max-width: 900px) {
+  .heavy-blur {
+    backdrop-filter: none !important;
+    filter: none !important;
+    box-shadow: none !important;
+  }
+}
+
+@media (hover: none) {
+  .card-hover,
+  .review-card,
+  .timeline-card {
+    transition: none !important;
+    transform: none !important;
+    box-shadow: inherit !important;
+  }
+}
+
 /**
  * Base typography. This is not applied to elements which have an ancestor with a Tailwind text class.
  */

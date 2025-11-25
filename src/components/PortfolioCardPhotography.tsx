@@ -49,6 +49,7 @@ const colorTokens: Record<AccentColor, {
 export interface PortfolioCardPhotographyProps {
   icon?: ReactNode | null;
   title: string;
+  subline?: string;
   description: string;
   color: AccentColor;
   delay?: number;
@@ -58,6 +59,7 @@ export interface PortfolioCardPhotographyProps {
 export function PortfolioCardPhotography({
   icon,
   title,
+  subline,
   description,
   color,
   delay = 0,
@@ -67,10 +69,7 @@ export function PortfolioCardPhotography({
   const hasRing = Boolean(ringImages?.length);
   const ringImagesList = hasRing ? Array.from(ringImages!) : [];
   const titleSpacingClass = hasRing ? 'mb-4' : 'mb-8';
-  const descriptionText =
-    description && description.trim().length > 0
-      ? description
-      : 'I capture portraits and moments as visual stories\n— clean, sharp, and creatively engineered through advanced photography and editing --';
+  const descriptionText = description?.trim() ?? '';
   const descriptionLines = descriptionText
     .split('\n')
     .map((line) => line.trim())
@@ -82,7 +81,7 @@ export function PortfolioCardPhotography({
       animate={{ opacity: 1, y: 0, rotateX: 0 }}
       transition={{ duration: 0.9, delay, ease: [0.25, 0.46, 0.45, 0.94] }}
       whileHover={{ y: -6, scale: 1.01 }}
-      className="h-full"
+      className="h-full card-hover"
     >
       <div className={`relative flex h-full flex-col overflow-hidden rounded-[28px] border ${tokens.border} bg-black/40 px-8 py-10 shadow-[0_25px_60px_rgba(0,0,0,0.45)] backdrop-blur-2xl`}>
         <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${tokens.gradient} opacity-80`} />
@@ -119,20 +118,30 @@ export function PortfolioCardPhotography({
             />
           </div>
 
-          <div
-            className="mt-8 mb-6 text-center text-white"
-            style={{
-              fontSize: 'clamp(0.82rem, 0.85vw, 0.95rem)',
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-            }}
-          >
-            {descriptionLines.map((line, idx) => (
-              <p key={`${title}-description-${idx}`} className={idx > 0 ? 'mt-2' : undefined}>
-                {line}
-              </p>
-            ))}
-          </div>
+          {(subline || descriptionLines.length > 0) && (
+            <div className="mt-8 mb-6 text-center">
+              {subline && (
+                <h3 className="text-white text-lg uppercase tracking-[0.22em] leading-relaxed">
+                  {subline}
+                </h3>
+              )}
+              {descriptionLines.length > 0 && (
+                <div
+                  className="mt-3 text-white/90 text-sm leading-relaxed"
+                  style={{ letterSpacing: '0.04em', textTransform: 'none' }}
+                >
+                  {descriptionLines.map((line, idx) => (
+                    <p
+                      key={`${title}-description-${idx}`}
+                      className={idx > 0 ? 'mt-2' : undefined}
+                    >
+                      {line}
+                    </p>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
           <motion.p
             className="mt-6 w-full text-center text-[0.65rem] uppercase tracking-[0.35em] text-white/70"
             initial={{ opacity: 0.35 }}

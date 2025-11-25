@@ -4,6 +4,7 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import ElectroBorder from './components/ui/electro-border';
 import SmokeyCursorFullScreen from './components/lightswind/smokey-cursor-full';
+import { CookieBanner } from './components/ui/CookieBanner';
 
 import Home from './pages/Home';
 import Portfolio from './pages/Portfolio';
@@ -11,10 +12,12 @@ import Coaching from './pages/Coaching';
 import Academy from './pages/Academy';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import Datenschutz from './pages/Datenschutz';
 import Film from './pages/Film';
 import Photography from './pages/Photography';
 import Audio from './pages/Audio';
 import Marketing from './pages/Marketing';
+import Impressum from './pages/Impressum';
 
 
 
@@ -25,7 +28,7 @@ export default function App() {
         {/* Cosmic animated background */}
         <CosmicBackground />
         
-        /* smokey cursor animation */
+        {/* smokey cursor animation */}
         <SmokeyCursorFullScreen
           className="-z-[5]"
           simulationResolution={320}
@@ -60,9 +63,12 @@ export default function App() {
             <Route path="/academy" element={<Academy />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/impressum" element={<Impressum />} />
+            <Route path="/datenschutz" element={<Datenschutz />} />
           </Routes>
         </main>
         <Footer />
+        <CookieBanner />
       </div>
     </>
   );

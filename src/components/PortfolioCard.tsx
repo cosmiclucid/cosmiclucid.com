@@ -17,6 +17,7 @@ interface PortfolioCardProps {
   ringImages?: string[];
   footerContent?: ReactNode;
   maxWidthClass?: string;
+  children?: ReactNode;
 }
 
 const colorConfig = {
@@ -125,6 +126,7 @@ export function PortfolioCard({
   ringImages,
   footerContent,
   maxWidthClass = 'max-w-[350px]',
+  children,
 }: PortfolioCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const config = colorConfig[color];
@@ -157,7 +159,7 @@ export function PortfolioCard({
       whileTap={{ scale: 0.985 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
-      className={`group relative w-full ${maxWidthClass} min-h-[400px] perspective-1000`}
+      className={`group relative w-full card-hover ${maxWidthClass} min-h-[400px] perspective-1000`}
       style={{ transformStyle: 'preserve-3d' }}
     >
       {/* Main card */}
@@ -300,7 +302,7 @@ export function PortfolioCard({
 
             {/* Embedded video */}
             {hasVideos && (
-              <div className="mt-4 flex w-full flex-nowrap justify-center gap-3">
+              <div className="mt-6 mb-4 flex w-full flex-nowrap justify-center gap-4">
                 {videoUrls!.map((url, index) => (
                   <div
                     key={`${title}-video-${index}`}
@@ -352,6 +354,8 @@ export function PortfolioCard({
               </div>
             )}
 
+            {children && <div className="mt-6 w-full">{children}</div>}
+
             {footerContent && (
               <div className="mt-8 w-full">{footerContent}</div>
             )}
@@ -366,7 +370,7 @@ export function PortfolioCard({
                 }}
                 transition={{ duration: 0.3 }}
                 className="absolute text-white text-xs tracking-widest uppercase"
-                style={{ bottom: '5rem' }}
+                style={{ bottom: '6.25rem' }}
               >
                 Enter the cosmos →
               </motion.div>

@@ -112,6 +112,7 @@ export default function SmokeyCursor({
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    if (disabled) return; // Skip expensive work entirely when disabled
     const canvas = canvasRef.current;
     if (!canvas) return; // Guard canvas early
 
@@ -522,7 +523,12 @@ export default function SmokeyCursor({
               c *= diffuse;
           #endif
 
-          float a = max(c.r, max(c.g, c.b));
+          // Dim overly bright whites
+          float brightness = max(c.r, max(c.g, c.b));
+          float dimFactor = 0.55; // reduces intensity; adjust 0.4–0.7 as needed
+          c = c * dimFactor;
+
+          float a = brightness * 0.6; // softer opacity
           gl_FragColor = vec4(c, a);
       }
     `;
@@ -1045,6 +1051,8 @@ export default function SmokeyCursor({
     let lastUpdateTime = Date.now();
     let colorUpdateTimer = 0.0;
 
+    let rafId: number | null = null;
+
     function updateFrame() {
       const dt = calcDeltaTime();
       if (resizeCanvas()) initFramebuffers();
@@ -1052,7 +1060,7 @@ export default function SmokeyCursor({
       applyInputs();
       step(dt);
       render(null);
-      requestAnimationFrame(updateFrame);
+      rafId = requestAnimationFrame(updateFrame);
     }
 
     function calcDeltaTime() {
@@ -1459,13 +1467,24 @@ export default function SmokeyCursor({
     }
 
     // -------------------- Event Listeners --------------------
-    window.addEventListener("mousedown", (e) => {
+    const pointerThrottleMs = 16;
+    let lastPointerTime = 0;
+
+    const throttled = <T extends (...args: any[]) => void>(fn: T) =>
+      ((...args: Parameters<T>) => {
+        const now = performance.now();
+        if (now - lastPointerTime < pointerThrottleMs) return;
+        lastPointerTime = now;
+        fn(...args);
+      }) as T;
+
+    const handleMouseDown = (e: MouseEvent) => {
       const pointer = pointers[0];
       const posX = scaleByPixelRatio(e.clientX, false);
       const posY = scaleByPixelRatio(e.clientY, false);
       updatePointerDownData(pointer, -1, posX, posY);
       clickSplat(pointer);
-    });
+    };
 
     // Start rendering on first mouse move
     function handleFirstMouseMove(e: MouseEvent) {
@@ -1479,7 +1498,7 @@ export default function SmokeyCursor({
     }
     document.body.addEventListener("mousemove", handleFirstMouseMove);
 
-    window.addEventListener("mousemove", (e) => {
+    const handleMouseMove = throttled((e: MouseEvent) => {
       const pointer = pointers[0];
       const posX = scaleByPixelRatio(e.clientX, false);
       const posY = scaleByPixelRatio(e.clientY, false);
@@ -1501,42 +1520,51 @@ export default function SmokeyCursor({
     }
     document.body.addEventListener("touchstart", handleFirstTouchStart);
 
-    window.addEventListener(
-      "touchstart",
-      (e) => {
-        const touches = e.targetTouches;
-        const pointer = pointers[0];
-        for (let i = 0; i < touches.length; i++) {
-          const posX = scaleByPixelRatio(touches[i].clientX, false);
-          const posY = scaleByPixelRatio(touches[i].clientY, false);
-          updatePointerDownData(pointer, touches[i].identifier, posX, posY);
-        }
-      },
-      false
-    );
+    const handleTouchStart = (e: TouchEvent) => {
+      const touches = e.targetTouches;
+      const pointer = pointers[0];
+      for (let i = 0; i < touches.length; i++) {
+        const posX = scaleByPixelRatio(touches[i].clientX, false);
+        const posY = scaleByPixelRatio(touches[i].clientY, false);
+        updatePointerDownData(pointer, touches[i].identifier, posX, posY);
+      }
+    };
 
-    window.addEventListener(
-      "touchmove",
-      (e) => {
-        const touches = e.targetTouches;
-        const pointer = pointers[0];
-        for (let i = 0; i < touches.length; i++) {
-          const posX = scaleByPixelRatio(touches[i].clientX, false);
-          const posY = scaleByPixelRatio(touches[i].clientY, false);
-          updatePointerMoveData(pointer, posX, posY, pointer.color);
-        }
-      },
-      false
-    );
+    const handleTouchMove = throttled((e: TouchEvent) => {
+      const touches = e.targetTouches;
+      const pointer = pointers[0];
+      for (let i = 0; i < touches.length; i++) {
+        const posX = scaleByPixelRatio(touches[i].clientX, false);
+        const posY = scaleByPixelRatio(touches[i].clientY, false);
+        updatePointerMoveData(pointer, posX, posY, pointer.color);
+      }
+    });
 
-    window.addEventListener("touchend", (e) => {
+    const handleTouchEnd = (e: TouchEvent) => {
       const touches = e.changedTouches;
       const pointer = pointers[0];
       for (let i = 0; i < touches.length; i++) {
         updatePointerUpData(pointer);
       }
-    });
+    };
+
+    window.addEventListener("mousedown", handleMouseDown);
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("touchstart", handleTouchStart, false);
+    window.addEventListener("touchmove", handleTouchMove, false);
+    window.addEventListener("touchend", handleTouchEnd);
+
     // ------------------------------------------------------------
+    return () => {
+      rafId && cancelAnimationFrame(rafId);
+      window.removeEventListener("mousedown", handleMouseDown);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
+      document.body.removeEventListener("mousemove", handleFirstMouseMove);
+      document.body.removeEventListener("touchstart", handleFirstTouchStart);
+    };
   }, [
     simulationResolution,
     dyeResolution,
@@ -1553,6 +1581,8 @@ export default function SmokeyCursor({
     backgroundColor,
     transparent,
   ]);
+
+  if (disabled) return null;
 
   const baseClass = "fixed inset-0 pointer-events-none cursor-none";
   const combinedClassName = [baseClass, className].filter(Boolean).join(" ");

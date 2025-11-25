@@ -79,8 +79,9 @@ const categories = [
     id: 'portraits',
     icon: null,
     title: 'PEOPLE',
+    subline: 'I capture portraits and moments as visual stories',
     description:
-      'I capture portraits and moments as visual stories\n— clean, sharp, and creatively engineered through advanced photography and editing --',
+      '— clean, sharp, and creatively engineered through advanced photography and editing —',
     color: 'magenta' as const,
     delay: 0.15,
     ringImages: portraitRingImages,
@@ -89,8 +90,9 @@ const categories = [
     id: 'brands',
     icon: null,
     title: 'BRANDS',
+    subline: 'Impactful content for modern brands',
     description:
-      'Impactful content for modern brands\n— crafted to stand out, resonate, and convert across digital platforms —',
+      '— crafted to stand out, resonate, and convert across digital platforms —',
     color: 'cyan' as const,
     delay: 0.3,
     ringImages: brandRingImages,
@@ -99,8 +101,9 @@ const categories = [
     id: 'weddings',
     icon: null,
     title: 'WEDDINGS',
+    subline: 'Emotional storytelling of your most sacred day',
     description:
-      'Emotional storytelling of your most sacred day\n— captured with cinematic intimacy, elegance and timeless beauty —',
+      '— captured with cinematic intimacy, elegance and timeless beauty —',
     color: 'gold' as const,
     delay: 0.45,
     ringImages: weddingRingImages,
@@ -109,8 +112,9 @@ const categories = [
     id: 'events',
     icon: null,
     title: 'EVENTS',
+    subline: 'Dynamic visual storytelling of live moments, music culture and corporate experiences',
     description:
-      'Dynamic visual storytelling of live moments, music culture and corporate experiences\n— captured with energy, precision and cinematic flair —',
+      '— captured with energy, precision and cinematic flair —',
     color: 'purple' as const,
     delay: 0.6,
     ringImages: eventRingImages,
@@ -119,8 +123,9 @@ const categories = [
     id: 'creative',
     icon: null,
     title: 'CREATIVE EDITS',
+    subline: 'Experimental visual transformations',
     description:
-      'Experimental visual transformations\n— turning raw footage into surreal, stylized and boundary-breaking art —',
+      '— turning raw footage into surreal, stylized and boundary-breaking art —',
     color: 'magenta' as const,
     delay: 0.75,
     ringImages: creativeRingImages,
@@ -211,8 +216,8 @@ export default function Photography() {
             className="mx-auto h-[2px] w-full max-w-[460px] rounded-full"
             style={{
               background:
-                'linear-gradient(90deg, rgba(81,21,140,0.18) 0%, rgba(124,58,237,0.95) 50%, rgba(81,21,140,0.18) 100%)',
-              boxShadow: '0 0 20px rgba(124, 58, 237, 0.9)',
+                'linear-gradient(90deg, rgba(12, 180, 255, 0.18) 0%, rgba(34, 211, 238, 0.95) 50%, rgba(12, 180, 255, 0.18) 100%)',
+              boxShadow: '0 0 20px rgba(34, 211, 238, 0.9)',
             }}
           />
 
@@ -226,6 +231,7 @@ export default function Photography() {
               letterSpacing: '0.22em',
               textTransform: 'uppercase',
               fontSize: '1.2rem',
+              color: '#ffffff',
             }}
           >
             I capture portraits and moments as visual stories
@@ -259,6 +265,7 @@ export default function Photography() {
               <PortfolioCardPhotography
                 icon={category.icon}
                 title={category.title}
+                subline={'subline' in category ? (category as any).subline : undefined}
                 description={category.description}
                 color={category.color}
                 delay={category.delay}

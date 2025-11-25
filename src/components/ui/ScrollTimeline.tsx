@@ -52,11 +52,13 @@ export const ScrollTimeline: React.FC<ScrollTimelineProps> = ({
   const dotRefs = useRef<HTMLDivElement[]>([]);
   const [dotOffsets, setDotOffsets] = useState<number[]>([]);
   const [cometPos, setCometPos] = useState(0);
+  const CTA_EARLY_OFFSET = 0; // pull comet/line upward so it reaches CTA sooner; tweak as needed
   const COMET_OFFSET = 0;
+  const PROGRESS_ACCEL = 1.25; // >1 makes the comet/line advance faster relative to scroll
 
   const { scrollYProgress } = useScroll({
     target: scrollRef,
-    offset: ["start 0.4", "end 0.8"],
+    offset: ["start 0.3", "end center"],
   });
 
   const smoothProgress = useSpring(scrollYProgress, {
@@ -68,15 +70,17 @@ export const ScrollTimeline: React.FC<ScrollTimelineProps> = ({
   const progressHeight = useTransform(smoothProgress, [0, 1], ["0%", "100%"]);
   const lineHeight = useTransform(smoothProgress, (v) => {
     if (ctaOffset !== null) {
-      const clamped = Math.min(v, 1);
-      return `${(clamped * ctaOffset).toFixed(3)}px`;
+      const accelerated = Math.min(1, v * PROGRESS_ACCEL);
+      const target = Math.max(ctaOffset + CTA_EARLY_OFFSET, 0);
+      return `${(accelerated * target).toFixed(3)}px`;
     }
     return `${(v * 100).toFixed(2)}%`;
   });
   const cometTop = useTransform(smoothProgress, (v) => {
     if (ctaOffset !== null) {
-      const clamped = Math.min(v, 1);
-      return `${(clamped * ctaOffset + COMET_OFFSET).toFixed(2)}px`;
+      const accelerated = Math.min(1, v * PROGRESS_ACCEL);
+      const target = Math.max(ctaOffset + CTA_EARLY_OFFSET, 0);
+      return `${(accelerated * target + COMET_OFFSET).toFixed(2)}px`;
     }
     return `${(v * 100).toFixed(2)}%`;
   });
@@ -92,11 +96,11 @@ export const ScrollTimeline: React.FC<ScrollTimelineProps> = ({
 
       // derive comet position in px relative to inner timeline
       const innerHeight = innerRef.current?.getBoundingClientRect().height ?? 0;
-      const target = ctaOffset ?? innerHeight;
-      const clamped = Math.min(1, v);
-      const cometY = clamped * target + COMET_OFFSET;
+      const target = ctaOffset !== null ? Math.max(ctaOffset + CTA_EARLY_OFFSET, 0) : innerHeight;
+      const accelerated = Math.min(1, v * PROGRESS_ACCEL);
+      const cometY = accelerated * target + COMET_OFFSET;
       setCometPos(cometY);
-      setIsAtEnd(ctaOffset !== null ? cometY >= ctaOffset : v >= 0.995);
+      setIsAtEnd(ctaOffset !== null ? accelerated >= 0.999 : v >= 0.995);
     });
     return () => unsubscribe();
   }, [scrollYProgress, events.length, ctaOffset]);
@@ -323,8 +327,8 @@ export const ScrollTimeline: React.FC<ScrollTimelineProps> = ({
               </div>
 
               {/* Card */}
-              <motion.article
-                className="scroll-timeline-card"
+      <motion.article
+        className="scroll-timeline-card timeline-card heavy-blur"
                 variants={getCardVariants(index)}
                 initial="initial"
                 whileInView="whileInView"
@@ -365,7 +369,7 @@ export const ScrollTimeline: React.FC<ScrollTimelineProps> = ({
             </div>
 
             <article
-              className="scroll-timeline-card scroll-timeline-final-card-content"
+            className="scroll-timeline-card scroll-timeline-final-card-content timeline-card heavy-blur"
             >
               {renderFinalCardTitle()}
               {finalCard.subtitle && (

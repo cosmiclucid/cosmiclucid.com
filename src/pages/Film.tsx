@@ -4,13 +4,26 @@ import { PortfolioCard } from '../components/PortfolioCard';
 import { useNavigate } from 'react-router-dom';
 import AuroraButton from '../components/ui/AuroraButton';
 import GlowNav from '../components/ui/GlowNav';
+import { CountUp } from '../components/ui/CountUp';
 
 const categories = [
   {
     id: 'artists',
     icon: null,
     title: 'ARTISTS',
-    description: '',
+    subLine: 'ARTISTS, DJS & CREATIVE INDIVIDUALS',
+    description:
+      '— I capture high-energy moments on stage and transform them into cinematic visuals that define your identity. —',
+    salesHeadline: 'ARTISTS',
+    selling: 'Transform your stage moments into powerful visuals that build your artistic identity.',
+    cta: 'BOOK ARTIST VISUALS',
+    shortText: 'Cinematic visuals for artists.',
+    badge: 'TRUSTED BY ARTISTS & DJS',
+    bullets: [
+      { label: 'Artists filmed', value: 120, suffix: '+' },
+      { label: 'Fast delivery', value: 250, suffix: '+' },
+      { label: 'Cities worldwide', value: 30, suffix: '+' },
+    ],
     color: 'purple' as const,
     delay: 0.15,
     videoIds: [
@@ -22,7 +35,19 @@ const categories = [
     id: 'brands',
     icon: null,
     title: 'BRANDS',
-    description: '',
+    subLine: 'BRANDED CONTENT & COMMERCIAL FILMS',
+    description:
+      '— I craft modern, cinematic brand visuals that elevate products, services, and stories into premium experiences. —',
+    salesHeadline: 'BRANDS',
+    selling: 'Elevate your brand with storytelling that builds trust, connects emotionally and converts effortlessly.',
+    cta: 'CREATE YOUR BRAND FILM',
+    shortText: 'Modern and cinematic brand storytelling.',
+    badge: 'TRUSTED BY BRANDS & FOUNDERS',
+    bullets: [
+      { label: 'Brand campaigns', value: 80, suffix: '+' },
+      { label: 'Premium look', value: 140, suffix: '+' },
+      { label: 'High conversion impact', value: 25, suffix: '+' },
+    ],
     color: 'cyan' as const,
     delay: 0.3,
     videoIds: [
@@ -34,7 +59,19 @@ const categories = [
     id: 'events',
     icon: null,
     title: 'EVENTS',
-    description: '',
+    subLine: 'EVENT FILMS & HIGHLIGHTS',
+    description:
+      '— I preserve the energy, emotion, and atmosphere of your event through impactful, story-driven visuals. —',
+    salesHeadline: 'EVENTS',
+    selling: 'Capture the energy, atmosphere, and emotion of your event that feel as powerful as the real thing.',
+    cta: 'CAPTURE MY EVENT',
+    shortText: 'High-energy event highlights.',
+    badge: 'TRUSTED BY ORGANIZERS WORLDWIDE',
+    bullets: [
+      { label: 'Events filmed', value: 150, suffix: '+' },
+      { label: 'Fast delivery', value: 90, suffix: '+' },
+      { label: 'High-energy edits', value: 18, suffix: '+' },
+    ],
     color: 'magenta' as const,
     delay: 0.6,
     videoIds: [
@@ -46,7 +83,19 @@ const categories = [
     id: 'weddings',
     icon: null,
     title: 'WEDDINGS',
-    description: '',
+    subLine: 'WEDDING FILMS & CELEBRATIONS',
+    description:
+      '— I create emotional, timeless wedding films that let you relive your story for a lifetime. —',
+    salesHeadline: 'WEDDINGS',
+    selling: 'Relive every moment with a wedding film crafted to feel magical every single time.',
+    cta: 'BOOK YOUR WEDDING FILM',
+    shortText: 'Emotional, cinematic wedding storytelling.',
+    badge: 'TRUSTED BY COUPLES WORLDWIDE',
+    bullets: [
+      { label: 'Wedding films', value: 50, suffix: '+' },
+      { label: 'Emotional storytelling', value: 80, suffix: '+' },
+      { label: 'Romantic cinematics', value: 20, suffix: '+' },
+    ],
     color: 'gold' as const,
     delay: 0.75,
     videoIds: [
@@ -58,7 +107,19 @@ const categories = [
     id: 'music-videos',
     icon: null,
     title: 'MUSIC VIDEOS',
-    description: '',
+    subLine: 'MUSIC VIDEO PRODUCTIONS & VISUALIZERS',
+    description:
+      '— I turn your sound into cinematic worlds — crafted to amplify emotion, identity, and visual impact. —',
+    salesHeadline: 'MUSIC VIDEOS',
+    selling: 'Bring your music to life with visuals that elevate your sound and define your artistic identity.',
+    cta: 'CREATE YOUR MUSIC VIDEO',
+    shortText: 'Cinematic visuals that amplify your music.',
+    badge: 'TRUSTED BY ARTISTS & LABELS',
+    bullets: [
+      { label: 'Music videos', value: 25, suffix: '+' },
+      { label: 'Unique artistic identity', value: 140, suffix: '+' },
+      { label: 'Strong visual style', value: 20, suffix: '+' },
+    ],
     color: 'purple' as const,
     delay: 0.45,
     videoIds: [
@@ -71,7 +132,19 @@ const categories = [
     id: 'short-films',
     icon: null,
     title: 'SHORT FILMS',
-    description: '',
+    subLine: 'FILM PROJECTS & CINEMATIC EXPERIMENTS',
+    description:
+      '— I produce artistic, meaningful short films that blend emotion, style, and storytelling into powerful expression. —',
+    salesHeadline: 'SHORT FILMS',
+    selling: 'Bring your creative vision to life through aesthetic filmmaking and emotional storytelling.',
+    cta: 'CREATE A SHORT FILM',
+    shortText: 'Artistic cinematic expression.',
+    badge: 'TRUSTED BY FILMMAKERS',
+    bullets: [
+      { label: 'Film projects', value: 45, suffix: '+' },
+      { label: 'Artistic pieces', value: 30, suffix: '+' },
+      { label: 'Strong visual identity', value: 12, suffix: '+' },
+    ],
     color: 'cyan' as const,
     delay: 0.9,
     videoIds: [
@@ -255,17 +328,70 @@ export default function Film() {
                 key={category.id}
                 onMouseEnter={() => setHoveredCategory(category.id)}
                 onMouseLeave={() => setHoveredCategory(null)}
-                className="mb-8 p-4 md:mb-12"
+                className="p-5"
+                style={{ marginBottom: '2.5rem' }}
               >
-                <PortfolioCard
-                  icon={category.icon}
-                  title={category.title}
-                  description={category.description}
-                  color={category.color}
-                  delay={category.delay}
-                  videoUrls={videoEmbedSrcs}
-                  onClick={videoEmbedSrcs?.length ? undefined : () => handleCategoryClick(category.id)}
-                />
+              <PortfolioCard
+                icon={category.icon}
+                title={category.title}
+                color={category.color}
+                delay={category.delay}
+                subline={category.subLine}
+                description={category.description}
+                videoUrls={videoEmbedSrcs}
+                onClick={videoEmbedSrcs?.length ? undefined : () => handleCategoryClick(category.id)}
+              >
+                  <div className="w-full text-center flex flex-col items-center gap-5">
+                    <h3 className="text-white text-lg uppercase tracking-[0.18em]" style={{ marginTop: '2rem' }}>
+                      {category.subLine}
+                    </h3>
+                    <p
+                      className="text-white/90 text-xs leading-relaxed normal-case tracking-normal"
+                      style={{ marginBottom: '2.5rem', marginTop: '0rem' }}
+                    >
+                      {category.selling}
+                    </p>
+                    <AuroraButton
+                      label={category.cta}
+                      className="px-10 py-4 tracking-[0.28em]"
+                      onClick={() => navigate('/contact')}
+                    />
+                    <p className="text-white/70 text-xs tracking-[0.16em]" style={{ marginTop: '0.4rem' }}>
+                      {category.shortText}
+                    </p>
+                    <div
+                      className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/15 px-8 py-3 text-[0.75rem] font-semibold uppercase tracking-[0.28em] text-white shadow-[0_0_24px_rgba(124,58,237,0.65),0_0_32px_rgba(56,189,248,0.45)] backdrop-blur-xl"
+                      style={{ marginTop: '3.5rem', marginBottom: '0rem' }}
+                    >
+                      <span className="mr-2 text-base">✨</span>
+                      <span>{category.badge}</span>
+                    </div>
+                    <div className="text-white/70 text-xs leading-relaxed flex flex-col items-center" style={{ marginTop: '0.5rem' }}>
+                      <div className="flex flex-wrap justify-center gap-4" style={{ marginBottom: '0.75rem' }}>
+                        {category.bullets?.map((bullet, idx) => (
+                          <div key={`${category.id}-bullet-${idx}`} className="flex items-center gap-2">
+                            {idx === 0 ? (
+                              <CountUp
+                                value={bullet.value}
+                                suffix={bullet.suffix ?? '+'}
+                                duration={3}
+                                animationStyle="default"
+                                easing="easeInOut"
+                                triggerOnView={true}
+                                colorScheme="gradient"
+                                className="text-[0.9rem] font-semibold tracking-[0.18em]"
+                                numberClassName="mx-0.5"
+                              />
+                            ) : (
+                              <span>&nbsp;•</span>
+                            )}
+                            <span>{bullet.label}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </PortfolioCard>
               </div>
             );
           })}

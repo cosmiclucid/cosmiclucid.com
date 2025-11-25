@@ -2,9 +2,14 @@ import { motion } from 'motion/react';
 import { ChevronDown, Play } from 'lucide-react';
 import { useRef, useState } from 'react';
 import AuroraButton from '../components/ui/AuroraButton';
-function Tilt({ children }: { children: React.ReactNode }) {
+import { useClientEnv } from '../hooks/useClientEnv';
+function Tilt({ children, disabled = false }: { children: React.ReactNode; disabled?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const [rot, setRot] = useState({ rx: 0, ry: 0 });
+  const frameRef = useRef<number | null>(null);
+  const pendingPos = useRef<{ x: number; y: number } | null>(null);
+
+  if (disabled) return <>{children}</>;
 
   return (
     <div
@@ -13,13 +18,26 @@ function Tilt({ children }: { children: React.ReactNode }) {
         const el = ref.current;
         if (!el) return;
         const rect = el.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width;  // 0..1
-        const y = (e.clientY - rect.top) / rect.height; // 0..1
-        const rx = (0.5 - y) * 10;  // tilt range X
-        const ry = (x - 0.5) * 10;  // tilt range Y
-        setRot({ rx, ry });
+        pendingPos.current = {
+          x: (e.clientX - rect.left) / rect.width,
+          y: (e.clientY - rect.top) / rect.height,
+        };
+        if (frameRef.current) return;
+        frameRef.current = requestAnimationFrame(() => {
+          frameRef.current = null;
+          const next = pendingPos.current;
+          if (!next) return;
+          const rx = (0.5 - next.y) * 6; // reduced tilt range for smoother motion
+          const ry = (next.x - 0.5) * 6;
+          setRot({ rx, ry });
+        });
       }}
-      onMouseLeave={() => setRot({ rx: 0, ry: 0 })}
+      onMouseLeave={() => {
+        pendingPos.current = null;
+        frameRef.current && cancelAnimationFrame(frameRef.current);
+        frameRef.current = null;
+        setRot({ rx: 0, ry: 0 });
+      }}
       style={{ perspective: '1000px' }}
       className="will-change-transform"
     >
@@ -39,6 +57,8 @@ import { UniverseCard } from '../components/UniverseCard';
 export default function Home() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const navigate = useNavigate();
+  const { isSmallScreen, isMobile, prefersReducedMotion } = useClientEnv();
+  const disableTilt = isSmallScreen || isMobile || prefersReducedMotion;
 
   const handleEnterCosmos = () => {
     setIsTransitioning(true);
@@ -206,23 +226,27 @@ export default function Home() {
             <div className="flex flex-col items-center">
               <motion.h3
                 className="text-white/90 text-lg tracking-[0.25em] uppercase mb-6 glow-text"
-                animate={{
-                  opacity: [0.9, 1, 0.9],
-                  scale: [1, 1.04, 1],
-                  textShadow: [
-                    '0 0 12px rgba(64, 128, 255, 0.6), 0 0 24px rgba(64, 128, 255, 0.4)',
-                    '0 0 20px rgba(64, 128, 255, 0.8), 0 0 40px rgba(64, 128, 255, 0.6)',
-                    '0 0 12px rgba(64, 128, 255, 0.6), 0 0 24px rgba(64, 128, 255, 0.4)',
-                  ],
-                }}
-                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                animate={
+                  prefersReducedMotion
+                    ? { opacity: 1, scale: 1 }
+                    : {
+                        opacity: [0.9, 1, 0.9],
+                        scale: [1, 1.02, 1],
+                        textShadow: [
+                          '0 0 12px rgba(64, 128, 255, 0.6), 0 0 24px rgba(64, 128, 255, 0.4)',
+                          '0 0 18px rgba(64, 128, 255, 0.7), 0 0 32px rgba(64, 128, 255, 0.5)',
+                          '0 0 12px rgba(64, 128, 255, 0.6), 0 0 24px rgba(64, 128, 255, 0.4)',
+                        ],
+                      }
+                }
+                transition={{ duration: 3, repeat: prefersReducedMotion ? 0 : Infinity, ease: 'easeInOut' }}
                 style={{
                   textShadow: '0 0 12px rgba(64, 128, 255, 0.8)',
                 }}
               >
                 CREATION
               </motion.h3>
-              <Tilt>
+              <Tilt disabled={disableTilt}>
                 <div className="relative mb-10 rounded-3xl" style={{ transform: 'translateX(-20px) translateY(0px)' }}>
                   <div className="relative z-10">
                     <UniverseCard
@@ -243,23 +267,27 @@ export default function Home() {
             <div className="flex flex-col items-center">
               <motion.h3
                 className="text-white/90 text-lg tracking-[0.25em] uppercase mb-6 glow-text"
-                animate={{
-                  opacity: [0.9, 1, 0.9],
-                  scale: [1, 1.04, 1],
-                  textShadow: [
-                    '0 0 12px rgba(255, 215, 0, 0.6), 0 0 24px rgba(255, 215, 0, 0.4)',
-                    '0 0 20px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.6)',
-                    '0 0 12px rgba(255, 215, 0, 0.6), 0 0 24px rgba(255, 215, 0, 0.4)',
-                  ],
-                }}
-                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                animate={
+                  prefersReducedMotion
+                    ? { opacity: 1, scale: 1 }
+                    : {
+                        opacity: [0.9, 1, 0.9],
+                        scale: [1, 1.02, 1],
+                        textShadow: [
+                          '0 0 12px rgba(255, 215, 0, 0.6), 0 0 24px rgba(255, 215, 0, 0.4)',
+                          '0 0 18px rgba(255, 215, 0, 0.7), 0 0 32px rgba(255, 215, 0, 0.5)',
+                          '0 0 12px rgba(255, 215, 0, 0.6), 0 0 24px rgba(255, 215, 0, 0.4)',
+                        ],
+                      }
+                }
+                transition={{ duration: 3, repeat: prefersReducedMotion ? 0 : Infinity, ease: 'easeInOut' }}
                 style={{
                   textShadow: '0 0 12px rgba(255, 215, 0, 0.8)',
                 }}
               >
                 TRANSFORMATION
               </motion.h3>
-              <Tilt>
+              <Tilt disabled={disableTilt}>
                 <div className="relative mb-10 rounded-3xl" style={{ transform: 'translateX(0px) translateY(0px)' }}>
                   <div className="relative z-10">
                     <UniverseCard
@@ -280,23 +308,27 @@ export default function Home() {
             <div className="flex flex-col items-center">
               <motion.h3
                 className="text-white/90 text-lg tracking-[0.25em] uppercase mb-6 glow-text"
-                animate={{
-                  opacity: [0.9, 1, 0.9],
-                  scale: [1, 1.04, 1],
-                  textShadow: [
-                    '0 0 12px rgba(173, 128, 255, 0.6), 0 0 24px rgba(173, 128, 255, 0.4)',
-                    '0 0 20px rgba(173, 128, 255, 0.8), 0 0 40px rgba(173, 128, 255, 0.6)',
-                    '0 0 12px rgba(173, 128, 255, 0.6), 0 0 24px rgba(173, 128, 255, 0.4)',
-                  ],
-                }}
-                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                animate={
+                  prefersReducedMotion
+                    ? { opacity: 1, scale: 1 }
+                    : {
+                        opacity: [0.9, 1, 0.9],
+                        scale: [1, 1.02, 1],
+                        textShadow: [
+                          '0 0 12px rgba(173, 128, 255, 0.6), 0 0 24px rgba(173, 128, 255, 0.4)',
+                          '0 0 18px rgba(173, 128, 255, 0.7), 0 0 32px rgba(173, 128, 255, 0.5)',
+                          '0 0 12px rgba(173, 128, 255, 0.6), 0 0 24px rgba(173, 128, 255, 0.4)',
+                        ],
+                      }
+                }
+                transition={{ duration: 3, repeat: prefersReducedMotion ? 0 : Infinity, ease: 'easeInOut' }}
                 style={{
                   textShadow: '0 0 12px rgba(173, 128, 255, 0.8)',
                 }}
               >
                 EVOLUTION
               </motion.h3>
-              <Tilt>
+              <Tilt disabled={disableTilt}>
                 <div className="relative mb-10 rounded-3xl" style={{ transform: 'translateX(20px) translateY(0px)' }}>
                   <div className="relative z-10">
                     <UniverseCard

@@ -1,10 +1,15 @@
 'use client';
 
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState, lazy, Suspense } from 'react';
 import { motion } from 'motion/react';
 import { ChevronDown } from 'lucide-react';
 import AuroraButton from '../components/ui/AuroraButton';
-import { ScrollTimeline } from '../components/ui/ScrollTimeline';
+import { CountUp } from '../components/ui/CountUp';
+import { useClientEnv } from '../hooks/useClientEnv';
+
+const ScrollTimeline = lazy(() =>
+  import('../components/ui/ScrollTimeline').then((mod) => ({ default: mod.ScrollTimeline })),
+);
 
 type TimelineEntry = {
   id: number;
@@ -14,9 +19,43 @@ type TimelineEntry = {
   side: 'left' | 'right';
 };
 
-const HERO_IMAGE_FILE = 'Louis.webp';
+const HERO_IMAGE_FILE = 'Louis blau.webp';
+
+function LazyMount({
+  children,
+  rootMargin = '0px 0px 120px 0px',
+  threshold = 0.15,
+}: {
+  children: React.ReactNode;
+  rootMargin?: string;
+  threshold?: number;
+}) {
+  const [visible, setVisible] = useState(false);
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setVisible(true);
+            observer.disconnect();
+          }
+        });
+      },
+      { rootMargin, threshold },
+    );
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [rootMargin, threshold]);
+
+  return <div ref={ref}>{visible ? children : null}</div>;
+}
 
 export default function About() {
+  const { isSmallScreen, isMobile, prefersReducedMotion } = useClientEnv();
+  const STAR_COUNT = isSmallScreen ? 12 : 48;
   // Reveal-on-scroll for any .reveal element
   useEffect(() => {
     const reveals = document.querySelectorAll('.reveal');
@@ -36,6 +75,13 @@ export default function About() {
   }, []);
 
   const heroAuraRef = useRef<HTMLDivElement | null>(null);
+  const heroImgStyle = {
+    display: 'block',
+    width: isSmallScreen ? '100%' : '130%',
+    height: 'auto',
+    objectFit: 'cover' as const,
+    transform: isSmallScreen ? 'translateX(0) translateY(0)' : 'translateX(5%) translateY(-20%)',
+  };
 
   // Build a safe public URL that respects Vite's base and encodes spaces/+ correctly
   const HERO_IMG =
@@ -44,14 +90,16 @@ export default function About() {
   // Pre-generate a small static field of stars for background decoration (no Tailwind)
   const stars = useMemo(
     () =>
-      Array.from({ length: 48 }).map((_, i) => ({
-        id: i,
-        top: `${Math.random() * 100}%`,
-        left: `${Math.random() * 100}%`,
-        delay: `${(Math.random() * 2.5).toFixed(2)}s`,
-        opacity: (Math.random() * 0.6 + 0.3).toFixed(2),
-      })),
-    []
+      prefersReducedMotion
+        ? []
+        : Array.from({ length: STAR_COUNT }).map((_, i) => ({
+            id: i,
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 100}%`,
+            delay: `${(Math.random() * 2.5).toFixed(2)}s`,
+            opacity: (Math.random() * 0.6 + 0.3).toFixed(2),
+          })),
+    [STAR_COUNT, prefersReducedMotion],
   );
 
   useEffect(() => {
@@ -116,7 +164,7 @@ export default function About() {
                 top: s.top,
                 left: s.left,
                 opacity: Number(s.opacity),
-                animation: `aboutStarPulse 2.6s ease-in-out ${s.delay} infinite`,
+                animation: prefersReducedMotion ? 'none' : `aboutStarPulse 2.6s ease-in-out ${s.delay} infinite`,
               }}
             />
           ))}
@@ -294,6 +342,8 @@ export default function About() {
 
       {/* ---- SCROLL TIMELINE ---- */}
       <section style={{ position: 'relative', zIndex: 1, marginTop: '4rem' }}>
+        <LazyMount rootMargin="0px 0px 200px 0px">
+          <Suspense fallback={null}>
         <ScrollTimeline
           subtitle="SCROLL TO EXPLORE THE COSMIC JOURNEY"
           events={[
@@ -369,15 +419,208 @@ export default function About() {
             },
           }}
           ctaSlot={
-            <div className="contact-footer">
+            <div
+              className="contact-footer"
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                margin: '0.5rem auto 0rem',
+                gap: '1rem',
+              }}
+            >
               <AuroraButton
                 label="CONNECT WITH ME"
-                className="px-10 sm:px-14 py-4 text-base tracking-[0.3em] timeline-cta-button"
+                className="px-10 sm:px-14 py-4 text-base tracking-[0.32em] timeline-cta-button"
+                style={{ marginBottom: '10rem' }}
                 onClick={() => (window.location.href = '/contact')}
               />
+              <div className="mt-12 w-full flex flex-col items-center gap-8 text-center">
+                <div className="flex w-full justify-center">
+                  <div
+                    className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/15 px-8 py-3 text-[0.8rem] font-semibold uppercase tracking-[0.32em] text-white shadow-[0_0_26px_rgba(124,58,237,0.95),0_0_46px_rgba(56,189,248,0.65)] backdrop-blur-xl"
+                    style={{ letterSpacing: '0.3em' }}
+                  >
+                    <CountUp
+                      value={1111}
+                      suffix="+"
+                      duration={8}
+                      animationStyle="default"
+                      easing="easeInOut"
+                      triggerOnView={true}
+                      colorScheme="gradient"
+                      className="text-[0.9rem] font-semibold tracking-[0.32em]"
+                      numberClassName="mx-1"
+                    />
+                    <span className="ml-3 text-[0.8rem] tracking-[0.32em]">Clients Impacted Worldwide</span>
+                  </div>
+                </div>
+                <p
+                  className="mt-4 text-xs tracking-[0.28em] text-white/80"
+                  style={{ textTransform: 'uppercase' }}
+                >
+                  🎥 Brand Identity • 💪🏽 Coaching • 🎵 Production
+                </p>
+
+                <div className="flex justify-center items-center">
+                  <div
+                    className="h-[2px] w-[280px] rounded-full"
+                    style={{
+                      background:
+                        'linear-gradient(90deg, rgba(81,21,140,0.18) 0%, rgba(124,58,237,0.95) 50%, rgba(81,21,140,0.18) 100%)',
+                      boxShadow: '0 0 20px rgba(124, 58, 237, 0.9)',
+                    }}
+                  />
+                </div>
+
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    justifyContent: 'center',
+                    gap: '2.5rem',
+                  }}
+                >
+                  <div
+                    className="rounded-2xl backdrop-blur-xl p-7 text-center review-card heavy-blur card-hover"
+                    style={{
+                      flex: '1 1 280px',
+                      maxWidth: '420px',
+                      background: 'rgba(255,255,255,0.02)',
+                      border: '1px solid rgba(90,0,255,0.25)',
+                      boxShadow: '0 0 25px rgba(90,0,255,0.25)',
+                      padding: '1rem',
+                      transform: 'translateY(0) scale(1)',
+                      transition: 'transform 300ms ease, box-shadow 300ms ease, border-color 300ms ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-6px) scale(1.02)';
+                      e.currentTarget.style.boxShadow = '0 0 28px rgba(56,189,248,0.45)';
+                      e.currentTarget.style.border = '1px solid rgba(56,189,248,0.8)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                      e.currentTarget.style.boxShadow = '0 0 25px rgba(90,0,255,0.25)';
+                      e.currentTarget.style.border = '1px solid rgba(90,0,255,0.25)';
+                    }}
+                  >
+                    <div className="text-lg">✨✨✨✨✨</div>
+                    <p className="text-white/90 text-sm leading-relaxed italic">
+"Louis completely transformed our brand presence — the visuals, the energy, the storytelling. It felt like he understood our identity better than we did. The result looks premium and unforgettable.”
+                    </p>
+                    <p className="mt-4 text-white text-xs tracking-[0.22em] uppercase">
+                      — HIRYZE
+                    </p>
+                  </div>
+
+                  <div
+                    className="rounded-2xl backdrop-blur-xl p-7 text-center review-card heavy-blur card-hover"
+                    style={{
+                      flex: '1 1 280px',
+                      maxWidth: '420px',
+                      background: 'rgba(255,255,255,0.02)',
+                      border: '1px solid rgba(90,0,255,0.25)',
+                      boxShadow: '0 0 25px rgba(90,0,255,0.25)',
+                      padding: '1rem',
+                      transform: 'translateY(0) scale(1)',
+                      transition: 'transform 300ms ease, box-shadow 300ms ease, border-color 300ms ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-6px) scale(1.02)';
+                      e.currentTarget.style.boxShadow = '0 0 28px rgba(56,189,248,0.45)';
+                      e.currentTarget.style.border = '1px solid rgba(56,189,248,0.8)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                      e.currentTarget.style.boxShadow = '0 0 25px rgba(90,0,255,0.25)';
+                      e.currentTarget.style.border = '1px solid rgba(90,0,255,0.25)';
+                    }}
+                  >
+                    <div className="text-lg">✨✨✨✨✨</div>
+                    <p className="text-white/90 text-sm leading-relaxed italic">
+                      “Working with Louis shifted my entire mindset. His coaching mixes clarity, discipline, and deep emotional awareness — it activated something in me that I didn’t know I had. Total life-upgrade.”
+                    </p>
+                    <p className="mt-4 text-white text-xs tracking-[0.22em] uppercase">
+                      — LUCAS SCHÄFERs
+                    </p>
+                  </div>
+
+                  <div
+                    className="rounded-2xl backdrop-blur-xl p-7 text-center review-card heavy-blur card-hover"
+                    style={{
+                      flex: '1 1 280px',
+                      maxWidth: '420px',
+                      background: 'rgba(255,255,255,0.02)',
+                      border: '1px solid rgba(90,0,255,0.25)',
+                      boxShadow: '0 0 25px rgba(90,0,255,0.25)',
+                      padding: '1rem',
+                      transform: 'translateY(0) scale(1)',
+                      transition: 'transform 300ms ease, box-shadow 300ms ease, border-color 300ms ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-6px) scale(1.02)';
+                      e.currentTarget.style.boxShadow = '0 0 28px rgba(56,189,248,0.45)';
+                      e.currentTarget.style.border = '1px solid rgba(56,189,248,0.8)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                      e.currentTarget.style.boxShadow = '0 0 25px rgba(90,0,255,0.25)';
+                      e.currentTarget.style.border = '1px solid rgba(90,0,255,0.25)';
+                    }}
+                  >
+                    <div className="text-lg">✨✨✨✨✨</div>
+                    <p className="text-white/90 text-sm leading-relaxed italic">
+                     “Every sound Louis creates feels alive. He took my idea, elevated it, and turned it into something cinematic and full of emotion. The mix hits harder than anything I’ve released before.”
+                    </p>
+                    <p className="mt-4 text-white text-xs tracking-[0.22em] uppercase">
+                      — KIRIC
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-center gap-3 text-center">
+                  <div
+                    className="inline-flex flex-col items-center justify-center rounded-full border border-white/30 bg-white/15 px-8 py-3 text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-white shadow-[0_0_26px_rgba(124,58,237,0.95),0_0_46px_rgba(56,189,248,0.65)] backdrop-blur-xl"
+                  >
+                    <div className="flex items-center justify-center gap-3 mb-1">
+                      <span className="text-xs leading-none tracking-[0.2em]">★★★★★</span>
+                      <CountUp
+                        value={5}
+                        decimals={1}
+                        duration={3}
+                        easing="easeInOut"
+                        animationStyle="default"
+                        colorScheme="gradient"
+                        className="text-[0.9rem] font-semibold tracking-[0.28em]"
+                        numberClassName=""
+                      />
+                    </div>
+                    <span className="text-[0.7rem] tracking-[0.28em] text-white/90">
+                      RATING ON GOOGLE MAPS
+                    </span>
+                  </div>
+                  <a
+                    href="https://www.google.com/maps/place/COSMICLUCID+CREATIONS/@49.1267538,9.8136859,17z/data=!4m8!3m7!1s0x47985b5e0ece8847:0x39690efa870e1601!8m2!3d49.1267538!4d9.8162608!9m1!1b1!16s%2Fg%2F11xp0g25h9?entry=ttu&g_ep=EgoyMDI1MTExNy4wIKXMDSoASAFQAw%3D%3D"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 uppercase transition-colors"
+                    style={{
+                      color: '#00c3ff',
+                      letterSpacing: '0.35em',
+                      fontSize: '0.82rem',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    READ MORE GOOGLE REVIEWS • LEAVE YOURS
+                    <span aria-hidden style={{ fontSize: '1rem', lineHeight: 1 }}>↗</span>
+                  </a>
+                </div>
+              </div>
             </div>
           }
         />
+          </Suspense>
+        </LazyMount>
       </section>
 
       {/* ---- Location ---- */}
@@ -386,14 +629,14 @@ export default function About() {
         style={{
           position: 'relative',
           zIndex: 1,
-          maxWidth: 1100,
-          margin: 'var(--cta-map-gap, 20rem) auto 2rem',
-          padding: '0 2rem',
+          maxWidth: 888,
+          margin: 'var(--cta-map-gap, 2rem) auto 2rem',
+          padding: '1rem',
           textAlign: 'center',
         }}
       >
         <div
-          className="scroll-timeline-card no-hover"
+          className="scroll-timeline-card no-hover heavy-blur timeline-card"
           style={{
             maxWidth: 960,
             margin: '1rem auto 0',
@@ -417,25 +660,27 @@ export default function About() {
             — but creating from everywhere in the cosmos —
           </p>
 
-          <div
-            style={{
-              borderRadius: 20,
-              overflow: 'hidden',
-              border: '1px solid rgba(255,255,255,0.15)',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.35)',
-            }}
-          >
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d10443.670206608622!2d9.815018!3d49.126201!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47985b5e0ece8847%3A0x39690efa870e1601!2sCOSMICLUCID%20CREATIONS!5e0!3m2!1sen!2sus!4v1762871463357!5m2!1sen!2sus"
-              width="100%"
-              height="444"
-              style={{ border: 0, display: 'block' }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              title="COSMICLUCID Location"
-            />
-          </div>
+          <LazyMount rootMargin={isMobile ? '0px 0px 50px 0px' : '0px 0px 200px 0px'}>
+            <div
+              style={{
+                borderRadius: 20,
+                overflow: 'hidden',
+                border: '1px solid rgba(255,255,255,0.15)',
+                boxShadow: '0 20px 60px rgba(0,0,0,0.35)',
+              }}
+            >
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d10443.670206608622!2d9.815018!3d49.126201!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47985b5e0ece8847%3A0x39690efa870e1601!2sCOSMICLUCID%20CREATIONS!5e0!3m2!1sen!2sus!4v1762871463357!5m2!1sen!2sus"
+                width="100%"
+                height="444"
+                style={{ border: 0, display: 'block' }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="COSMICLUCID Location"
+              />
+            </div>
+          </LazyMount>
 
           <div style={{ marginTop: 18, marginBottom: '4rem', textAlign: 'center' }}>
             <a
@@ -457,6 +702,30 @@ export default function About() {
             </a>
           </div>
         </div>
+      </section>
+
+      {/* Final CTA */}
+      <section
+        className="reveal"
+        style={{
+          margin: '6rem auto 8rem',
+          padding: '0 2rem',
+          display: 'flex',
+          justifyContent: 'center',
+        }}
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.25 }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+        >
+          <AuroraButton
+            label="BRING YOUR VISION TO LIFE"
+            className="px-12 sm:px-16 py-5 text-lg tracking-[0.32em]"
+            onClick={() => (window.location.href = '/contact')}
+          />
+        </motion.div>
       </section>
 
       {/* Keyframes only for local twinkle animation if not present globally */}
