@@ -1,0 +1,36 @@
+name: Deploy cosmiclucid.com
+
+on:
+  push:
+    branches:
+      - main   # ggf. auf deinen Branch ändern (z.B. master)
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Deploy via SCP to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          source: "build/*"
+          target: "/var/www/cosmiclucid.com/build"
+          rm: true   # alte Dateien im Zielordner entfernen
