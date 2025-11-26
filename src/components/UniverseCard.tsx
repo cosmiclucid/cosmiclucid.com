@@ -65,9 +65,7 @@ export function UniverseCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 60 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
+      initial={{ opacity: 1, y: 0 }}
       transition={{ 
         duration: 0.9, 
         delay, 

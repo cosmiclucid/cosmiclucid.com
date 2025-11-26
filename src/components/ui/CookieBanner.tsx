@@ -5,7 +5,8 @@ import React, { JSX, useEffect, useState } from "react";
 
 type ConsentValue = "accepted" | "declined";
 
-const STORAGE_KEY = "cookie-consent";
+// Bump the storage key so the banner reappears on first load after deploy.
+const STORAGE_KEY = "cookie-consent-v2";
 
 export function CookieBanner(): JSX.Element | null {
   const [consent, setConsent] = useState<ConsentValue | null>(null);

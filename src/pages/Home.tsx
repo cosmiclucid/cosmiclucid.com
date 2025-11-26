@@ -1,6 +1,6 @@
 import { motion } from 'motion/react';
 import { ChevronDown, Play } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import AuroraButton from '../components/ui/AuroraButton';
 import { useClientEnv } from '../hooks/useClientEnv';
 function Tilt({ children, disabled = false }: { children: React.ReactNode; disabled?: boolean }) {
@@ -59,6 +59,22 @@ export default function Home() {
   const navigate = useNavigate();
   const { isSmallScreen, isMobile, prefersReducedMotion } = useClientEnv();
   const disableTilt = isSmallScreen || isMobile || prefersReducedMotion;
+  const [preloadCards, setPreloadCards] = useState(false);
+
+  // Preload UniverseCards offscreen to avoid any first-click lag
+  useEffect(() => {
+    const id =
+      'requestIdleCallback' in window
+        ? (window as any).requestIdleCallback(() => setPreloadCards(true))
+        : window.setTimeout(() => setPreloadCards(true), 150);
+    return () => {
+      if ('cancelIdleCallback' in window) {
+        (window as any).cancelIdleCallback(id);
+      } else {
+        clearTimeout(id as any);
+      }
+    };
+  }, []);
 
   const handleEnterCosmos = () => {
     setIsTransitioning(true);
@@ -394,6 +410,45 @@ export default function Home() {
           </div>
         </section>
       </section>
+
+      {preloadCards && (
+        <div
+          aria-hidden
+          className="preload-universe-cards"
+          style={{ position: 'absolute', opacity: 0, pointerEvents: 'none', height: 0, overflow: 'hidden' }}
+        >
+          <UniverseCard
+            icon={<span>🎥</span>}
+            title="COSMICLUCID PRODUCTION"
+            description="Audiovisual production and creative marketing for conscious brands and artists."
+            buttonText="View Portfolio"
+            buttonHref="/portfolio"
+            glowColor="blue"
+            delay={0}
+            tilt="left"
+          />
+          <UniverseCard
+            icon={<span>🧘‍♂️</span>}
+            title="LUCID BODY–MIND–SOUL SYSTEM"
+            description="Personal 1:1 energetic coaching to align your body, mind, and soul."
+            buttonText="Explore Coaching"
+            buttonHref="/coaching"
+            glowColor="gold"
+            delay={0}
+            tilt="center"
+          />
+          <UniverseCard
+            icon={<span>🎓</span>}
+            title="LUCID ACADEMY"
+            description="Learn to master your energy, align body, mind, and soul."
+            buttonText="Visit Academy"
+            buttonHref="/academy"
+            glowColor="violet"
+            delay={0}
+            tilt="right"
+          />
+        </div>
+      )}
     </>
   );
 }
