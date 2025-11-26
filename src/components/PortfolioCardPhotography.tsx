@@ -83,7 +83,7 @@ export function PortfolioCardPhotography({
       whileHover={{ y: -6, scale: 1.01 }}
       className="h-full card-hover"
     >
-      <div className={`relative flex h-full flex-col overflow-hidden rounded-[28px] border ${tokens.border} bg-black/40 px-8 py-10 shadow-[0_25px_60px_rgba(0,0,0,0.45)] backdrop-blur-2xl`}>
+      <div className={`relative flex h-full flex-col overflow-hidden rounded-[28px] border ${tokens.border} bg-black/40 px-8 py-10 shadow-[0_25px_60px_rgba(0,0,0,0.45)] backdrop-blur-2xl portfolio-card-content`}>
         <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${tokens.gradient} opacity-80`} />
         <motion.div
           aria-hidden
@@ -94,7 +94,7 @@ export function PortfolioCardPhotography({
         />
 
         <div className="relative z-10 flex h-full flex-col">
-          <div className="flex flex-col items-center text-center">
+          <div className="flex flex-col items-center text-center card-title-block">
             {icon && <div className={`mb-6 text-4xl ${tokens.text}`}>{icon}</div>}
             <motion.h3
               className="glow-text mb-5 text-white tracking-wide"
@@ -119,15 +119,15 @@ export function PortfolioCardPhotography({
           </div>
 
           {(subline || descriptionLines.length > 0) && (
-            <div className="mt-8 mb-6 text-center">
+            <div className="mt-8 mb-6 text-center card-body-block">
               {subline && (
-                <h3 className="text-white text-lg uppercase tracking-[0.22em] leading-relaxed">
+                <h3 className="portfolio-card-subline text-white text-lg uppercase tracking-[0.22em] leading-relaxed">
                   {subline}
                 </h3>
               )}
               {descriptionLines.length > 0 && (
                 <div
-                  className="mt-3 text-white/90 text-sm leading-relaxed"
+                  className="portfolio-card-desc mt-3 text-white/90 text-sm leading-relaxed"
                   style={{ letterSpacing: '0.04em', textTransform: 'none' }}
                 >
                   {descriptionLines.map((line, idx) => (

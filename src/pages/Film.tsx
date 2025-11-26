@@ -106,11 +106,11 @@ const categories = [
   {
     id: 'music-videos',
     icon: null,
-    title: 'MUSIC VIDEOS',
-    subLine: 'MUSIC VIDEO PRODUCTIONS & VISUALIZERS',
+    title: 'MUSIC',
+    subLine: 'MUSIC PRODUCTIONS & VISUALIZERS',
     description:
       '— I turn your sound into cinematic worlds — crafted to amplify emotion, identity, and visual impact. —',
-    salesHeadline: 'MUSIC VIDEOS',
+    salesHeadline: 'MUSIC',
     selling: 'Bring your music to life with visuals that elevate your sound and define your artistic identity.',
     cta: 'CREATE YOUR MUSIC VIDEO',
     shortText: 'Cinematic visuals that amplify your music.',
@@ -131,13 +131,13 @@ const categories = [
   {
     id: 'short-films',
     icon: null,
-    title: 'SHORT FILMS',
+    title: 'FILMS',
     subLine: 'FILM PROJECTS & CINEMATIC EXPERIMENTS',
     description:
       '— I produce artistic, meaningful short films that blend emotion, style, and storytelling into powerful expression. —',
-    salesHeadline: 'SHORT FILMS',
+    salesHeadline: 'FILMS',
     selling: 'Bring your creative vision to life through aesthetic filmmaking and emotional storytelling.',
-    cta: 'CREATE A SHORT FILM',
+    cta: 'CREATE A FILM',
     shortText: 'Artistic cinematic expression.',
     badge: 'TRUSTED BY FILMMAKERS',
     bullets: [
@@ -226,7 +226,7 @@ export default function Film() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="portfolio-page relative min-h-screen overflow-hidden">
       <motion.div
         animate={{ opacity: hoveredCategory ? 0.65 : 0 }}
         transition={{ duration: 0.8 }}
@@ -244,12 +244,13 @@ export default function Film() {
         className="pointer-events-none fixed inset-0 z-50 bg-black"
       />
 
-      <div className="relative z-10 flex min-h-screen flex-col items-center px-8 pt-32 pb-24">
+      <div className="relative z-10 flex min-h-screen flex-col items-center px-8 pt-20 pb-16">
         <motion.div
           initial={{ opacity: 0, y: -40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="relative mb-20 mt-10 flex flex-col items-center text-center md:mt-20"
+          className="hero-header relative flex flex-col items-center text-center md:mt-20"
+          style={{ marginTop: '0.25rem', marginBottom: '0.1rem' }}
         >
           <motion.div
             className="pointer-events-none absolute -z-10 top-1/2 left-1/2 h-[260px] w-[720px] -translate-x-1/2 -translate-y-1/2 bg-gradient-radial from-[#51158C]/25 via-[#182E6F]/30 to-transparent blur-[120px] opacity-70"
@@ -261,12 +262,13 @@ export default function Film() {
             initial={{ opacity: 0, filter: 'blur(20px)', y: 30 }}
             animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
             transition={{ duration: 1.2, delay: 0.3, ease: 'easeOut' }}
-            className="mb-5 tracking-wide headline-gradient"
+            className="mb-1 tracking-wide headline-gradient"
             style={{
               fontSize: 'clamp(3rem, 6vw, 5.5rem)',
               lineHeight: 1.05,
               textTransform: 'uppercase',
               color: 'transparent',
+              marginTop: '8rem',
             }}
           >
             FILM
@@ -274,13 +276,14 @@ export default function Film() {
 
           <motion.div
             initial={{ width: 0, opacity: 0 }}
-            animate={{ width: '420px', opacity: 1 }}
+            animate={{ width: '260px', opacity: 1 }}
             transition={{ duration: 1.1, delay: 0.7, ease: 'easeOut' }}
-            className="mx-auto h-[2px] w-full max-w-[460px] rounded-full"
+            className="mx-auto h-[2px] w-full max-w-[220px] rounded-full"
             style={{
               background:
                 'linear-gradient(90deg, rgba(81,21,140,0.18) 0%, rgba(124,58,237,0.95) 50%, rgba(81,21,140,0.18) 100%)',
               boxShadow: '0 0 20px rgba(124, 58, 237, 0.9)',
+              marginTop: '0rem',
             }}
           />
 
@@ -288,12 +291,13 @@ export default function Film() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.9 }}
-            className="mt-8 text-white text-center leading-relaxed"
+            className="mt-1 text-white text-center leading-relaxed portfolio-subline"
             style={{
-              marginBottom: '2rem',
-              letterSpacing: '0.22em',
+              marginTop: '0.3rem',
+              marginBottom: '0.45rem',
+              letterSpacing: '0.14em',
               textTransform: 'uppercase',
-              fontSize: '1.2rem',
+              fontSize: 'clamp(0.82rem, 3vw, 1.05rem)',
               color: '#ffffff',
             }}
           >
@@ -304,9 +308,9 @@ export default function Film() {
         </motion.div>
 
         <div className="flex w-full justify-center" style={{ marginTop: '1rem', marginBottom: '4rem' }}>
-          <div className="scale-[0.85] origin-center">
+          <div className="scale-[0.7] sm:scale-[0.8] origin-center max-w-full">
             <GlowNav
-              className="w-full max-w-[900px]"
+              className="w-full max-w-[720px]"
               items={navItems}
               activeIndex={activeIndex < 0 ? 0 : activeIndex}
               onSelect={(index) => {
@@ -411,7 +415,7 @@ export default function Film() {
           >
             <AuroraButton
               label="BRING YOUR VISION TO LIFE"
-              className="px-12 sm:px-20 py-6 text-lg tracking-[0.32em]"
+              className="vision-btn px-12 sm:px-20 py-6 text-lg tracking-[0.32em]"
               onClick={() => navigate('/contact')}
             />
           </motion.div>

@@ -161,13 +161,13 @@ export default function Portfolio() {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.95, ease: 'easeOut' }}
-            className="text-center text-white leading-relaxed"
+            className="portfolio-subline text-center text-white leading-relaxed"
             style={{
-              marginTop: '2rem',
-              marginBottom: '2rem',
-              letterSpacing: '0.22em',
+              marginTop: '1rem',
+              marginBottom: '1.2rem',
+              letterSpacing: '0.14em',
               textTransform: 'uppercase',
-              fontSize: '1.2rem',
+              fontSize: 'clamp(0.82rem, 3vw, 1.05rem)',
             }}
           >
             I fuse cinema, sound & strategy into high-impact visual storytelling
@@ -237,7 +237,7 @@ export default function Portfolio() {
           <motion.div whileHover={{ scale: 1.04, y: -4 }} whileTap={{ scale: 0.97 }}>
             <AuroraButton
               label="BRING YOUR VISION TO LIFE"
-              className="px-12 sm:px-16 py-5 text-lg tracking-[0.32em]"
+              className="vision-btn px-12 sm:px-16 py-5 text-lg tracking-[0.32em]"
               onClick={() => navigate('/contact')}
             />
           </motion.div>

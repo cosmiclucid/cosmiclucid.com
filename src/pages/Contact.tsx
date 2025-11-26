@@ -7,10 +7,12 @@ const ContactPage: React.FC = () => {
   return (
     <main className="contact-page">
       <motion.div
-        initial={{ opacity: 0, y: -40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
-        className="relative text-center mb-20 mt-10 md:mt-20 flex flex-col items-center"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.7, ease: "easeOut" }}
+        className="contact-hero relative text-center flex flex-col items-center"
+        style={{ marginTop: "2rem", marginBottom: "1rem", gap: "0.2rem" }}
       >
         <motion.div
           className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[720px] h-[260px] bg-gradient-radial from-[#51158C]/25 via-[#182E6F]/30 to-transparent blur-[120px] opacity-70 pointer-events-none"
@@ -20,14 +22,16 @@ const ContactPage: React.FC = () => {
 
         <motion.h1
           initial={{ opacity: 0, filter: "blur(20px)", y: 30 }}
-          animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
-          transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
-          className="mb-5 tracking-wide headline-gradient"
+          whileInView={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          className="tracking-wide headline-gradient"
           style={{
             fontSize: "clamp(3rem, 6vw, 5.5rem)",
             lineHeight: 1.05,
             textTransform: "uppercase",
             color: "transparent",
+            marginBottom: "0.5rem",
           }}
         >
           CONTACT
@@ -35,9 +39,11 @@ const ContactPage: React.FC = () => {
 
         <motion.div
           initial={{ width: 0, opacity: 0 }}
-          animate={{ width: "520px", opacity: 1 }}
-          transition={{ duration: 1.1, delay: 0.7, ease: "easeOut" }}
-          className="mt-5 mx-auto h-[2px] w-full max-w-[580px] relative overflow-visible"
+          whileInView={{ width: "520px", opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          className="contact-divider mx-auto h-[2px] w-full max-w-[580px] relative overflow-visible"
+          style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}
         >
           <div
             className="absolute inset-0 rounded-full"
@@ -63,7 +69,7 @@ const ContactPage: React.FC = () => {
       </motion.div>
 
       <div className="contact-layout">
-        <section className="contact-left" style={{ marginTop: "3rem" }}>
+        <section className="contact-left" style={{ marginTop: "0.5rem" }}>
           <h2
             className="headline-gradient"
             style={{
@@ -86,8 +92,8 @@ const ContactPage: React.FC = () => {
               letterSpacing: "0.1em",
               textTransform: "uppercase",
               fontSize: "1rem",
-              marginTop: "1.5rem",
-              marginBottom: "2.5rem",
+              marginTop: "0.1rem",
+              marginBottom: "0.3rem",
             }}
           >
             <br />
@@ -99,44 +105,44 @@ const ContactPage: React.FC = () => {
             I&apos;LL HELP YOU TURN THEM INTO REALITY!
           </p>
 
-          <div
-            style={{
-              marginTop: "4rem",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              textAlign: "center",
-              gap: "1rem",
-            }}
-          >
-            <p
-              className="contact-subline"
-              style={{
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                fontSize: "0.95rem",
-                marginBottom: "0.5rem",
-                marginTop: "4.8rem",
-              }}
-            >
-              Prefer a quick chat? <br />
-              Reach me instantly via WhatsApp.
-            </p>
-            <form className="contact-form" onSubmit={(e) => e.preventDefault()} noValidate>
-              <div className="contact-footer">
-                <AuroraButton
-                  label="WRITE ME ON WHATSAPP"
-                  className="px-12 py-4 text-sm tracking-[0.28em]"
-                  onClick={() => window.open("https://wa.me/4915257256800", "_blank", "noopener,noreferrer")}
-                />
-              </div>
-            </form>
-          </div>
         </section>
 
         <section className="contact-right">
-          <div className="contact-form-card" style={{ marginTop: "3rem" }}>
+          <div className="contact-form-card" style={{ marginTop: "1rem" }}>
             <ContactForm />
+            <div
+              style={{
+                marginTop: "2rem",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                textAlign: "center",
+                gap: "0.75rem",
+              }}
+            >
+              <p
+                className="contact-subline"
+                style={{
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  fontSize: "0.95rem",
+                  marginBottom: "0.35rem",
+                  marginTop: "0.2rem",
+                }}
+              >
+                Prefer a quick chat? <br />
+                Reach me instantly via WhatsApp.
+              </p>
+              <form className="contact-form" onSubmit={(e) => e.preventDefault()} noValidate>
+                <div className="contact-footer">
+                  <AuroraButton
+                    label="WRITE ME ON WHATSAPP"
+                    className="px-12 py-4 text-sm tracking-[0.28em]"
+                    onClick={() => window.open("https://wa.me/4915257256800", "_blank", "noopener,noreferrer")}
+                  />
+                </div>
+              </form>
+            </div>
           </div>
         </section>
       </div>

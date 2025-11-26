@@ -56,6 +56,8 @@ function LazyMount({
 export default function About() {
   const { isSmallScreen, isMobile, prefersReducedMotion } = useClientEnv();
   const STAR_COUNT = isSmallScreen ? 12 : 48;
+  const topSpacerHeight = isSmallScreen ? 0 : 220;
+  const heroTextTransform = isSmallScreen ? 'translateY(0)' : 'translateY(-20rem)';
   // Reveal-on-scroll for any .reveal element
   useEffect(() => {
     const reveals = document.querySelectorAll('.reveal');
@@ -81,6 +83,7 @@ export default function About() {
     height: 'auto',
     objectFit: 'cover' as const,
     transform: isSmallScreen ? 'translateX(0) translateY(0)' : 'translateX(5%) translateY(-20%)',
+    marginTop: isSmallScreen ? '-0.5rem' : '1.25rem',
   };
 
   // Build a safe public URL that respects Vite's base and encodes spaces/+ correctly
@@ -137,7 +140,7 @@ export default function About() {
       <div
         className="about-top-spacer"
         aria-hidden
-        style={{ height: '220px', pointerEvents: 'none' }}
+        style={{ height: `${topSpacerHeight}px`, pointerEvents: 'none' }}
       />
       {/* ---- Cosmic background accents (uses your global colors) ---- */}
       <div
@@ -175,7 +178,7 @@ export default function About() {
       <section className="hero" style={{ position: 'relative', zIndex: 1 }}>
         <div
           className="hero-text reveal"
-          style={{ transform: 'translateY(-20rem)', textAlign: 'center' }}
+          style={{ transform: heroTextTransform, textAlign: 'center' }}
         >
           <motion.h1
             initial={{ opacity: 0, filter: 'blur(20px)', y: 30 }}
@@ -215,12 +218,13 @@ export default function About() {
             />
           </div>
           <p
-            className="text-white/70 leading-relaxed mx-auto"
+            className="text-white/70 leading-relaxed mx-auto about-subline"
             style={{
               letterSpacing: '0.22em',
               textTransform: 'uppercase',
               maxWidth: '56ch',
               fontSize: '1.2rem',
+              textAlign: 'center',
             }}
           >
             Filmmaker, Creator &amp; Athlete — combining cinematic storytelling,
@@ -249,13 +253,7 @@ export default function About() {
             height={640}
             loading="eager"
             decoding="async"
-            style={{
-              display: 'block',
-              width: '130%',
-              height: 'auto',
-              objectFit: 'cover',
-              transform: 'translateX(5%) translateY(-20%)',
-            }}
+            style={heroImgStyle}
             onError={(e) => {
               console.warn('Hero image failed to load:', HERO_IMG);
               (e.currentTarget as HTMLImageElement).style.outline = '2px solid red';
@@ -264,7 +262,7 @@ export default function About() {
         </div>
 
         <motion.div
-          className="absolute left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 text-white/70 cursor-pointer"
+          className="about-scroll-cue absolute left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 text-white/70 cursor-pointer"
           onClick={() => {
             const target = document.getElementById('about-my-story');
             if (target) {
@@ -335,7 +333,16 @@ export default function About() {
             />
           </motion.div>
         </div>
-        <p style={{ opacity: 0.9, marginTop: '1.5rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+        <p
+          className="about-subline"
+          style={{
+            opacity: 0.9,
+            marginTop: '1.5rem',
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+            textAlign: 'center',
+          }}
+        >
           AND HOW YOU CAN BE PART OF THIS POSITIVE TRANSFORMATION
         </p>
       </div>
@@ -722,7 +729,7 @@ export default function About() {
         >
           <AuroraButton
             label="BRING YOUR VISION TO LIFE"
-            className="px-12 sm:px-16 py-5 text-lg tracking-[0.32em]"
+            className="vision-btn px-12 sm:px-16 py-5 text-lg tracking-[0.32em]"
             onClick={() => (window.location.href = '/contact')}
           />
         </motion.div>

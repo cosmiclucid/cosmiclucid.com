@@ -8,7 +8,8 @@ type SmokeyCursorProps = ComponentProps<typeof OriginalSmokeyCursor>;
 
 export default function SmokeyCursorFullScreen(props: SmokeyCursorProps) {
   const { isMobile, isSmallScreen, prefersReducedMotion } = useClientEnv();
-  const disabled = isMobile || isSmallScreen || prefersReducedMotion || props.disabled;
+  // Re-enable on mobile; only respect reduced motion or explicit disable.
+  const disabled = prefersReducedMotion || props.disabled;
 
   if (disabled) return null;
 

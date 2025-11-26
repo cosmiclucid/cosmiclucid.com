@@ -46,7 +46,7 @@ export function Header() {
           <VideoText
             src="/Film/speed.mp4"
             className="site-logo-mark h-9 w-[150px]"
-            fontSize="50px"
+            fontSize="clamp(32px, 8vw, 44px)"
             fontWeight={800}
             fontFamily="ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
           >
@@ -55,7 +55,7 @@ export function Header() {
         </motion.button>
 
         {/* Navigation */}
-        <div className="flex items-center">
+        <div className="site-nav-container flex items-center">
           <SparkleNavbar
             items={['About', 'Academy', 'Coaching', 'Contact', 'Portfolio']}
             color="#5A00FF"

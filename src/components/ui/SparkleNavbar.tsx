@@ -328,7 +328,8 @@ const SparkleNavbar: React.FC<SparkleNavbarProps> = ({
 
           .navigation-menu ul {
             gap: 14px;
-            justify-content: flex-end;
+            justify-content: center;
+            width: 100%;
           }
 
           .navigation-menu ul li button {
@@ -346,12 +347,13 @@ const SparkleNavbar: React.FC<SparkleNavbarProps> = ({
 
         @media (max-width: 520px) {
           .navigation-menu ul {
-            gap: 10px;
+            gap: 12px;
+            justify-content: center;
           }
 
           .navigation-menu ul li button {
-            font-size: 0.68rem;
-            letter-spacing: 0.1em;
+            font-size: 0.7rem;
+            letter-spacing: 0.12em;
           }
 
           .navigation-menu .active-element {

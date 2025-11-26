@@ -114,7 +114,7 @@ const categories = [
     title: 'EVENTS',
     subline: 'Dynamic visual storytelling of live moments, music culture and corporate experiences',
     description:
-      '— captured with energy, precision and cinematic flair —',
+      '— captured with energy, precision & cinematic flair —',
     color: 'purple' as const,
     delay: 0.6,
     ringImages: eventRingImages,
@@ -174,7 +174,7 @@ export default function Photography() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="portfolio-page relative min-h-screen overflow-hidden">
       <motion.div
         animate={{ opacity: hoveredCategory ? 0.65 : 0 }}
         transition={{ duration: 0.8 }}
@@ -186,7 +186,8 @@ export default function Photography() {
           initial={{ opacity: 0, y: -40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="relative mb-20 mt-10 flex flex-col items-center text-center md:mt-20"
+          className="hero-header relative flex flex-col items-center text-center md:mt-20"
+          style={{ marginTop: '2rem', marginBottom: '0.5rem' }}
         >
           <motion.div
             className="pointer-events-none absolute -z-10 top-1/2 left-1/2 h-[260px] w-[720px] -translate-x-1/2 -translate-y-1/2 bg-gradient-radial from-[#51158C]/25 via-[#182E6F]/30 to-transparent blur-[120px] opacity-70"
@@ -198,7 +199,7 @@ export default function Photography() {
             initial={{ opacity: 0, filter: 'blur(20px)', y: 30 }}
             animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
             transition={{ duration: 1.2, delay: 0.3, ease: 'easeOut' }}
-            className="mb-5 tracking-wide headline-gradient"
+            className="mb-2 tracking-wide headline-gradient"
             style={{
               fontSize: 'clamp(3rem, 6vw, 5.5rem)',
               lineHeight: 1.05,
@@ -213,11 +214,12 @@ export default function Photography() {
             initial={{ width: 0, opacity: 0 }}
             animate={{ width: '420px', opacity: 1 }}
             transition={{ duration: 1.1, delay: 0.7, ease: 'easeOut' }}
-            className="mx-auto h-[2px] w-full max-w-[460px] rounded-full"
+            className="mx-auto h-[2px] w-full max-w-[320px] rounded-full"
             style={{
               background:
                 'linear-gradient(90deg, rgba(12, 180, 255, 0.18) 0%, rgba(34, 211, 238, 0.95) 50%, rgba(12, 180, 255, 0.18) 100%)',
               boxShadow: '0 0 20px rgba(34, 211, 238, 0.9)',
+              marginTop: '0.4rem',
             }}
           />
 
@@ -225,25 +227,26 @@ export default function Photography() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.9 }}
-            className="mt-8 text-white text-center leading-relaxed"
+            className="mt-1 text-white text-center leading-relaxed portfolio-subline"
             style={{
-              marginBottom: '2rem',
-              letterSpacing: '0.22em',
+              marginTop: '0.8rem',
+              marginBottom: '0.6rem',
+              letterSpacing: '0.1em',
               textTransform: 'uppercase',
-              fontSize: '1.2rem',
+              fontSize: 'clamp(0.56rem, 2vw, 0.78rem)',
               color: '#ffffff',
             }}
           >
             I capture portraits and moments as visual stories
             <br />
-            — clean, sharp, and creatively engineered through advanced photography and editing —
+            — clean, sharp, and creatively engineered through advanced photography & editing —
           </motion.p>
         </motion.div>
 
         <div className="flex w-full justify-center" style={{ marginTop: '1rem', marginBottom: '4rem' }}>
-          <div className="scale-[0.85] origin-center">
+          <div className="scale-[0.7] sm:scale-[0.8] origin-center max-w-full">
             <GlowNav
-              className="w-full max-w-[900px]"
+              className="w-full max-w-[720px]"
               items={navItems}
               activeIndex={activeIndex < 0 ? 0 : activeIndex}
               onSelect={(index) => {

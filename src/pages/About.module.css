@@ -59,6 +59,7 @@
   height: auto;
   display: block;
   object-fit: cover;
+  margin-top: 1.25rem;
 }
 
 /* ——— Two Columns ——— */
@@ -140,7 +141,11 @@
 
 /* ——— Responsive ——— */
 @media (max-width: 900px) {
-  .hero { grid-template-columns: 1fr; }
+  .hero {
+    grid-template-columns: 1fr 0.9fr; /* keep side-by-side, slightly smaller image */
+    gap: 1rem;
+    align-items: center;
+  }
   .split { grid-template-columns: 1fr; }
   .item { grid-template-columns: 1fr; }
   .itemLeft, .itemRight { padding: 0; }
@@ -149,8 +154,13 @@
 
 @media (max-width: 768px) {
   .hero {
-    gap: 1.75rem;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
     padding: 44px 18px 52px;
+  }
+
+  .heroImg {
+    margin-top: 3.25rem;
   }
 
   .heroTitle {
@@ -178,7 +188,12 @@
 
 @media (max-width: 540px) {
   .hero {
+    grid-template-columns: 1fr; /* stack only on very small phones */
     padding: 32px 16px 44px;
+  }
+
+  .heroImg {
+    margin-top: 4rem;
   }
 
   .heroTitle {

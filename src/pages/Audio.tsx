@@ -113,7 +113,7 @@ export default function Audio() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="portfolio-page relative min-h-screen overflow-hidden">
       <motion.div
         animate={{ opacity: hoveredCategory ? 0.65 : 0 }}
         transition={{ duration: 0.8 }}
@@ -131,13 +131,13 @@ export default function Audio() {
         className="pointer-events-none fixed inset-0 z-50 bg-black"
       />
 
-      <div className="relative z-10 flex min-h-screen flex-col items-center px-8 md:px-16 lg:px-24 xl:px-32 pt-32 pb-24">
+      <div className="relative z-10 flex min-h-screen flex-col items-center px-8 md:px-16 lg:px-24 xl:px-32 pt-24 pb-20">
         <motion.div
           initial={{ opacity: 0, y: -40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="relative flex flex-col items-center text-center"
-          style={{ marginTop: '6rem', marginBottom: '4rem' }}
+          className="hero-header relative flex flex-col items-center text-center"
+          style={{ marginTop: '2rem', marginBottom: '0.5rem' }}
         >
           <motion.div
             className="pointer-events-none absolute -z-10 top-1/2 left-1/2 h-[260px] w-[720px] -translate-x-1/2 -translate-y-1/2 bg-gradient-radial from-[#51158C]/25 via-[#182E6F]/30 to-transparent blur-[120px] opacity-70"
@@ -149,7 +149,7 @@ export default function Audio() {
             initial={{ opacity: 0, filter: 'blur(20px)', y: 30 }}
             animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
             transition={{ duration: 1.2, delay: 0.3, ease: 'easeOut' }}
-            className="mb-5 tracking-wide headline-gradient"
+            className="mb-2 tracking-wide headline-gradient"
             style={{
               fontSize: 'clamp(3rem, 6vw, 5.5rem)',
               lineHeight: 1.05,
@@ -164,11 +164,12 @@ export default function Audio() {
             initial={{ width: 0, opacity: 0 }}
             animate={{ width: '420px', opacity: 1 }}
             transition={{ duration: 1.1, delay: 0.7, ease: 'easeOut' }}
-            className="mx-auto h-[2px] w-full max-w-[460px] rounded-full"
+            className="mx-auto h-[2px] w-full max-w-[320px] rounded-full"
             style={{
               background:
                 'linear-gradient(90deg, rgba(245, 158, 11, 0.18) 0%, rgba(251, 191, 36, 0.95) 50%, rgba(245, 158, 11, 0.18) 100%)',
               boxShadow: '0 0 20px rgba(251, 191, 36, 0.9)',
+              marginTop: '0.4rem',
             }}
           />
 
@@ -176,12 +177,13 @@ export default function Audio() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.9 }}
-            className="mt-8 text-white text-center leading-relaxed"
+            className="mt-2 text-white text-center leading-relaxed portfolio-subline"
             style={{
-              marginBottom: '2rem',
-              letterSpacing: '0.22em',
+              marginTop: '0.6rem',
+              marginBottom: '0.5rem',
+              letterSpacing: '0.14em',
               textTransform: 'uppercase',
-              fontSize: '1.2rem',
+              fontSize: 'clamp(0.82rem, 3vw, 1.05rem)',
               color: '#ffffff',
             }}
           >
@@ -236,7 +238,7 @@ export default function Audio() {
                       }}
                     >
                       <div className="flex-1 min-w-[260px] flex flex-col items-center text-center gap-3">
-                        <h3 className="text-white text-lg uppercase tracking-[0.22em]">
+                        <h3 className="text-white text-lg uppercase tracking-[0.22em] lucid-music-heading">
                           LUCID MUSIC
                         </h3>
                         <p className="text-white/85 text-sm leading-relaxed whitespace-pre-line">
@@ -252,7 +254,7 @@ export default function Audio() {
                       </div>
 
                       <div className="flex-1 min-w-[260px] flex flex-col items-center text-center gap-3">
-                        <h3 className="text-white text-lg uppercase tracking-[0.22em]">
+                        <h3 className="text-white text-lg uppercase tracking-[0.22em] lucid-production-heading">
                           LUCID PRODUCTION
                         </h3>
                         <p className="text-white/85 text-sm leading-relaxed whitespace-pre-line">
@@ -271,7 +273,7 @@ export default function Audio() {
                     {/* TESTIMONIALS SECTION */}
                     <div className="mt-8 mb-4">
                       {/* Badge: 888+ Tracks produced */}
-                      <div className="mb-6 flex w-full justify-center">
+                      <div className="mb-6 flex w-full justify-center tracks-produced-wrap">
                         <div
                           className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/15 px-8 py-3 text-[0.8rem] font-semibold uppercase tracking-[0.32em] text-white shadow-[0_0_26px_rgba(124,58,237,0.95),0_0_46px_rgba(56,189,248,0.65)] backdrop-blur-xl"
                           style={{
@@ -289,7 +291,7 @@ export default function Audio() {
                             className="text-[0.9rem] font-semibold tracking-[0.32em]"
                             numberClassName="mx-1"
                           />
-                          <span className="ml-3 text-[0.8rem] tracking-[0.32em]">
+                          <span className="ml-3 text-[0.8rem] tracking-[0.32em] tracks-produced-badge">
                             TRACKS PRODUCED
                           </span>
                         </div>
@@ -457,22 +459,22 @@ LUCID’s production quality competes with top-tier industry tracks — at a fra
                             <div className="absolute -bottom-24 right-0 h-40 w-60 rounded-full bg-gradient-radial from-[#5A00FF]/35 via-transparent to-transparent blur-3xl" />
                           </div>
 
-                          <div className="relative flex flex-col items-center text-center space-y-5">
-                            <div style={{ marginTop: '1.5rem', marginBottom: '-3rem', width: '100%', maxWidth: '888px' }}>
+                          <div className="relative flex flex-col items-center text-center space-y-4">
+                            <div style={{ marginTop: '0', marginBottom: '0.5rem', width: '100%', maxWidth: '888px' }}>
                               <VideoText
                                 src="/Film/speed.mp4"
                                 as="h3"
-                                fontSize={44}
+                                fontSize={42}
                                 fontWeight={800}
-                                className="w-full h-[120px] overflow-visible"
+                                className="w-full h-[120px] overflow-visible secret-sound-title"
                               >
                                 SECRET SOUND
                               </VideoText>
                             </div>
 
                             <p
-                              className="text-white/90 leading-relaxed"
-                              style={{ fontSize: '0.95rem' }}
+                              className="text-white/90 leading-relaxed secret-sound-copy"
+                              style={{ fontSize: '0.95rem', marginTop: '0', marginBottom: '0.6rem' }}
                             >
                              For my core supporters, I create limited, high-resolution SECRET SOUND files 
                              <br />— CAREFULLY TUNES LUCID FREQUENCIES FOR DEEP FOCUS, TRAINING, HEALING, AND INNER TRANSFORMATION.
@@ -533,7 +535,7 @@ LUCID’s production quality competes with top-tier industry tracks — at a fra
                   >
                     {/* Left Column */}
                     <div className="flex-1 min-w-[260px] flex flex-col items-center text-center gap-3">
-                      <h3 className="text-white text-lg uppercase tracking-[0.22em]">
+                      <h3 className="text-white text-lg uppercase tracking-[0.22em] film-cinematic-heading">
                         FILM &amp; CINEMATIC SOUND
                       </h3>
                       <p className="text-white/85 text-sm leading-relaxed whitespace-pre-line">
@@ -550,10 +552,13 @@ LUCID’s production quality competes with top-tier industry tracks — at a fra
 
                     {/* Right Column */}
                     <div className="flex-1 min-w-[260px] flex flex-col items-center text-center gap-3">
-                      <h3 className="text-white text-lg uppercase tracking-[0.22em]">
+                      <h3 className="text-white text-lg uppercase tracking-[0.22em] brands-creators-heading">
                         BRANDS &amp; CREATORS
                       </h3>
-                      <p className="text-white/85 text-sm leading-relaxed whitespace-pre-line">
+                      <p
+                        className="text-white/85 text-sm leading-relaxed whitespace-pre-line"
+                        style={{ marginBottom: '1.5rem' }}
+                      >
                        I craft high-end audio identities, product SFX, and sonic textures that 
                          <br />transform your videos into premium, scroll-stopping experiences. 
                          <br />I help your visuals feel more emotional and more memorable.
@@ -561,7 +566,8 @@ LUCID’s production quality competes with top-tier industry tracks — at a fra
                       </p>
                       <AuroraButton
                         label="GET YOUR SIGNATURE SOUND"
-                        className="px-10 py-5 text-lg tracking-[0.28em]"
+                        className="px-10 py-5 text-lg tracking-[0.28em] signature-sound-btn"
+                        style={{ marginTop: '2.5rem' }}
                         onClick={() => navigate('/contact')}
                       />
                     </div>
@@ -569,7 +575,7 @@ LUCID’s production quality competes with top-tier industry tracks — at a fra
                   {/* Trusted by badge */}
                   <div className="mt-10 flex flex-col items-center gap-3 text-center">
                     <div
-                      className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/10 px-8 py-3 text-[0.75rem] font-semibold uppercase tracking-[0.28em] text-white shadow-[0_0_24px_rgba(56,189,248,0.65)] backdrop-blur-xl"
+                      className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/10 px-8 py-3 text-[0.75rem] font-semibold uppercase tracking-[0.28em] text-white shadow-[0_0_24px_rgba(56,189,248,0.65)] backdrop-blur-xl trusted-badge"
                       style={{ marginBottom: '0.35rem' }}
                     >
                       <span className="mr-2 text-base">✨</span>
@@ -577,7 +583,7 @@ LUCID’s production quality competes with top-tier industry tracks — at a fra
                     </div>
 
                     <div
-                      className="flex items-center justify-center gap-3 text-[0.8rem] tracking-[0.28em] text-white/80"
+                      className="trusted-bullets flex items-center justify-center gap-3 text-[0.8rem] tracking-[0.28em] text-white/80"
                       style={{ marginBottom: '0.25rem' }}
                     >
                       <div className="inline-flex items-center gap-2">
@@ -618,7 +624,7 @@ LUCID’s production quality competes with top-tier industry tracks — at a fra
                   >
                     {/* Left Column – DJ Sets */}
                     <div className="flex-1 min-w-[260px] flex flex-col items-center text-center gap-3">
-                      <h3 className="text-white text-lg uppercase tracking-[0.22em]">
+                      <h3 className="text-white text-lg uppercase tracking-[0.22em] dj-sets-heading">
                         DJ SETS
                       </h3>
                       <p className="text-white/85 text-sm leading-relaxed whitespace-pre-line">
@@ -643,7 +649,7 @@ LUCID’s production quality competes with top-tier industry tracks — at a fra
 
                     {/* Right Column – Artistic Performances */}
                     <div className="flex-1 min-w-[260px] flex flex-col items-center text-center gap-3">
-                      <h3 className="text-white text-lg uppercase tracking-[0.22em]">
+                      <h3 className="text-white text-lg uppercase tracking-[0.22em] artistic-performances-heading">
                         ARTISTIC PERFORMANCES
                       </h3>
                       <p className="text-white/85 text-sm leading-relaxed whitespace-pre-line">
@@ -662,7 +668,7 @@ LUCID’s production quality competes with top-tier industry tracks — at a fra
                     </div>
                   </div>
                   {/* Trusted by clubs badge */}
-                  <div className="mt-10 flex flex-col items-center gap-3 text-center">
+                  <div className="mt-10 flex flex-col items-center gap-3 text-center trusted-clubs-wrap">
                     <div
                       className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/10 px-8 py-3 text-[0.75rem] font-semibold uppercase tracking-[0.28em] text-white shadow-[0_0_20px_rgba(245,158,11,0.75)] backdrop-blur-xl"
                     >
@@ -670,7 +676,7 @@ LUCID’s production quality competes with top-tier industry tracks — at a fra
                       <span>TRUSTED BY CLUBS, CREATORS &amp; EVENT ORGANIZERS WORLDWIDE</span>
                     </div>
 
-                    <div className="text-[0.8rem] tracking-[0.26em] text-white/80 uppercase">
+                    <div className="text-[0.8rem] tracking-[0.26em] text-white/80 uppercase trusted-clubs-bullets">
                       Clubs • Rooftops • Art Galleries • Festivals • Private Events
                     </div>
                   </div>
@@ -714,7 +720,7 @@ LUCID’s production quality competes with top-tier industry tracks — at a fra
           <motion.div whileHover={{ scale: 1.04, y: -4 }} whileTap={{ scale: 0.97 }}>
             <AuroraButton
               label="BRING YOUR VISION TO LIFE"
-              className="px-12 sm:px-20 py-6 text-lg tracking-[0.32em]"
+              className="vision-btn px-12 sm:px-20 py-6 text-lg tracking-[0.32em]"
               onClick={() => navigate('/contact')}
             />
           </motion.div>

@@ -247,7 +247,10 @@ export default function Home() {
                 CREATION
               </motion.h3>
               <Tilt disabled={disableTilt}>
-                <div className="relative mb-10 rounded-3xl" style={{ transform: 'translateX(-20px) translateY(0px)' }}>
+                <div
+                  className="relative mb-10 rounded-3xl"
+                  style={{ transform: disableTilt ? 'translateX(0px) translateY(0px)' : 'translateX(-20px) translateY(0px)' }}
+                >
                   <div className="relative z-10">
                     <UniverseCard
                       icon={<span>🎥</span>}
@@ -329,7 +332,10 @@ export default function Home() {
                 EVOLUTION
               </motion.h3>
               <Tilt disabled={disableTilt}>
-                <div className="relative mb-10 rounded-3xl" style={{ transform: 'translateX(20px) translateY(0px)' }}>
+                <div
+                  className="relative mb-10 rounded-3xl"
+                  style={{ transform: disableTilt ? 'translateX(0px) translateY(0px)' : 'translateX(20px) translateY(0px)' }}
+                >
                   <div className="relative z-10">
                     <UniverseCard
                       icon={<span>🎓</span>}
@@ -374,7 +380,7 @@ export default function Home() {
             >
               <AuroraButton
                 label="BRING YOUR VISION TO LIFE"
-                className="px-12 sm:px-16 py-6 text-lg tracking-[0.32em] font-extrabold"
+                className="px-12 sm:px-16 py-6 text-lg tracking-[0.32em] font-extrabold vision-btn"
                 onClick={() => navigate('/contact')}
               />
 

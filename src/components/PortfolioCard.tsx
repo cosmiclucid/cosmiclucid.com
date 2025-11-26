@@ -227,11 +227,11 @@ export function PortfolioCard({
 
         {/* Content */}
         <div
-          className="relative z-10 flex h-full w-full flex-col items-center justify-center p-8"
+          className="relative z-10 flex h-full w-full flex-col items-center justify-center p-8 portfolio-card-content"
         >
             {/* Icon */}
             <motion.div
-  className="mb-8 text-9xl"
+  className="mb-8 text-9xl portfolio-card-icon"
   animate={ isHovered ? { rotateY: 360 } : { rotateY: 0 } }
   transition={{
     duration: isHovered ? 6 : 1,
@@ -245,13 +245,13 @@ export function PortfolioCard({
   </span>
 </motion.div>
 
-            {/* Title */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: delay + 0.15, ease: 'easeOut' }}
-              className={`text-center ${titleSpacingClass}`}
-            >
+        {/* Title */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: delay + 0.15, ease: 'easeOut' }}
+          className={`text-center ${titleSpacingClass} card-title-block`}
+        >
               <h3
                 className="text-white mb-5 tracking-wide glow-text"
                 style={{ fontSize: 'clamp(2.5rem, 2.5vw, 2.5rem)', lineHeight: 1.05 }}
@@ -259,12 +259,12 @@ export function PortfolioCard({
                 {title}
               </h3>
 
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: '240px' }}
-                transition={{ duration: 1.2, delay: delay + 0.25, ease: 'easeOut' }}
-                className="mt-6 mx-auto h-[2px] relative overflow-visible w-full max-w-[240px]"
-              >
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: '240px' }}
+            transition={{ duration: 1.2, delay: delay + 0.25, ease: 'easeOut' }}
+            className="mt-6 mx-auto h-[2px] relative overflow-visible w-full max-w-[240px] card-title-line"
+          >
                 <div
                   className="absolute inset-0 rounded-full"
                   style={config.accentCore}
@@ -274,19 +274,19 @@ export function PortfolioCard({
                   style={config.accentGlow}
                 />
               </motion.div>
-            </motion.div>
+        </motion.div>
 
-            {/* Description */}
+        {/* Description */}
             {(subline || description) && (
-              <div className="mt-4 text-center mb-8">
+              <div className="mt-4 text-center mb-8 card-body-block">
                 {subline && (
-                  <h3 className="text-white text-lg uppercase tracking-[0.22em]">
+                  <h3 className="portfolio-card-subline text-white text-lg uppercase tracking-[0.22em]">
                     {subline}
                   </h3>
                 )}
                 {description && (
                   <h3
-                    className="mt-3 text-white/90 text-xs leading-relaxed normal-case tracking-normal"
+                    className="portfolio-card-desc mt-3 text-white/90 text-xs leading-relaxed normal-case tracking-normal"
                     style={{ marginBottom: '1rem' }}
                   >
                     {description}
@@ -302,7 +302,7 @@ export function PortfolioCard({
 
             {/* Embedded video */}
             {hasVideos && (
-              <div className="mt-6 mb-4 flex w-full flex-nowrap justify-center gap-4">
+              <div className="portfolio-card-videos mt-6 mb-4 flex w-full flex-nowrap justify-center gap-4">
                 {videoUrls!.map((url, index) => (
                   <div
                     key={`${title}-video-${index}`}
