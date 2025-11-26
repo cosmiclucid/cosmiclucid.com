@@ -25,27 +25,27 @@ export function Header() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6 }}
-      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+      className="site-header fixed top-0 left-0 right-0 z-50 transition-all duration-300"
       style={{
         background: `linear-gradient(to bottom, rgba(0,0,0,${(0.32 * fade).toFixed(3)}) 0%, rgba(0,0,0,${(0.22 * fade).toFixed(3)}) 60%, rgba(0,0,0,0) 100%)`,
         backdropFilter: `blur(${Math.round(8 * fade)}px)`,
         WebkitBackdropFilter: `blur(${Math.round(8 * fade)}px)`,
       }}
     >
-      <div className="max-w-[1440px] mx-auto px-20 h-20 flex items-center justify-between">
+      <div className="site-header__inner max-w-[1440px] mx-auto px-20 h-20 flex items-center justify-between">
         {/* Logo - Home Button */}
         <motion.button
+          className="site-logo cursor-pointer transition-all duration-300 uppercase tracking-[0.35em]"
           onClick={() => {
             navigate('/');
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="cursor-pointer transition-all duration-300 uppercase tracking-[0.35em]"
         >
           <VideoText
             src="/Film/speed.mp4"
-            className="h-9 w-[150px]"
+            className="site-logo-mark h-9 w-[150px]"
             fontSize="50px"
             fontWeight={800}
             fontFamily="ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"

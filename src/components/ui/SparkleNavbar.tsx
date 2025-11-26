@@ -309,6 +309,55 @@ const SparkleNavbar: React.FC<SparkleNavbarProps> = ({
         .navigation-menu.before .active-element {
           transform: rotateY(180deg);
         }
+
+        @media (max-width: 900px) {
+          .navigation-menu ul {
+            gap: 24px;
+          }
+
+          .navigation-menu ul li button {
+            font-size: 0.78rem;
+            letter-spacing: 0.16em;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .navigation-menu {
+            width: 100%;
+          }
+
+          .navigation-menu ul {
+            gap: 14px;
+            justify-content: flex-end;
+          }
+
+          .navigation-menu ul li button {
+            font-size: 0.72rem;
+            letter-spacing: 0.12em;
+            padding: 4px 0;
+          }
+
+          .navigation-menu .active-element {
+            top: 28px;
+            height: 2px;
+            width: 26px;
+          }
+        }
+
+        @media (max-width: 520px) {
+          .navigation-menu ul {
+            gap: 10px;
+          }
+
+          .navigation-menu ul li button {
+            font-size: 0.68rem;
+            letter-spacing: 0.1em;
+          }
+
+          .navigation-menu .active-element {
+            top: 24px;
+          }
+        }
       `}</style>
 
       {/* The main container for the component, replicating the body styles. */}

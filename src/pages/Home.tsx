@@ -73,7 +73,7 @@ export default function Home() {
 
   return (
     <>
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <section className="hero-section relative min-h-screen flex items-center justify-center overflow-hidden">
         <motion.div
           initial={{ opacity: 0, scale: 0 }}
           animate={isTransitioning ? { opacity: 1, scale: 3 } : { opacity: 0, scale: 0 }}
@@ -81,7 +81,7 @@ export default function Home() {
           className="absolute inset-0 z-50 bg-gradient-radial from-white via-purple-200 to-transparent pointer-events-none"
         />
 
-        <div className="relative z-10 text-center px-8 max-w-5xl -mt-[12vh]">
+        <div className="hero-content relative z-10 text-center px-8 max-w-5xl -mt-[12vh]">
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-gradient-radial from-[#51158C]/35 via-[#182E6F]/20 to-transparent blur-3xl pointer-events-none" />
 
           <div className="relative">
@@ -89,7 +89,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6, ease: 'easeOut' }}
-              className="mb-6 tracking-tight headline-gradient"
+              className="hero-headline mb-6 tracking-tight headline-gradient"
               style={{
                 fontSize: 'clamp(2.5rem, 5vw, 4.5rem)',
                 lineHeight: 1.05,
@@ -104,7 +104,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 1.1, ease: 'easeOut' }}
-              className="text-white/70 leading-relaxed mx-auto"
+              className="hero-subtitle text-white/70 leading-relaxed mx-auto"
               style={{
                 letterSpacing: '0.22em',
                 textTransform: 'uppercase',
@@ -120,7 +120,7 @@ export default function Home() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 1.4, ease: 'backOut' }}
-              className="flex gap-6 justify-center items-center flex-wrap"
+              className="hero-cta-row flex gap-6 justify-center items-center flex-wrap"
             >
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <AuroraButton
@@ -138,7 +138,7 @@ export default function Home() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 2, repeat: Infinity, repeatType: 'reverse', repeatDelay: 0.5 }}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-2 text-white/60 cursor-pointer"
+          className="hero-scroll absolute bottom-12 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-2 text-white/60 cursor-pointer"
           onClick={handleEnterCosmos}
         >
           <span className="text-sm tracking-wider uppercase">Scroll to Explore</span>

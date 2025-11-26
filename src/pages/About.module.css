@@ -146,3 +146,55 @@
   .itemLeft, .itemRight { padding: 0; }
   .spine { left: 8px; transform: none; }
 }
+
+@media (max-width: 768px) {
+  .hero {
+    gap: 1.75rem;
+    padding: 44px 18px 52px;
+  }
+
+  .heroTitle {
+    font-size: clamp(28px, 7vw, 40px);
+  }
+
+  .heroSub {
+    font-size: 15px;
+  }
+
+  .split,
+  .timeline {
+    padding: 40px 18px;
+    gap: 20px;
+  }
+
+  .card {
+    padding: 18px;
+  }
+
+  .items {
+    gap: 20px;
+  }
+}
+
+@media (max-width: 540px) {
+  .hero {
+    padding: 32px 16px 44px;
+  }
+
+  .heroTitle {
+    font-size: clamp(26px, 8vw, 36px);
+  }
+
+  .cta {
+    width: 100%;
+    text-align: center;
+  }
+
+  .timelineInner {
+    padding: 0 4px;
+  }
+
+  .spine {
+    left: 6px;
+  }
+}
