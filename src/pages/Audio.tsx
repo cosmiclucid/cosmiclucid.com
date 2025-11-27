@@ -555,10 +555,7 @@ LUCID’s production quality competes with top-tier industry tracks — at a fra
                       <h3 className="text-white text-lg uppercase tracking-[0.22em] brands-creators-heading">
                         BRANDS &amp; CREATORS
                       </h3>
-                      <p
-                        className="text-white/85 text-sm leading-relaxed whitespace-pre-line"
-                        style={{ marginBottom: '1.5rem' }}
-                      >
+                      <p className="text-white/85 text-sm leading-relaxed whitespace-pre-line">
                        I craft high-end audio identities, product SFX, and sonic textures that 
                          <br />transform your videos into premium, scroll-stopping experiences. 
                          <br />I help your visuals feel more emotional and more memorable.
@@ -567,7 +564,6 @@ LUCID’s production quality competes with top-tier industry tracks — at a fra
                       <AuroraButton
                         label="GET YOUR SIGNATURE SOUND"
                         className="px-10 py-5 text-lg tracking-[0.28em] signature-sound-btn"
-                        style={{ marginTop: '2.5rem' }}
                         onClick={() => navigate('/contact')}
                       />
                     </div>
