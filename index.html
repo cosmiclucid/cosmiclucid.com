@@ -4,6 +4,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      const cores = navigator.hardwareConcurrency || 8;
+      const memory = navigator.deviceMemory || 8;
+      const isLowCPU = cores <= 4;
+      const isLowMemory = memory <= 4;
+
+      if (isLowCPU || isLowMemory) {
+        document.body.classList.add("low-performance");
+      }
+    </script>
     <link rel="icon" type="image/png" href="/Favicon/LUCIDFavicon.png" />
     <link rel="shortcut icon" type="image/png" href="/Favicon/LUCIDFavicon.png" />
     <title>cosmiclucid.com</title>

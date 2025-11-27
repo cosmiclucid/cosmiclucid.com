@@ -286,7 +286,7 @@ export default function ThreeDImageRing({
                 <img
                   src={src}
                   alt={`ring-${i}`}
-                  loading="eager"
+                  loading="lazy"
                   draggable={false}
                   style={{
                     width: "100%",

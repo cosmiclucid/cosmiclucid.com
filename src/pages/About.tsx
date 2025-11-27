@@ -432,39 +432,49 @@ export default function About() {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                margin: '0.5rem auto 0rem',
+                margin: '1.2rem auto 0rem',
                 gap: '1rem',
               }}
             >
               <AuroraButton
                 label="CONNECT WITH ME"
                 className="px-10 sm:px-14 py-4 text-base tracking-[0.32em] timeline-cta-button"
-                style={{ marginBottom: '10rem' }}
+                style={{ marginBottom: '7rem' }}
                 onClick={() => (window.location.href = '/contact')}
               />
               <div className="mt-12 w-full flex flex-col items-center gap-8 text-center">
                 <div className="flex w-full justify-center">
                   <div
-                    className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/15 px-8 py-3 text-[0.8rem] font-semibold uppercase tracking-[0.32em] text-white shadow-[0_0_26px_rgba(124,58,237,0.95),0_0_46px_rgba(56,189,248,0.65)] backdrop-blur-xl"
-                    style={{ letterSpacing: '0.3em' }}
+                    className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/12 px-3.5 py-1.1 text-[0.6rem] sm:text-[0.7rem] font-semibold uppercase tracking-[0.14em] sm:tracking-[0.2em] text-white shadow-[0_0_12px_rgba(124,58,237,0.6),0_0_20px_rgba(56,189,248,0.4)] backdrop-blur-lg"
+                    style={{ letterSpacing: '0.14em' }}
                   >
                     <CountUp
-                      value={1111}
+                      value={800}
                       suffix="+"
                       duration={8}
                       animationStyle="default"
                       easing="easeInOut"
                       triggerOnView={true}
                       colorScheme="gradient"
-                      className="text-[0.9rem] font-semibold tracking-[0.32em]"
+                      className="text-[0.68rem] sm:text-[0.8rem] font-semibold tracking-[0.2em]"
                       numberClassName="mx-1"
                     />
-                    <span className="ml-3 text-[0.8rem] tracking-[0.32em]">Clients Impacted Worldwide</span>
+                    <span
+                      className="ml-2 text-[0.52rem] tracking-[0.14em] sm:text-[0.64rem] sm:tracking-[0.2em]"
+                      style={{ whiteSpace: 'nowrap' }}
+                    >
+                      People Impacted Worldwide
+                    </span>
                   </div>
                 </div>
                 <p
-                  className="mt-4 text-xs tracking-[0.28em] text-white/80"
-                  style={{ textTransform: 'uppercase' }}
+                  className="mt-4 text-center text-white/80"
+                  style={{
+                    textTransform: 'uppercase',
+                    whiteSpace: 'nowrap',
+                    fontSize: '0.7rem',
+                    letterSpacing: '0.14em',
+                  }}
                 >
                   🎥 Brand Identity • 💪🏽 Coaching • 🎵 Production
                 </p>

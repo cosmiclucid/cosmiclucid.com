@@ -1831,7 +1831,7 @@ body {
   }
 
   .contact-footer {
-    margin-top: -0.1rem !important;
+    margin-top: 0.6rem !important;
   }
 
   /* Contact page spacing tighten */
@@ -2106,5 +2106,20 @@ body {
 
   .gap-10 {
     gap: 1.25rem;
+  }
+}
+
+.low-performance * {
+  animation: none !important;
+  transition: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
   }
 }
