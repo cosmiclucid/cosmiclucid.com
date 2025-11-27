@@ -3,7 +3,7 @@ name: Deploy cosmiclucid.com
 on:
   push:
     branches:
-      - main   # ggf. auf deinen Branch ändern (z.B. master)
+      - main
 
 jobs:
   build-and-deploy:
@@ -26,18 +26,25 @@ jobs:
 
       - name: Verify build output
         run: |
+          echo "📁 Build-Verzeichnis:"
+          ls -R
           if [ ! -f "build/index.html" ]; then
-            echo "❌ build/index.html not found – aborting deploy."
+            echo "❌ build/index.html nicht gefunden – Deploy wird abgebrochen."
             exit 1
           fi
+          echo "✅ build/index.html gefunden."
 
-      - name: Deploy via SCP to VPS
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          source: "build/*"
-          target: "/var/www/cosmiclucid.com/build"
-          # rm: true  # Absichtlich entfernt, damit der Zielordner nicht geleert wird, falls etwas schiefgeht
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "${{ secrets.VPS_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Deploy to VPS (clean + upload)
+        run: |
+          echo "🧹 Entferne alte Dateien auf dem Server…"
+          ssh -i ~/.ssh/id_ed25519 ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} 'rm -rf /var/www/cosmiclucid.com/build/*'
+          echo "📤 Lade neuen Build hoch…"
+          scp -i ~/.ssh/id_ed25519 -r build/* ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/var/www/cosmiclucid.com/build/
+          echo "✅ Deploy fertig."

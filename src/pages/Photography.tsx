@@ -7,17 +7,17 @@ import GlowNav from '../components/ui/GlowNav';
 
 const portraitRingImages = [
   '/Photography/Portraits/A7404918.webp',
-  '/Photography/Portraits/A7404923.webp',
+  '/Photography/Portraits/A7407787.webp',
   '/Photography/Portraits/A7404962.webp',
   '/Photography/Portraits/A7406024.webp',
-  '/Photography/Portraits/A7407412.webp',
-  '/Photography/Portraits/A7407426.webp',
+  '/Photography/Portraits/A7405329.webp',
+  '/Photography/Portraits/A7407427.webp',
   '/Photography/Portraits/A7407484.webp',
   '/Photography/Portraits/A7407512.webp',
-  '/Photography/Portraits/A7407622.webp',
-  '/Photography/Portraits/A7407787.webp',
-  '/Photography/Portraits/A7407852.webp',
-  '/Photography/Portraits/A7407866.webp',
+  '/Photography/Portraits/A7407417.webp',
+'/Photography/Portraits/A7407935.webp',
+  '/Photography/Portraits/A7408006.webp',
+  '/Photography/Portraits/A7407980.webp',
 ] as const;
 
 const brandRingImages = [
@@ -25,14 +25,14 @@ const brandRingImages = [
   '/Photography/brands/A7403431.webp',
   '/Photography/brands/A7403434.webp',
   '/Photography/brands/A7403441-Enhanced-NR.webp',
+  '/Photography/brands/A7405653.webp',
   '/Photography/brands/A7407490.webp',
-  '/Photography/brands/A7407524.webp',
   '/Photography/brands/A7407525.webp',
-  '/Photography/brands/A7407526.webp',
-  '/Photography/brands/A7407527.webp',
-  '/Photography/brands/A7407540.webp',
-  '/Photography/brands/A7407542.webp',
   '/Photography/brands/A7407564.webp',
+  '/Photography/brands/A7408292.webp',
+  '/Photography/brands/A7408296.webp',
+  '/Photography/brands/A7408326.webp',
+  '/Photography/brands/A7408579.webp',
 ] as const;
 
 const weddingRingImages = [
