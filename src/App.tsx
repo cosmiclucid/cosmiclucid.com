@@ -33,11 +33,9 @@ export default function App() {
     <>
       <div className="relative z-0 min-h-screen overflow-x-hidden">
         {/* Cosmic animated background */}
-        {!lowPerf && (
-          <Suspense fallback={null}>
-            <CosmicBackground />
-          </Suspense>
-        )}
+        <Suspense fallback={null}>
+          <CosmicBackground />
+        </Suspense>
         
         {/* smokey cursor animation */}
         {!lowPerf && (

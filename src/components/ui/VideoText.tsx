@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "../lib/utils";
-import React, { ReactNode, useEffect, useMemo, useState } from "react";
+import React, { ReactNode, useMemo } from "react";
 import { motion, HTMLMotionProps } from "framer-motion";
 
 export interface VideoTextProps {
