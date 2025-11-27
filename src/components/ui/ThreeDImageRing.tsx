@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useClientEnv } from "../../hooks/useClientEnv";
 
 export type ThreeDImageRingProps = {
   /** Image URLs (use leading slash if in /public) */
@@ -64,14 +65,14 @@ export default function ThreeDImageRing({
   ringClassName,
   tileClassName,
 }: ThreeDImageRingProps) {
+  const { isMobile, isSmallScreen } = useClientEnv();
   const stageRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
   const activePointerId = useRef<number | null>(null);
-    const TILE_SELECTOR = '[data-ring-tile="true"]';
+  const TILE_SELECTOR = '[data-ring-tile="true"]';
 
   // rotation state
   const rotation = useRef(initialRotation);
-  const [rot, setRot] = useState(initialRotation);
 
   // drag state
   const dragging = useRef(false);
@@ -87,6 +88,10 @@ export default function ThreeDImageRing({
   const safeAspect = tileAspectRatio > 0 ? tileAspectRatio : 1;
   const tileHeight = tileWidth / safeAspect;
   const radius = imageDistance * scale;
+  const effectiveIdleRotate = useMemo(
+    () => (isMobile || isSmallScreen ? idleRotateDegPerSec * 0.55 : idleRotateDegPerSec),
+    [idleRotateDegPerSec, isMobile, isSmallScreen],
+  );
 
   // responsive listener
   useEffect(() => {
@@ -99,13 +104,18 @@ export default function ThreeDImageRing({
     return () => window.removeEventListener("resize", onResize);
   }, [mobileBreakpoint, mobileScaleFactor]);
 
-  const updateRotation = () => {
-    setRot(rotation.current);
-  };
+  const applyRotation = useCallback(() => {
+    if (!ringRef.current) return;
+    ringRef.current.style.transform = `translateZ(-200px) rotateY(${rotation.current}deg)`;
+  }, []);
+
+  useEffect(() => {
+    applyRotation();
+  }, [applyRotation]);
 
   // gentle idle rotation loop (no inertia)
   useEffect(() => {
-    if (idleRotateDegPerSec === 0) return;
+    if (effectiveIdleRotate === 0) return;
 
     let rafId: number | null = null;
     let prev = performance.now();
@@ -115,8 +125,8 @@ export default function ThreeDImageRing({
       prev = now;
 
       if (!dragging.current) {
-        rotation.current += idleRotateDegPerSec * dt;
-        setRot(rotation.current);
+        rotation.current += effectiveIdleRotate * dt;
+        applyRotation();
       }
 
       rafId = requestAnimationFrame(tick);
@@ -126,7 +136,7 @@ export default function ThreeDImageRing({
     return () => {
       if (rafId) cancelAnimationFrame(rafId);
     };
-  }, [idleRotateDegPerSec]);
+  }, [applyRotation, effectiveIdleRotate]);
 
   // pointer handlers
   useEffect(() => {
@@ -137,7 +147,7 @@ export default function ThreeDImageRing({
       dragging.current = false;
       activePointerId.current = null;
       if (ringRef.current) ringRef.current.style.cursor = "grab";
-      updateRotation();
+      applyRotation();
     };
 
     const onDown = (e: PointerEvent) => {
@@ -162,7 +172,7 @@ export default function ThreeDImageRing({
 
       const deltaDeg = -dx * dragSensitivity;
       rotation.current += deltaDeg;
-      updateRotation();
+      applyRotation();
     };
 
     const onUp = (e: PointerEvent) => {
@@ -185,7 +195,7 @@ export default function ThreeDImageRing({
       window.removeEventListener("pointerup", onUp);
       window.removeEventListener("pointercancel", onCancel);
     };
-  }, [dragSensitivity]);
+  }, [applyRotation, dragSensitivity]);
 
   // hover dim handlers (kept super simple)
   const dimOthers = (index: number) => {
@@ -215,7 +225,7 @@ export default function ThreeDImageRing({
     position: "absolute",
     inset: 0,
     transformStyle: "preserve-3d",
-    transform: `translateZ(-200px) rotateY(${rot}deg)`,
+    transform: `translateZ(-200px) rotateY(${rotation.current}deg)`,
     cursor: "grab",
     willChange: "transform",
   };
