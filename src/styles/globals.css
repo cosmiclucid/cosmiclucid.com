@@ -1637,6 +1637,20 @@ body {
     letter-spacing: 0.22em;
   }
 
+  /* Remove gradient border artifacts on mobile buttons */
+  .neon-btn::before {
+    background: none;
+    animation: none;
+    filter: none;
+    -webkit-mask: none;
+    mask: none;
+  }
+
+  .neon-btn {
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(124, 58, 237, 0.5);
+  }
+
   .hero-scroll {
     bottom: 2rem;
   }

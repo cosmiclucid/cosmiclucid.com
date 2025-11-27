@@ -37,12 +37,13 @@ export function VideoText({
   ...motionProps
 }: VideoTextProps & HTMLMotionProps<"div">) {
   const content = React.Children.toArray(children).join("");
-  const maskId = useMemo(() => `video-text-mask-${Math.random().toString(36).slice(2, 9)}`, []);
 
   const validTags = ["div", "span", "section", "article", "p", "h1", "h2", "h3", "h4", "h5", "h6"] as const;
   type ValidTag = (typeof validTags)[number];
 
   const MotionComponent = motion[validTags.includes(as) ? as : "div"] as React.ElementType;
+
+  const maskId = useMemo(() => `video-text-mask-${Math.random().toString(36).slice(2, 9)}`, []);
 
   return (
     <MotionComponent className={cn("relative overflow-hidden", className)} {...motionProps}>

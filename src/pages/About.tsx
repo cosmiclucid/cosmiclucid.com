@@ -558,7 +558,7 @@ export default function About() {
                       “Working with Louis shifted my entire mindset. His coaching mixes clarity, discipline, and deep emotional awareness — it activated something in me that I didn’t know I had. Total life-upgrade.”
                     </p>
                     <p className="mt-4 text-white text-xs tracking-[0.22em] uppercase">
-                      — LUCAS SCHÄFERs
+                      — LUCAS SCHÄFER
                     </p>
                   </div>
 
