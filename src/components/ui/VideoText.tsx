@@ -37,7 +37,7 @@ export function VideoText({
   ...motionProps
 }: VideoTextProps & HTMLMotionProps<"div">) {
   const content = React.Children.toArray(children).join("");
-  const maskId = useMemo(() => `video-text-mask-${Math.random().toString(36).slice(2, 9)}`, []);
+  const clipId = useMemo(() => `video-text-${Math.random().toString(36).slice(2, 9)}`, []);
 
   const validTags = ["div", "span", "section", "article", "p", "h1", "h2", "h3", "h4", "h5", "h6"] as const;
   type ValidTag = (typeof validTags)[number];
@@ -46,10 +46,9 @@ export function VideoText({
 
   return (
     <MotionComponent className={cn("relative overflow-hidden", className)} {...motionProps}>
-      <svg className="absolute inset-0 h-0 w-0" aria-hidden="true" focusable="false">
+      <svg className="w-full h-full" viewBox="0 0 1000 200" preserveAspectRatio="xMidYMid meet">
         <defs>
-          <mask id={maskId} maskUnits="userSpaceOnUse">
-            <rect width="1000" height="200" fill="black" />
+          <clipPath id={clipId}>
             <text
               x="50%"
               y="50%"
@@ -58,35 +57,24 @@ export function VideoText({
               textAnchor={textAnchor}
               dominantBaseline={dominantBaseline}
               fontFamily={fontFamily}
-              fill="white"
             >
               {content}
             </text>
-          </mask>
+          </clipPath>
         </defs>
+        <foreignObject width="100%" height="100%" clipPath={`url(#${clipId})`}>
+          <video
+            className="w-full h-full object-cover"
+            autoPlay={autoPlay}
+            muted={muted}
+            loop={loop}
+            preload={preload}
+            playsInline
+          >
+            <source src={src} type="video/mp4" />
+          </video>
+        </foreignObject>
       </svg>
-
-      <video
-        className="w-full h-full object-cover"
-        autoPlay={autoPlay}
-        muted={muted}
-        loop={loop}
-        preload={preload}
-        playsInline
-        aria-hidden="true"
-        style={{
-          mask: `url(#${maskId})`,
-          WebkitMask: `url(#${maskId})`,
-          maskSize: "100% 100%",
-          WebkitMaskSize: "100% 100%",
-          maskRepeat: "no-repeat",
-          WebkitMaskRepeat: "no-repeat",
-        }}
-      >
-        <source src={src} type="video/mp4" />
-      </video>
-
-      <span className="sr-only">{content}</span>
     </MotionComponent>
   );
 }
