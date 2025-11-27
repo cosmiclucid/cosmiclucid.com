@@ -131,7 +131,7 @@ export default function Audio() {
         className="pointer-events-none fixed inset-0 z-50 bg-black"
       />
 
-      <div className="relative z-10 flex min-h-screen flex-col items-center px-8 md:px-16 lg:px-24 xl:px-32 pt-24 pb-20">
+      <div className="relative z-10 flex min-h-screen flex-col items-center px-8 md:px-16 lg:px-24 xl:px-32 pt-32 pb-20">
         <motion.div
           initial={{ opacity: 0, y: -40 }}
           animate={{ opacity: 1, y: 0 }}
@@ -151,7 +151,7 @@ export default function Audio() {
             transition={{ duration: 1.2, delay: 0.3, ease: 'easeOut' }}
             className="mb-2 tracking-wide headline-gradient"
             style={{
-              fontSize: 'clamp(3rem, 6vw, 5.5rem)',
+              fontSize: '4rem',
               lineHeight: 1.05,
               textTransform: 'uppercase',
               color: 'transparent',
