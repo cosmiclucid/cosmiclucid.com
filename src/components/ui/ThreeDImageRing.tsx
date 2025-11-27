@@ -229,7 +229,7 @@ export default function ThreeDImageRing({
         width: "100%",
         height: "100%",
         overflow: "visible",
-        touchAction: "pan-y",
+        touchAction: "none", // allow horizontal drags on touch devices
       }}
     >
       <div style={stageStyle}>
