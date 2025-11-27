@@ -2109,11 +2109,6 @@ body {
   }
 }
 
-.low-performance * {
-  animation: none !important;
-  transition: none !important;
-}
-
 @media (prefers-reduced-motion: reduce) {
   * {
     animation: none !important;

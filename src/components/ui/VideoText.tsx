@@ -37,7 +37,7 @@ export function VideoText({
   ...motionProps
 }: VideoTextProps & HTMLMotionProps<"div">) {
   const content = React.Children.toArray(children).join("");
-  const clipId = useMemo(() => `video-text-${Math.random().toString(36).slice(2, 9)}`, []);
+  const maskId = useMemo(() => `video-text-mask-${Math.random().toString(36).slice(2, 9)}`, []);
 
   const validTags = ["div", "span", "section", "article", "p", "h1", "h2", "h3", "h4", "h5", "h6"] as const;
   type ValidTag = (typeof validTags)[number];
@@ -48,7 +48,8 @@ export function VideoText({
     <MotionComponent className={cn("relative overflow-hidden", className)} {...motionProps}>
       <svg className="w-full h-full" viewBox="0 0 1000 200" preserveAspectRatio="xMidYMid meet">
         <defs>
-          <clipPath id={clipId}>
+          <mask id={maskId} maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="200" maskContentUnits="userSpaceOnUse">
+            <rect x="0" y="0" width="1000" height="200" fill="black" />
             <text
               x="50%"
               y="50%"
@@ -57,23 +58,27 @@ export function VideoText({
               textAnchor={textAnchor}
               dominantBaseline={dominantBaseline}
               fontFamily={fontFamily}
+              fill="white"
             >
               {content}
             </text>
-          </clipPath>
+          </mask>
         </defs>
-        <foreignObject width="100%" height="100%" clipPath={`url(#${clipId})`}>
-          <video
-            className="w-full h-full object-cover"
-            autoPlay={autoPlay}
-            muted={muted}
-            loop={loop}
-            preload={preload}
-            playsInline
-          >
-            <source src={src} type="video/mp4" />
-          </video>
-        </foreignObject>
+
+        <g mask={`url(#${maskId})`}>
+          <foreignObject width="100%" height="100%">
+            <video
+              className="w-full h-full object-cover"
+              autoPlay={autoPlay}
+              muted={muted}
+              loop={loop}
+              preload={preload}
+              playsInline
+            >
+              <source src={src} type="video/mp4" />
+            </video>
+          </foreignObject>
+        </g>
       </svg>
     </MotionComponent>
   );
