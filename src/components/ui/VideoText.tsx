@@ -3,6 +3,7 @@
 import { cn } from "../lib/utils";
 import React, { ReactNode, useMemo } from "react";
 import { motion, HTMLMotionProps } from "framer-motion";
+import AuroraLogo from "./AuroraLogo";
 
 export interface VideoTextProps {
   src: string;
@@ -46,7 +47,7 @@ export function VideoText({
   const maskId = useMemo(() => `video-text-mask-${Math.random().toString(36).slice(2, 9)}`, []);
 
   return (
-    <MotionComponent className={cn("relative overflow-hidden", className)} {...motionProps}>
+    <MotionComponent className={cn("relative overflow-hidden video-text", className)} {...motionProps}>
       <svg className="w-full h-full" viewBox="0 0 1000 200" preserveAspectRatio="xMidYMid meet">
         <defs>
           <mask id={maskId} maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="200" maskContentUnits="userSpaceOnUse">
@@ -69,7 +70,7 @@ export function VideoText({
         <g mask={`url(#${maskId})`}>
           <foreignObject width="100%" height="100%">
             <video
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover video-text__video"
               autoPlay={autoPlay}
               muted={muted}
               loop={loop}
@@ -81,6 +82,11 @@ export function VideoText({
           </foreignObject>
         </g>
       </svg>
+
+      {/* Mobile Aurora fallback */}
+      <span className="video-text-aurora-fallback">
+        <AuroraLogo text={content} />
+      </span>
     </MotionComponent>
   );
 }
