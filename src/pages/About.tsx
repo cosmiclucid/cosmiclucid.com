@@ -19,7 +19,7 @@ type TimelineEntry = {
   side: 'left' | 'right';
 };
 
-const HERO_IMAGE_FILE = 'Louis blau.webp';
+const HERO_IMAGE_FILE = 'Louis neu 2.webp';
 
 function LazyMount({
   children,

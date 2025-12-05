@@ -233,7 +233,19 @@ export const ScrollTimeline: React.FC<ScrollTimelineProps> = ({
       {/* Header */}
       {(title || subtitle) && (
         <div className="scroll-timeline-header">
-          {title && <h2 className="scroll-timeline-title">{title}</h2>}
+          {title && (
+            <h2
+              className="scroll-timeline-title headline-gradient tracking-wide"
+              style={{
+                fontSize: "clamp(1.6rem, 3vw, 2.8rem)",
+                lineHeight: 1.05,
+                textTransform: "uppercase",
+                color: "transparent",
+              }}
+            >
+              {title}
+            </h2>
+          )}
           {subtitle && (
             <p className="scroll-timeline-subtitle">{subtitle}</p>
           )}
