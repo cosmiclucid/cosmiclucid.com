@@ -275,9 +275,10 @@ export default function Audio() {
                       {/* Badge: 888+ Tracks produced */}
                       <div className="mb-6 flex w-full justify-center tracks-produced-wrap">
                         <div
-                          className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/15 px-8 py-3 text-[0.8rem] font-semibold uppercase tracking-[0.32em] text-white shadow-[0_0_26px_rgba(124,58,237,0.95),0_0_46px_rgba(56,189,248,0.65)] backdrop-blur-xl"
+                          className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/15 px-9 py-3.5 text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-white shadow-[0_0_26px_rgba(124,58,237,0.95),0_0_46px_rgba(56,189,248,0.65)] backdrop-blur-xl"
                           style={{
-                            letterSpacing: '0.3em',
+                            letterSpacing: '0.24em',
+                            padding: '1rem 2.3rem',
                           }}
                         >
                           <CountUp
@@ -288,10 +289,10 @@ export default function Audio() {
                             easing="easeInOut"
                             triggerOnView={true}
                             colorScheme="gradient"
-                            className="text-[0.9rem] font-semibold tracking-[0.32em]"
+                            className="text-[0.82rem] font-semibold tracking-[0.22em]"
                             numberClassName="mx-1"
                           />
-                          <span className="ml-3 text-[0.8rem] tracking-[0.32em] tracks-produced-badge">
+                          <span className="ml-3 text-[0.7rem] tracking-[0.22em] tracks-produced-badge">
                             TRACKS PRODUCED
                           </span>
                         </div>
@@ -409,7 +410,8 @@ LUCID’s production quality competes with top-tier industry tracks — at a fra
                       {/* Google reviews badge + link */}
                       <div className="mt-8 flex flex-col items-center gap-3 text-center">
                         <div
-                          className="inline-flex flex-col items-center justify-center rounded-full border border-white/30 bg-white/15 px-8 py-3 text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-white shadow-[0_0_26px_rgba(124,58,237,0.95),0_0_46px_rgba(56,189,248,0.65)] backdrop-blur-xl"
+                          className="inline-flex flex-col items-center justify-center rounded-full border border-white/30 bg-white/15 px-9 py-3.5 text-[0.66rem] font-semibold uppercase tracking-[0.24em] text-white shadow-[0_0_26px_rgba(124,58,237,0.95),0_0_46px_rgba(56,189,248,0.65)] backdrop-blur-xl"
+                          style={{ padding: '1rem 2.3rem' }}
                         >
                           <div className="flex items-center justify-center gap-3 mb-1">
                             <span className="text-xs leading-none tracking-[0.2em]">
@@ -422,11 +424,11 @@ LUCID’s production quality competes with top-tier industry tracks — at a fra
                               easing="easeInOut"
                               animationStyle="default"
                               colorScheme="gradient"
-                              className="text-[0.9rem] font-semibold tracking-[0.28em]"
+                              className="text-[0.84rem] font-semibold tracking-[0.24em]"
                               numberClassName=""
                             />
                           </div>
-                          <span className="text-[0.7rem] tracking-[0.28em] text-white/90">
+                          <span className="text-[0.62rem] tracking-[0.22em] text-white/90">
                             RATING ON GOOGLE MAPS
                           </span>
                         </div>
@@ -571,8 +573,8 @@ LUCID’s production quality competes with top-tier industry tracks — at a fra
                   {/* Trusted by badge */}
                   <div className="mt-10 flex flex-col items-center gap-3 text-center">
                     <div
-                      className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/10 px-8 py-3 text-[0.75rem] font-semibold uppercase tracking-[0.28em] text-white shadow-[0_0_24px_rgba(56,189,248,0.65)] backdrop-blur-xl trusted-badge"
-                      style={{ marginBottom: '0.35rem' }}
+                      className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/10 px-9 py-3.5 text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-white shadow-[0_0_24px_rgba(56,189,248,0.65)] backdrop-blur-xl trusted-badge"
+                      style={{ marginBottom: '0.35rem', padding: '1rem 2.3rem' }}
                     >
                       <span className="mr-2 text-base">✨</span>
                       <span>TRUSTED BY FILMMAKERS, CREATORS &amp; BRANDS WORLDWIDE</span>
@@ -666,7 +668,8 @@ LUCID’s production quality competes with top-tier industry tracks — at a fra
                   {/* Trusted by clubs badge */}
                   <div className="mt-10 flex flex-col items-center gap-3 text-center trusted-clubs-wrap">
                     <div
-                      className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/10 px-8 py-3 text-[0.75rem] font-semibold uppercase tracking-[0.28em] text-white shadow-[0_0_20px_rgba(245,158,11,0.75)] backdrop-blur-xl"
+                      className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/10 px-9 py-3.5 text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-white shadow-[0_0_20px_rgba(245,158,11,0.75)] backdrop-blur-xl"
+                      style={{ padding: '1rem 2.3rem' }}
                     >
                       <span className="mr-2 text-base">✨</span>
                       <span>TRUSTED BY CLUBS, CREATORS &amp; EVENT ORGANIZERS WORLDWIDE</span>

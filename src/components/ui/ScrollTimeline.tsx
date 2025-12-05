@@ -8,6 +8,7 @@ import {
   useSpring,
 } from "framer-motion";
 import { VideoText, VideoTextProps } from "./VideoText";
+import AuroraButton from "./AuroraButton";
 
 export interface TimelineEvent {
   id?: string;
@@ -26,6 +27,8 @@ export interface TimelineFinalCard {
   titleHeight?: string | number;
   titleMarginTop?: string | number;
   titleMarginBottom?: string | number;
+  ctaLabel?: string;
+  ctaHref?: string;
 }
 
 export interface ScrollTimelineProps {
@@ -241,6 +244,8 @@ export const ScrollTimeline: React.FC<ScrollTimelineProps> = ({
                 lineHeight: 1.05,
                 textTransform: "uppercase",
                 color: "transparent",
+                letterSpacing: "0.08em",
+                marginBottom: "0.4rem",
               }}
             >
               {title}
@@ -304,36 +309,55 @@ export const ScrollTimeline: React.FC<ScrollTimelineProps> = ({
               {/* Dot on center line */}
               <div className="scroll-timeline-dot-wrapper">
                 {(() => {
-                  const isMeasured = dotOffsets.length === events.length && dotOffsets[index] !== undefined;
-                  const threshold = isMeasured ? dotOffsets[index] - 12 : Infinity; // light only when comet passes
-                  const isLit = isMeasured && cometPos >= threshold;
+                  const isMeasured =
+                    dotOffsets.length === events.length &&
+                    dotOffsets[index] !== undefined;
+                  const measuredThreshold = isMeasured
+                    ? dotOffsets[index] - 12
+                    : Infinity;
+
+                  // Fallback if offsets aren't ready: use a proportional position along the timeline height.
+                  const innerHeight =
+                    innerRef.current?.getBoundingClientRect().height ?? 0;
+                  const totalSteps = events.length + (finalCard ? 1 : 0);
+                  const fallbackThreshold =
+                    innerHeight *
+                    ((index + 0.6) / Math.max(totalSteps + 0.2, 1));
+
+                  const threshold = isMeasured
+                    ? measuredThreshold
+                    : fallbackThreshold;
+                  const isLit = cometPos >= threshold;
+
                   return (
-                  <motion.div
-                    className={`scroll-timeline-dot ${
-                        isLit ? "scroll-timeline-dot--active scroll-timeline-dot--lit" : ""
-                  }`}
-                    ref={(el) => {
-                      dotRefs.current[index] = el as HTMLDivElement;
-                    }}
-                    animate={
-                    isLit
-                      ? {
-                          scale: [1, 1.3, 1],
-                          boxShadow: [
-                            "0 0 0px rgba(99,102,241,0)",
-                            "0 0 14px rgba(99,102,241,0.7)",
-                            "0 0 0px rgba(99,102,241,0)",
-                          ],
-                        }
-                      : {}
-                    }
-                    transition={{
-                      duration: 0.8,
-                      repeat: Infinity,
-                      repeatDelay: 4,
-                      ease: "easeInOut",
-                    }}
-                  />
+                    <motion.div
+                      className={`scroll-timeline-dot ${
+                        isLit
+                          ? "scroll-timeline-dot--active scroll-timeline-dot--lit"
+                          : ""
+                      }`}
+                      ref={(el) => {
+                        dotRefs.current[index] = el as HTMLDivElement;
+                      }}
+                      animate={
+                        isLit
+                          ? {
+                              scale: [1, 1.3, 1],
+                              boxShadow: [
+                                "0 0 0px rgba(99,102,241,0)",
+                                "0 0 14px rgba(99,102,241,0.7)",
+                                "0 0 0px rgba(99,102,241,0)",
+                              ],
+                            }
+                          : {}
+                      }
+                      transition={{
+                        duration: 0.8,
+                        repeat: Infinity,
+                        repeatDelay: 4,
+                        ease: "easeInOut",
+                      }}
+                    />
                   );
                 })()}
               </div>
@@ -382,6 +406,10 @@ export const ScrollTimeline: React.FC<ScrollTimelineProps> = ({
 
             <article
             className="scroll-timeline-card scroll-timeline-final-card-content timeline-card heavy-blur"
+            style={{
+              boxShadow:
+                "0 0 28px rgba(147, 87, 255, 0.55), 0 0 52px rgba(99, 102, 241, 0.45)",
+            }}
             >
               {renderFinalCardTitle()}
               {finalCard.subtitle && (

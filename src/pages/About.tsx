@@ -445,8 +445,8 @@ export default function About() {
               <div className="mt-12 w-full flex flex-col items-center gap-8 text-center">
                 <div className="flex w-full justify-center">
                   <div
-                    className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/12 px-3.5 py-1.1 text-[0.6rem] sm:text-[0.7rem] font-semibold uppercase tracking-[0.14em] sm:tracking-[0.2em] text-white shadow-[0_0_12px_rgba(124,58,237,0.6),0_0_20px_rgba(56,189,248,0.4)] backdrop-blur-lg"
-                    style={{ letterSpacing: '0.14em' }}
+                    className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/12 px-4 py-1.2 text-[0.52rem] sm:text-[0.6rem] font-semibold uppercase tracking-[0.1em] sm:tracking-[0.16em] text-white shadow-[0_0_12px_rgba(124,58,237,0.6),0_0_20px_rgba(56,189,248,0.4)] backdrop-blur-lg"
+                    style={{ letterSpacing: '0.1em', padding: '0.6rem 1.6rem' }}
                   >
                     <CountUp
                       value={800}
@@ -595,27 +595,28 @@ export default function About() {
                   </div>
                 </div>
 
-                <div className="flex flex-col items-center gap-3 text-center">
-                  <div
-                    className="inline-flex flex-col items-center justify-center rounded-full border border-white/30 bg-white/15 px-8 py-3 text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-white shadow-[0_0_26px_rgba(124,58,237,0.95),0_0_46px_rgba(56,189,248,0.65)] backdrop-blur-xl"
-                  >
-                    <div className="flex items-center justify-center gap-3 mb-1">
-                      <span className="text-xs leading-none tracking-[0.2em]">★★★★★</span>
-                      <CountUp
-                        value={5}
-                        decimals={1}
-                        duration={3}
-                        easing="easeInOut"
-                        animationStyle="default"
-                        colorScheme="gradient"
-                        className="text-[0.9rem] font-semibold tracking-[0.28em]"
-                        numberClassName=""
-                      />
-                    </div>
-                    <span className="text-[0.7rem] tracking-[0.28em] text-white/90">
-                      RATING ON GOOGLE MAPS
-                    </span>
+              <div className="flex flex-col items-center gap-3 text-center">
+                <div
+                  className="inline-flex flex-col items-center justify-center rounded-full border border-white/30 bg-white/15 px-9 py-3.5 text-[0.66rem] font-semibold uppercase tracking-[0.24em] text-white shadow-[0_0_26px_rgba(124,58,237,0.95),0_0_46px_rgba(56,189,248,0.65)] backdrop-blur-xl"
+                  style={{ padding: "1rem 2.3rem" }}
+                >
+                  <div className="flex items-center justify-center gap-3 mb-1">
+                    <span className="text-xs leading-none tracking-[0.2em]">★★★★★</span>
+                    <CountUp
+                      value={5}
+                      decimals={1}
+                      duration={3}
+                      easing="easeInOut"
+                      animationStyle="default"
+                      colorScheme="gradient"
+                      className="text-[0.84rem] font-semibold tracking-[0.24em]"
+                      numberClassName=""
+                    />
                   </div>
+                  <span className="text-[0.62rem] tracking-[0.22em] text-white/90">
+                    RATING ON GOOGLE MAPS
+                  </span>
+                </div>
                   <a
                     href="https://www.google.com/maps/place/COSMICLUCID+CREATIONS/@49.1267538,9.8136859,17z/data=!4m8!3m7!1s0x47985b5e0ece8847:0x39690efa870e1601!8m2!3d49.1267538!4d9.8162608!9m1!1b1!16s%2Fg%2F11xp0g25h9?entry=ttu&g_ep=EgoyMDI1MTExNy4wIKXMDSoASAFQAw%3D%3D"
                     target="_blank"

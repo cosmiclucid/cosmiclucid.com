@@ -5,6 +5,7 @@ import AuroraButton from "../components/ui/AuroraButton";
 import { ScrollTimeline } from "../components/ui/ScrollTimeline";
 import { UniverseCard } from "../components/UniverseCard";
 import { MarketingOrbVisual } from "../components/ui/MarketingOrbVisual";
+import { CountUp } from "../components/ui/CountUp";
 import { useClientEnv } from "../hooks/useClientEnv";
 
 // Tilt interaction (mirrors homepage behavior)
@@ -85,13 +86,49 @@ const serviceCards = [
 ];
 
 const timelineEvents = [
-  { id: "discover", year: "01", title: "Discover", description: "Brand, audience and performance audit." },
-  { id: "design", year: "02", title: "Design", description: "Strategy, content, funnel." },
-  { id: "deploy", year: "03", title: "Deploy", description: "Launch site, content & ads." },
-  { id: "scale", year: "04", title: "Scale", description: "Optimization & growth." },
+  {
+    id: "discover",
+    year: "01",
+    title: "⭐ 01 — Discover",
+    description:
+      "We analyze your brand, audience, competitors and current performance.\nPain points, positioning gaps, opportunities — everything becomes clear.",
+  },
+  {
+    id: "design",
+    year: "02",
+    title: "⭐ 02 — Design",
+    description:
+      "We craft your brand system, messaging, content strategy, and funnel architecture.\nThis is the blueprint for scaling — identity, strategy, content direction.",
+  },
+  {
+    id: "build",
+    year: "03",
+    title: "⭐ 03 — Build",
+    description:
+      "We produce cinematic content, design your assets, and develop your website or landing system.\nYour brand gets the visuals and infrastructure it needs to convert.",
+  },
+  {
+    id: "deploy",
+    year: "04",
+    title: "⭐ 04 — Deploy",
+    description:
+      "We launch your content, website, ads, and growth engine across the right channels.\nFull system goes live.",
+  },
+  {
+    id: "scale",
+    year: "05",
+    title: "⭐ 05 — Scale (optional but powerful)",
+    description:
+      "We optimize campaigns, upgrade content, refine funnels, and scale what works.\nThis shows long-term partnership — not just a project.",
+  },
 ];
 
 export default function MarketingPage() {
+  const HERO_IMAGE_FILE = "Louis Drone.webp";
+  const HERO_IMG = useMemo(
+    () => (import.meta as any).env.BASE_URL + "About/" + encodeURIComponent(HERO_IMAGE_FILE),
+    []
+  );
   const scrollToSection = useCallback((id: string) => {
     const el = document.getElementById(id);
     if (!el) return;
@@ -106,6 +143,17 @@ export default function MarketingPage() {
   const topSpacerHeight = 0;
   const heroTextTransform = "translateY(0)";
   const heroFlexWrap = isSmallScreen ? "wrap" : "nowrap";
+  const heroAuraRef = useRef<HTMLDivElement | null>(null);
+  const auraFrameRef = useRef<number | null>(null);
+  const auraPendingPos = useRef<{ x: number; y: number } | null>(null);
+  const heroCloneImgStyle = {
+    display: "block",
+    width: isSmallScreen ? "100%" : "105%",
+    height: "auto",
+    objectFit: "cover" as const,
+    transform: isSmallScreen ? "translateX(0) translateY(0)" : "translateX(2%) translateY(10%)",
+    marginTop: isSmallScreen ? "0.8rem" : "3rem",
+  };
 
   useEffect(() => {
     const reveals = document.querySelectorAll(".reveal");
@@ -123,6 +171,49 @@ export default function MarketingPage() {
 
     reveals.forEach((r) => observer.observe(r));
     return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const el = heroAuraRef.current;
+    if (!el) return;
+
+    const handlePointerMove = (event: PointerEvent) => {
+      auraPendingPos.current = { x: event.clientX, y: event.clientY };
+      if (auraFrameRef.current) return;
+      auraFrameRef.current = requestAnimationFrame(() => {
+        auraFrameRef.current = null;
+        const next = auraPendingPos.current;
+        const target = heroAuraRef.current;
+        if (!target || !next) return;
+        const rect = target.getBoundingClientRect();
+        const x = ((next.x - rect.left) / rect.width) * 100;
+        const y = ((next.y - rect.top) / rect.height) * 100;
+        target.style.setProperty("--aura-x", `${x}%`);
+        target.style.setProperty("--aura-y", `${y}%`);
+        target.style.setProperty("--aura-opacity", "0.72");
+      });
+    };
+
+    const handlePointerLeave = () => {
+      auraPendingPos.current = null;
+      if (auraFrameRef.current) {
+        cancelAnimationFrame(auraFrameRef.current);
+        auraFrameRef.current = null;
+      }
+      const target = heroAuraRef.current;
+      if (!target) return;
+      target.style.setProperty("--aura-opacity", "0");
+    };
+
+    el.addEventListener("pointermove", handlePointerMove);
+    el.addEventListener("pointerenter", handlePointerMove);
+    el.addEventListener("pointerleave", handlePointerLeave);
+
+    return () => {
+      el.removeEventListener("pointermove", handlePointerMove);
+      el.removeEventListener("pointerenter", handlePointerMove);
+      el.removeEventListener("pointerleave", handlePointerLeave);
+    };
   }, []);
 
   const stars = useMemo(
@@ -421,7 +512,7 @@ export default function MarketingPage() {
             className="text-center"
             style={{
               marginTop: "8rem",
-              marginBottom: "-8rem",
+              marginBottom: "-4rem",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
@@ -441,30 +532,349 @@ export default function MarketingPage() {
               SERVICE PIPELINE
             </h2>
           </div>
-          <ScrollTimeline title="SERVICES PIPELINE" subtitle="HOW WE WORK" events={timelineEvents} />
+          <ScrollTimeline
+            subtitle="How We Build Your Growth Engine"
+            events={timelineEvents}
+            finalCard={{
+              title: "⭐ 06 — Let’s Build Your Growth Engine",
+              subtitle: "06",
+              paragraphs: [
+                "You now have a complete, aligned brand system — identity, content, website, and marketing — all working together. The final step: putting it to work for you.",
+                "I tailor a custom offer around your goals and create a growth engine built to scale sustainably. This is where clarity turns into momentum — and momentum becomes measurable growth.",
+              ],
+            }}
+            ctaSlot={
+              <div
+                className="contact-footer"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  margin: "-1rem auto 0rem",
+                  gap: "1rem",
+                }}
+              >
+                <AuroraButton
+                  label="Build YOUR Growth Engine 🚀"
+                  className="px-10 sm:px-14 py-4 text-base tracking-[0.32em] timeline-cta-button"
+                  onClick={() => scrollToSection("contact")}
+                />
+              </div>
+            }
+          />
         </div>
       </section>
 
-      {/* FINAL CTA */}
-      <section id="contact" className="py-24 border-t border-white/10">
-        <div className="max-w-5xl mx-auto px-6">
-          <div className="rounded-3xl border border-white/15 bg-gradient-to-b from-white/8 via-black/55 to-black px-8 py-12 md:px-12 md:py-14 text-center shadow-[0_24px_70px_rgba(0,0,0,0.6)] backdrop-blur-2xl">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
-              Ready To Scale Your Brand To Its{" "}
-              <span className="headline-gradient text-transparent bg-clip-text">Deserved State?</span>
-            </h2>
-            <p className="mt-4 max-w-2xl mx-auto text-white/80 leading-relaxed">
-              Tell me where you are now and where you want to go. I&apos;ll design the path.
-            </p>
-            <div className="mt-8 flex justify-center">
+      {/* ABOUT HERO CLONE */}
+      <section
+        className="hero"
+        style={{ position: "relative", zIndex: 1, padding: "6rem 10%", marginTop: "-20rem" }}
+      >
+        <div
+          className="hero-text reveal"
+          style={{ transform: heroTextTransform, textAlign: "center", flex: 1, minWidth: "320px" }}
+        >
+          <motion.h1
+            initial={{ opacity: 0, filter: "blur(20px)", y: 30 }}
+            whileInView={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
+            className="mb-5 tracking-wide headline-gradient"
+            style={{
+              fontSize: "clamp(2.1rem, 3.9vw, 3.6rem)",
+              lineHeight: 1.05,
+              textTransform: "uppercase",
+              color: "transparent",
+            }}
+          >
+            Why Work With Me
+          </motion.h1>
+          <div
+            className="mt-4 h-[2px] w-full max-w-[320px] relative overflow-visible mx-auto"
+            style={{ marginBottom: "1.5rem" }}
+          >
+            <div
+              className="absolute inset-0 rounded-full"
+              style={{
+                background:
+                  "linear-gradient(90deg, rgba(81,21,140,0.18) 0%, rgba(81,21,140,0.95) 50%, rgba(81,21,140,0.18) 100%)",
+                boxShadow: "0 0 24px rgba(81, 21, 140, 1), 0 0 56px rgba(81, 21, 140, 0.55)",
+                filter: "drop-shadow(0 0 20px rgba(81, 21, 140, 0.8))",
+                height: "100%",
+                borderRadius: "999px",
+              }}
+            />
+            <div
+              className="absolute inset-0 rounded-full blur-lg pointer-events-none"
+              style={{
+                background:
+                  "linear-gradient(90deg, rgba(81,21,140,0.1) 0%, rgba(81,21,140,0.4) 50%, rgba(81,21,140,0.1) 100%)",
+              }}
+            />
+          </div>
+          <p
+            className="text-white/70 leading-relaxed mx-auto about-subline"
+            style={{
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              maxWidth: "56ch",
+              fontSize: "1.2rem",
+              textAlign: "center",
+            }}
+          >
+            One creator. One vision. One growth engine.
+            <br />
+            — I blend branding, cinematic content, web design, and performance marketing into one aligned system — so your message is stronger, your funnel converts better, and your brand grows faster. —
+          </p>
+          <div style={{ marginTop: "2.5rem" }}>
+            <div className="contact-footer">
               <AuroraButton
-                label="BOOK A FREE DISCOVERY CALL"
-                className="px-10 py-5 text-sm tracking-[0.26em]"
+                label="LET'S WORK TOGETHER"
+                className="px-10 sm:px-14 py-4 text-base tracking-[0.3em]"
                 onClick={() => (window.location.href = "/contact")}
               />
             </div>
+            <div
+              className="mt-4 text-white/80 text-xs sm:text-sm tracking-[0.12em] text-center leading-relaxed"
+              style={{ marginTop: "1rem" }}>
+              <div>Free brand &amp; funnel audit</div>
+              <div style={{ marginTop: "0.35rem" }}>
+                brand, content, funnel, ads, messaging, positioning, all in one place.
+              </div>
+            </div>
           </div>
         </div>
+
+        <div
+          className="hero-img reveal"
+          ref={heroAuraRef}
+          style={{ flex: 1.2, minWidth: "300px", position: "relative", isolation: "isolate", overflow: "visible" }}
+        >
+          <img
+            src={HERO_IMG}
+            alt="Louis Kuschnir"
+            width={520}
+            height={640}
+            loading="lazy"
+            decoding="async"
+            style={heroCloneImgStyle}
+          />
+        </div>
+      </section>
+
+      {/* GOOGLE REVIEWS (copied from About) */}
+      <section
+        className="reveal"
+        style={{
+          position: "relative",
+          zIndex: 1,
+          padding: "0 10% 4rem",
+          marginTop: "-1rem",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "1.5rem",
+            textAlign: "center",
+          }}
+        >
+          <div className="flex w-full justify-center">
+            <div
+              className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/12 px-4 py-1.2 text-[0.52rem] sm:text-[0.6rem] font-semibold uppercase tracking-[0.1em] sm:tracking-[0.16em] text-white shadow-[0_0_12px_rgba(124,58,237,0.6),0_0_20px_rgba(56,189,248,0.4)] backdrop-blur-lg"
+              style={{ letterSpacing: "0.1em", padding: "0.55rem 1.4rem" }}
+            >
+              <CountUp
+                value={88}
+                suffix="+"
+                duration={8}
+                animationStyle="default"
+                easing="easeInOut"
+                triggerOnView
+                colorScheme="gradient"
+                className="text-[0.58rem] sm:text-[0.7rem] font-semibold tracking-[0.14em]"
+                numberClassName="mx-1"
+              />
+              <span
+                className="ml-2 text-[0.44rem] tracking-[0.1em] sm:text-[0.56rem] sm:tracking-[0.14em]"
+                style={{ whiteSpace: "nowrap" }}
+              >
+                Brands Scaled
+              </span>
+            </div>
+          </div>
+          <p
+            className="mt-2 text-center text-white/80"
+            style={{
+              textTransform: "uppercase",
+              whiteSpace: "nowrap",
+              fontSize: "0.7rem",
+              letterSpacing: "0.14em",
+            }}
+          >
+            🚀 Brand Systems &amp; Positioning • 🎬 Cinematic Content Production • ⚡ Performance Marketing &amp; Funnels
+          </p>
+
+          <div className="flex justify-center items-center">
+            <div
+              className="h-[2px] w-[280px] rounded-full"
+              style={{
+                background:
+                  "linear-gradient(90deg, rgba(81,21,140,0.18) 0%, rgba(124,58,237,0.95) 50%, rgba(81,21,140,0.18) 100%)",
+                boxShadow: "0 0 20px rgba(124, 58, 237, 0.9)",
+              }}
+            />
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "center",
+              gap: "2.5rem",
+            }}
+          >
+            <div
+              className="rounded-2xl backdrop-blur-xl p-7 text-center review-card heavy-blur card-hover"
+              style={{
+                flex: "1 1 280px",
+                maxWidth: "420px",
+                background: "rgba(255,255,255,0.02)",
+                border: "1px solid rgba(90,0,255,0.25)",
+                boxShadow: "0 0 25px rgba(90,0,255,0.25)",
+                padding: "1rem",
+                transform: "translateY(0) scale(1)",
+                transition: "transform 300ms ease, box-shadow 300ms ease, border-color 300ms ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-6px) scale(1.02)";
+                e.currentTarget.style.boxShadow = "0 0 28px rgba(56,189,248,0.45)";
+                e.currentTarget.style.border = "1px solid rgba(56,189,248,0.8)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0) scale(1)";
+                e.currentTarget.style.boxShadow = "0 0 25px rgba(90,0,255,0.25)";
+                e.currentTarget.style.border = "1px solid rgba(90,0,255,0.25)";
+              }}
+            >
+              <div className="text-lg">✨✨✨✨✨</div>
+              <p className="text-white/90 text-sm leading-relaxed italic">
+                "Louis elevated our entire brand. Cinematic content, clean strategy, and a funnel that finally converts. We saw an immediate lift in engagement and sales.”
+              </p>
+              <p className="mt-4 text-white text-xs tracking-[0.22em] uppercase">— HIRYZE</p>
+            </div>
+
+            <div
+              className="rounded-2xl backdrop-blur-xl p-7 text-center review-card heavy-blur card-hover"
+              style={{
+                flex: "1 1 280px",
+                maxWidth: "420px",
+                background: "rgba(255,255,255,0.02)",
+                border: "1px solid rgba(90,0,255,0.25)",
+                boxShadow: "0 0 25px rgba(90,0,255,0.25)",
+                padding: "1rem",
+                transform: "translateY(0) scale(1)",
+                transition: "transform 300ms ease, box-shadow 300ms ease, border-color 300ms ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-6px) scale(1.02)";
+                e.currentTarget.style.boxShadow = "0 0 28px rgba(56,189,248,0.45)";
+                e.currentTarget.style.border = "1px solid rgba(56,189,248,0.8)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0) scale(1)";
+                e.currentTarget.style.boxShadow = "0 0 25px rgba(90,0,255,0.25)";
+                e.currentTarget.style.border = "1px solid rgba(90,0,255,0.25)";
+              }}
+            >
+              <div className="text-lg">✨✨✨✨✨</div>
+              <p className="text-white/90 text-sm leading-relaxed italic">
+                “Our website, branding, and ads now feel aligned and premium. Inquiries doubled within weeks. Louis delivered far beyond expectations..”
+              </p>
+              <p className="mt-4 text-white text-xs tracking-[0.22em] uppercase">— FERDINAND DEUBER</p>
+            </div>
+
+            <div
+              className="rounded-2xl backdrop-blur-xl p-7 text-center review-card heavy-blur card-hover"
+              style={{
+                flex: "1 1 280px",
+                maxWidth: "420px",
+                background: "rgba(255,255,255,0.02)",
+                border: "1px solid rgba(90,0,255,0.25)",
+                boxShadow: "0 0 25px rgba(90,0,255,0.25)",
+                padding: "1rem",
+                transform: "translateY(0) scale(1)",
+                transition: "transform 300ms ease, box-shadow 300ms ease, border-color 300ms ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-6px) scale(1.02)";
+                e.currentTarget.style.boxShadow = "0 0 28px rgba(56,189,248,0.45)";
+                e.currentTarget.style.border = "1px solid rgba(56,189,248,0.8)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0) scale(1)";
+                e.currentTarget.style.boxShadow = "0 0 25px rgba(90,0,255,0.25)";
+                e.currentTarget.style.border = "1px solid rgba(90,0,255,0.25)";
+              }}
+            >
+              <div className="text-lg">✨✨✨✨✨</div>
+              <p className="text-white/90 text-sm leading-relaxed italic">
+                “Louis rebuilt our messaging and campaigns from the ground up. More qualified leads, stronger presence, real growth. Highly recommended.”
+              </p>
+              <p className="mt-4 text-white text-xs tracking-[0.22em] uppercase">— ALEXANDER DANNER</p>
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center gap-3 text-center">
+            <div
+              className="inline-flex flex-col items-center justify-center rounded-full border border-white/30 bg-white/15 px-9 py-3.5 text-[0.66rem] font-semibold uppercase tracking-[0.24em] text-white shadow-[0_0_26px_rgba(124,58,237,0.95),0_0_46px_rgba(56,189,248,0.65)] backdrop-blur-xl"
+              style={{ padding: "1rem 2.3rem" }}
+            >
+              <div className="flex items-center justify-center gap-3 mb-1">
+                <span className="text-xs leading-none tracking-[0.2em]">★★★★★</span>
+                <CountUp
+                  value={5}
+                  decimals={1}
+                  duration={3}
+                  easing="easeInOut"
+                  animationStyle="default"
+                  colorScheme="gradient"
+                  className="text-[0.84rem] font-semibold tracking-[0.24em]"
+                  numberClassName=""
+                />
+              </div>
+              <span className="text-[0.62rem] tracking-[0.22em] text-white/90">RATING ON GOOGLE MAPS</span>
+            </div>
+            <a
+              href="https://www.google.com/maps/place/COSMICLUCID+CREATIONS/@49.1267538,9.8136859,17z/data=!4m8!3m7!1s0x47985b5e0ece8847:0x39690efa870e1601!8m2!3d49.1267538!4d9.8162608!9m1!1b1!16s%2Fg%2F11xp0g25h9?entry=ttu&g_ep=EgoyMDI1MTExNy4wIKXMDSoASAFQAw%3D%3D"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 uppercase transition-colors"
+              style={{
+                color: "#00c3ff",
+                letterSpacing: "0.35em",
+                fontSize: "0.82rem",
+                textDecoration: "none",
+              }}
+            >
+              READ MORE GOOGLE REVIEWS • LEAVE YOURS
+              <span aria-hidden style={{ fontSize: "1rem", lineHeight: 1 }}>↗</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section
+        className="flex justify-center px-6"
+        style={{ margin: "2rem auto 3rem" }}
+      >
+        <AuroraButton
+          label="BRNG YOUR VISION TO LIFE"
+          className="vision-btn px-12 sm:px-16 py-5 text-lg tracking-[0.3em]"
+          onClick={handleContact}
+        />
       </section>
 
       <style>
@@ -481,9 +891,9 @@ export default function MarketingPage() {
           }
 
           @keyframes about-aura-flare {
-            0% { transform: scale(0.95); filter: blur(25px); }
-            50% { transform: scale(1.05); filter: blur(35px); }
-            100% { transform: scale(0.95); filter: blur(25px); }
+            0% { transform: translateY(15rem) scale(0.98); filter: blur(12px); }
+            50% { transform: translateY(15rem) scale(1.02); filter: blur(18px); }
+            100% { transform: translateY(15rem) scale(0.98); filter: blur(12px); }
           }
 
           .marketing-page .hero {
@@ -524,7 +934,7 @@ export default function MarketingPage() {
           .marketing-page .hero-img::after {
             content: "";
             position: absolute;
-            inset: -18%;
+            inset: -6%;
             border-radius: 100%;
             opacity: var(--aura-opacity);
             pointer-events: none;
@@ -532,13 +942,13 @@ export default function MarketingPage() {
             z-index: -1;
             background:
               radial-gradient(circle at var(--aura-x) var(--aura-y),
-                rgba(16, 203, 255, 0.75),
-                rgba(37, 99, 235, 0.55),
-                rgba(124, 58, 237, 0.4),
+                rgba(16, 203, 255, 0.6),
+                rgba(37, 99, 235, 0.42),
+                rgba(124, 58, 237, 0.32),
                 transparent 70%);
-            filter: blur(40px);
-            transition: opacity 0.s ease;
-            animation: about-aura-flare 6s ease-in-out infinite;
+            filter: blur(16px);
+            transition: opacity 0.2s ease;
+            animation: about-aura-flare 5s ease-in-out infinite;
           }
 
           .marketing-page .hero-img img {

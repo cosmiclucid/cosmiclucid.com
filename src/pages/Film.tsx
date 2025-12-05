@@ -364,8 +364,8 @@ export default function Film() {
                       {category.shortText}
                     </p>
                     <div
-                      className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/15 px-8 py-3 text-[0.75rem] font-semibold uppercase tracking-[0.28em] text-white shadow-[0_0_24px_rgba(124,58,237,0.65),0_0_32px_rgba(56,189,248,0.45)] backdrop-blur-xl"
-                      style={{ marginTop: '3.5rem', marginBottom: '0rem' }}
+                      className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/15 px-9 py-3.5 text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-white shadow-[0_0_24px_rgba(124,58,237,0.65),0_0_32px_rgba(56,189,248,0.45)] backdrop-blur-xl"
+                      style={{ marginTop: '3.5rem', marginBottom: '0rem', padding: '1rem 2.3rem' }}
                     >
                       <span className="mr-2 text-base">✨</span>
                       <span>{category.badge}</span>
