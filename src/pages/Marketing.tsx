@@ -139,6 +139,7 @@ export default function MarketingPage() {
 
   const { isSmallScreen, prefersReducedMotion, isMobile } = useClientEnv();
   const disableTilt = isSmallScreen || isMobile || prefersReducedMotion;
+  const disableAura = isSmallScreen || isMobile || prefersReducedMotion;
   const STAR_COUNT = isSmallScreen ? 12 : 48;
   const topSpacerHeight = 0;
   const heroTextTransform = "translateY(0)";
@@ -174,6 +175,8 @@ export default function MarketingPage() {
   }, []);
 
   useEffect(() => {
+    if (disableAura) return;
+
     const el = heroAuraRef.current;
     if (!el) return;
 
@@ -214,7 +217,7 @@ export default function MarketingPage() {
       el.removeEventListener("pointerenter", handlePointerMove);
       el.removeEventListener("pointerleave", handlePointerLeave);
     };
-  }, []);
+  }, [disableAura]);
 
   const stars = useMemo(
     () =>
@@ -350,11 +353,12 @@ export default function MarketingPage() {
             transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
             className="tracking-wide headline-gradient"
             style={{
-              fontSize: "clamp(1.6rem, 3vw, 2.8rem)",
+              fontSize: "clamp(1.4rem, 3vw, 2.8rem)",
               lineHeight: 1.05,
               textTransform: "uppercase",
               color: "transparent",
               marginBottom: "1.25rem",
+              marginTop: isSmallScreen ? "-1.2rem" : undefined,
             }}
           >
             MARKETING GROWTH ENGINE
@@ -436,7 +440,7 @@ export default function MarketingPage() {
           <div
             className="text-center"
             style={{
-              marginTop: "8rem",
+              marginTop: isSmallScreen ? "-3rem" : "8rem",
               marginBottom: "2rem",
               display: "flex",
               flexDirection: "column",
@@ -556,7 +560,7 @@ export default function MarketingPage() {
               >
                 <AuroraButton
                   label="Build YOUR Growth Engine 🚀"
-                  className="px-10 sm:px-14 py-4 text-base tracking-[0.32em] timeline-cta-button"
+                  className="px-8 sm:px-12 py-3.5 text-sm sm:text-base tracking-[0.28em] timeline-cta-button"
                   onClick={() => scrollToSection("contact")}
                 />
               </div>
@@ -581,10 +585,11 @@ export default function MarketingPage() {
             transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
             className="mb-5 tracking-wide headline-gradient"
             style={{
-              fontSize: "clamp(2.1rem, 3.9vw, 3.6rem)",
+              fontSize: "clamp(1.8rem, 3.2vw, 3.2rem)",
               lineHeight: 1.05,
               textTransform: "uppercase",
               color: "transparent",
+              marginTop: isSmallScreen ? "8rem" : undefined,
             }}
           >
             Why Work With Me
@@ -647,7 +652,7 @@ export default function MarketingPage() {
 
         <div
           className="hero-img reveal"
-          ref={heroAuraRef}
+          ref={disableAura ? undefined : heroAuraRef}
           style={{ flex: 1.2, minWidth: "300px", position: "relative", isolation: "isolate", overflow: "visible" }}
         >
           <img
@@ -677,7 +682,7 @@ export default function MarketingPage() {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            gap: "1.5rem",
+            gap: "0.4rem",
             textAlign: "center",
           }}
         >
@@ -706,18 +711,21 @@ export default function MarketingPage() {
             </div>
           </div>
           <p
-            className="mt-2 text-center text-white/80"
+            className="mt-0 text-center text-white/80"
             style={{
               textTransform: "uppercase",
-              whiteSpace: "nowrap",
               fontSize: "0.7rem",
               letterSpacing: "0.14em",
             }}
           >
-            🚀 Brand Systems &amp; Positioning • 🎬 Cinematic Content Production • ⚡ Performance Marketing &amp; Funnels
+            <span className="block sm:inline">🚀 Brand Systems &amp; Positioning</span>
+            <span className="hidden sm:inline">&nbsp;•&nbsp;</span>
+            <span className="block sm:inline">🎬 Cinematic Content Production</span>
+            <span className="hidden sm:inline">&nbsp;•&nbsp;</span>
+            <span className="block sm:inline">⚡ Performance Marketing &amp; Funnels</span>
           </p>
 
-          <div className="flex justify-center items-center">
+          <div className="flex justify-center items-center" style={{ marginTop: "0.75rem" }}>
             <div
               className="h-[2px] w-[280px] rounded-full"
               style={{
