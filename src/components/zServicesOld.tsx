@@ -47,8 +47,8 @@ export function Services() {
             icon={<Sparkles className="w-16 h-16 text-amber-200 filter drop-shadow-[0_0_20px_rgba(255,215,0,0.5)]" />}
             title="LUCID BMS SYSTEM"
             description="Transform energy, clarity, and creativity through the Body–Mind–Soul Method."
-            buttonText="Explore Coaching"
-            buttonHref="#coaching"
+            buttonText="Explore Mentoring"
+            buttonHref="/mentoring"
             delay={0.3}
             accent="gold"
           />

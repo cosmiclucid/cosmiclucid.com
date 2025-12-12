@@ -38,15 +38,6 @@ export default function Portfolio() {
       path: '/portfolio/audio',
       delay: 0.6,
     },
-    {
-      id: 'marketing',
-      icon: <span className="text-6xl">📈</span>,
-      title: 'MARKETING',
-      description: 'Creative direction, campaigns, and brand storytelling.',
-      color: 'magenta' as const,
-      path: '/portfolio/marketing',
-      delay: 0.8,
-    },
   ];
 
   const handleCategoryClick = (categoryId: string, path: string) => {
@@ -66,8 +57,6 @@ export default function Portfolio() {
         return 'from-cyan-500/10 via-transparent to-transparent';
       case 'audio':
         return 'from-yellow-500/10 via-transparent to-transparent';
-      case 'marketing':
-        return 'from-pink-600/10 via-transparent to-transparent';
       default:
         return 'from-transparent via-transparent to-transparent';
     }

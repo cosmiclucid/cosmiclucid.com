@@ -445,8 +445,12 @@ export default function About() {
               <div className="mt-12 w-full flex flex-col items-center gap-8 text-center">
                 <div className="flex w-full justify-center">
                   <div
-                    className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/12 px-4 py-1.2 text-[0.52rem] sm:text-[0.6rem] font-semibold uppercase tracking-[0.1em] sm:tracking-[0.16em] text-white shadow-[0_0_12px_rgba(124,58,237,0.6),0_0_20px_rgba(56,189,248,0.4)] backdrop-blur-lg"
-                    style={{ letterSpacing: '0.1em', padding: '0.6rem 1.6rem' }}
+                    className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/15 px-4 py-1.2 text-[0.52rem] sm:text-[0.6rem] font-semibold uppercase tracking-[0.1em] sm:tracking-[0.16em] text-white shadow-[0_0_26px_rgba(124,58,237,0.95),0_0_46px_rgba(56,189,248,0.65)] backdrop-blur-xl"
+                    style={{
+                      letterSpacing: '0.12em',
+                      padding: '0.56rem 1.3rem',
+                      boxShadow: '0 0 8px rgba(124, 58, 237, 0.68), 0 0 14px rgba(56, 189, 248, 0.46)',
+                    }}
                   >
                     <CountUp
                       value={800}
@@ -598,7 +602,10 @@ export default function About() {
               <div className="flex flex-col items-center gap-3 text-center">
                 <div
                   className="inline-flex flex-col items-center justify-center rounded-full border border-white/30 bg-white/15 px-9 py-3.5 text-[0.66rem] font-semibold uppercase tracking-[0.24em] text-white shadow-[0_0_26px_rgba(124,58,237,0.95),0_0_46px_rgba(56,189,248,0.65)] backdrop-blur-xl"
-                  style={{ padding: "1rem 2.3rem" }}
+                  style={{
+                    padding: '0.56rem 1.3rem',
+                    boxShadow: '0 0 8px rgba(124, 58, 237, 0.68), 0 0 14px rgba(56, 189, 248, 0.46)',
+                  }}
                 >
                   <div className="flex items-center justify-center gap-3 mb-1">
                     <span className="text-xs leading-none tracking-[0.2em]">★★★★★</span>

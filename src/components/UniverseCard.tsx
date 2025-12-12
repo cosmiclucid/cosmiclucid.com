@@ -62,6 +62,7 @@ export function UniverseCard({
       : tilt === 'right'
       ? 'cosmic-card--right'
       : 'cosmic-card--left';
+  const descriptionLines = description.split('\n').filter(Boolean);
 
   return (
     <motion.div
@@ -110,7 +111,11 @@ export function UniverseCard({
 
           {/* Description */}
           <p className="text-white/70 mb-8 flex-grow tracking-wide leading-relaxed">
-            {description}
+            {descriptionLines.map((line, idx) => (
+              <span key={idx} className="block">
+                {line}
+              </span>
+            ))}
           </p>
 
           {/* CTA Button */}

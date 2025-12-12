@@ -843,7 +843,7 @@ html {
   transform: translateY(0);
 }
 .headline-gradient {
-  background: linear-gradient(90deg, #182E6F, #51158C);
+  background: linear-gradient(90deg, #1BA3FF 0%, #0052FF 52%, #5A00FF 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1764,7 +1764,7 @@ body {
   .marketing-subline,
   .film-subline,
   .photography-subline {
-    font-size: 0.9rem !important;
+    font-size: 0.82rem !important;
     letter-spacing: 0.12em !important;
   }
 

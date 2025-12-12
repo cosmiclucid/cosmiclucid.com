@@ -1,10 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Check, Video, Palette, ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 import AuroraButton from "../components/ui/AuroraButton";
 import { ScrollTimeline } from "../components/ui/ScrollTimeline";
 import { UniverseCard } from "../components/UniverseCard";
-import { MarketingOrbVisual } from "../components/ui/MarketingOrbVisual";
 import { CountUp } from "../components/ui/CountUp";
 import { useClientEnv } from "../hooks/useClientEnv";
 
@@ -60,28 +58,25 @@ function Tilt({ children, disabled = false }: { children: React.ReactNode; disab
 
 const serviceCards = [
   {
-    icon: <span className="text-3xl">🎥</span>,
-    title: "Branding & AV Production",
-    description:
-      "Create the strategic foundation of your brand — naming, identity, and cinematic visual assets that elevate your message and power every marketing channel.",
-    glow: "purple" as const,
-    buttonText: "Ignite Your Brand",
-  },
-  {
-    icon: <span className="text-3xl">💻</span>,
-    title: "Website Design & Development",
-    description:
-      "Design and build a fast, high-converting website that showcases your identity, communicates your value, and turns visitors into qualified customers.",
+    icon: <span className="text-5xl">💪🏽</span>,
+    title: "Body",
+    description: ["• Energy", "• Discipline", "• Nervous system", "• Physical presence"].join("\n"),
     glow: "blue" as const,
-    buttonText: "BUILD YOUR WEBSITE",
+    buttonText: "Explore Body",
   },
   {
-    icon: <span className="text-3xl">🚀</span>,
-    title: "Performance Marketing",
-    description:
-      "Build a performance engine that attracts the right audiences, delivers the right message, and scales your revenue through intelligent, data-driven optimization.",
+    icon: <span className="text-5xl">🧠</span>,
+    title: "Mind",
+    description: ["• Identity", "• Focus", "• Emotional mastery", "• Decision clarity"].join("\n"),
     glow: "violet" as const,
-    buttonText: "GROW YOUR BRAND",
+    buttonText: "Explore Mind",
+  },
+  {
+    icon: <span className="text-5xl">✨</span>,
+    title: "Soul",
+    description: ["• Purpose", "• Intuition", "• Alignment", "• Meaningful action"].join("\n"),
+    glow: "gold" as const,
+    buttonText: "Explore Soul",
   },
 ];
 
@@ -123,7 +118,7 @@ const timelineEvents = [
   },
 ];
 
-export default function MarketingPage() {
+export default function MentoringPage() {
   const HERO_IMAGE_FILE = "Louis Drone.webp";
   const HERO_IMG = useMemo(
     () => (import.meta as any).env.BASE_URL + "About/" + encodeURIComponent(HERO_IMAGE_FILE),
@@ -291,7 +286,7 @@ export default function MarketingPage() {
               backgroundClip: "text",
             }}
           >
-            MARKETING
+            MENTORING
           </h1>
 
           <motion.div
@@ -305,8 +300,9 @@ export default function MarketingPage() {
               className="absolute inset-0 rounded-full"
               style={{
                 background:
-                  "linear-gradient(90deg, rgba(81,21,140,0.28) 0%, rgba(124,58,237,0.95) 50%, rgba(81,21,140,0.28) 100%)",
-                boxShadow: "0 0 28px rgba(81, 21, 140, 0.9), 0 0 60px rgba(124, 58, 237, 0.65)",
+                  "linear-gradient(90deg, rgba(160,120,32,0.92) 0%, rgba(160,120,32,0.76) 42%, rgba(150,150,210,0.32) 50%, rgba(0,72,220,0.68) 58%, rgba(0,72,220,0.9) 100%)",
+                boxShadow:
+                  "0 0 24px rgba(160,120,32,0.48), 0 0 32px rgba(0,72,220,0.52), 0 0 54px rgba(124, 58, 237, 0.3)",
                 filter: "drop-shadow(0 0 22px rgba(124, 58, 237, 0.85))",
                 height: "100%",
                 borderRadius: "999px",
@@ -318,10 +314,28 @@ export default function MarketingPage() {
               style={{
                 marginBottom: "4rem",
                 background:
-                  "linear-gradient(90deg, rgba(81,21,140,0.18) 0%, rgba(124,58,237,0.35) 50%, rgba(81,21,140,0.18) 100%)",
+                  "linear-gradient(90deg, rgba(160,120,32,0.2) 0%, rgba(160,120,32,0.14) 44%, rgba(160,160,220,0.22) 50%, rgba(0,72,220,0.22) 56%, rgba(0,72,220,0.3) 100%)",
               }}
             />
           </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.95, ease: "easeOut" }}
+            className="portfolio-subline text-center text-white leading-relaxed"
+            style={{
+              marginTop: "-3rem",
+              marginBottom: "2rem",
+              letterSpacing: "0.14em",
+              textTransform: "uppercase",
+              fontSize: "clamp(0.82rem, 3vw, 1.05rem)",
+            }}
+          >
+            Energetic Fitness · Body · Mind · Soul
+            <br />
+            — Conscious performance, clarity, and embodied growth. —
+          </motion.p>
         </div>
       </section>
 
@@ -364,16 +378,16 @@ export default function MarketingPage() {
               marginTop: isSmallScreen ? "-1.2rem" : undefined,
             }}
           >
-            MARKETING GROWTH ENGINE
+            ENERGETIC FITNESS
           </motion.h1>
           <div className="mt-4 h-[2px] w-full max-w-[320px] relative overflow-visible mx-auto" style={{ marginBottom: "1.5rem" }}>
             <div
               className="absolute inset-0 rounded-full"
               style={{
                 background:
-                  "linear-gradient(90deg, rgba(81,21,140,0.18) 0%, rgba(81,21,140,0.95) 50%, rgba(81,21,140,0.18) 100%)",
-                boxShadow: "0 0 24px rgba(81, 21, 140, 1), 0 0 56px rgba(81, 21, 140, 0.55)",
-                filter: "drop-shadow(0 0 20px rgba(81, 21, 140, 0.8))",
+                  "linear-gradient(90deg, rgba(255,215,0,0.2) 0%, rgba(255,215,0,0.9) 50%, rgba(255,215,0,0.2) 100%)",
+                boxShadow: "0 0 24px rgba(255, 215, 0, 0.9), 0 0 56px rgba(255, 215, 0, 0.55)",
+                filter: "drop-shadow(0 0 20px rgba(255, 215, 0, 0.8))",
                 height: "100%",
                 borderRadius: "999px",
               }}
@@ -382,7 +396,7 @@ export default function MarketingPage() {
               className="absolute inset-0 rounded-full blur-lg pointer-events-none"
               style={{
                 background:
-                  "linear-gradient(90deg, rgba(81,21,140,0.1) 0%, rgba(81,21,140,0.4) 50%, rgba(81,21,140,0.1) 100%)",
+                  "linear-gradient(90deg, rgba(255,215,0,0.1) 0%, rgba(255,215,0,0.35) 50%, rgba(255,215,0,0.1) 100%)",
               }}
             />
           </div>
@@ -390,45 +404,110 @@ export default function MarketingPage() {
             className="text-white/70 leading-relaxed mx-auto about-subline"
             style={{
               letterSpacing: isSmallScreen ? "0.14em" : "0.22em",
-              textTransform: "uppercase",
+              // Remove uppercase for sentence case
+              textTransform: "none",
               maxWidth: "56ch",
               fontSize: isSmallScreen ? "0.72rem" : "clamp(0.9rem, 1.8vw, 1.02rem)",
               textAlign: "center",
             }}
           >
-            I help brands express their identity through cinematic content, build trust with strategic social media, and
-            grow through performance marketing that reaches the right audiences and converts attention into revenue.
+            One-on-one mentoring for entrepreneurs, creators, and leaders who want real transformation.<br />
+            We work deeply across body, mind, and soul to build energy, clarity, discipline, and aligned action — so you perform at your highest level without burning out.
           </p>
 
           <div style={{ marginTop: "2.5rem" }}>
             <div className="contact-footer flex flex-wrap justify-center gap-3">
               <AuroraButton
-                label="SCALE YOUR BRAND"
+                label="APPLY 1:1"
                 className="px-10 sm:px-14 py-4 text-base tracking-[0.3em]"
-                onClick={handleContact}
+                onClick={() => (window.location.href = "/contact")}
               />
               <AuroraButton
-                label="SEE SERVICES"
+                label="VIEW PROCESS"
                 className="px-9 sm:px-12 py-4 text-xs sm:text-sm tracking-[0.26em]"
                 onClick={() => scrollToSection("services")}
               />
             </div>
           </div>
-
-          <div
-            className="flex flex-wrap items-center justify-center gap-3 text-sm text-white/85 tracking-[0.22em]"
-            style={{ marginTop: "1.5rem", textTransform: "uppercase" }}
-          >
-            <span>Custom brand strategy</span>
-            <span className="opacity-60">•</span>
-            <span>High-end video &amp; audio</span>
-            <span className="opacity-60">•</span>
-            <span>Full-funnel ad management</span>
-          </div>
         </div>
 
-        <div className="hero-img reveal flex flex-col items-center justify-center gap-6" style={{ flex: 1.1, maxWidth: "560px", margin: "0 auto" }}>
-          <MarketingOrbVisual />
+        <div
+          className="hero-text reveal"
+          style={{
+            textAlign: "center",
+            maxWidth: "640px",
+            margin: "0 auto",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <motion.h1
+            initial={{ opacity: 0, filter: "blur(20px)", y: 30 }}
+            animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+            transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
+            className="tracking-wide headline-gradient"
+            style={{
+              fontSize: "clamp(1.4rem, 3vw, 2.8rem)",
+              lineHeight: 1.05,
+              textTransform: "uppercase",
+              color: "transparent",
+              marginBottom: "1.25rem",
+              marginTop: isSmallScreen ? "-1.2rem" : undefined,
+            }}
+          >
+            EF-ACADEMY
+          </motion.h1>
+          <div className="text-white/80 uppercase tracking-[0.22em] text-xs sm:text-sm mb-2">
+          </div>
+          <div className="mt-4 h-[2px] w-full max-w-[320px] relative overflow-visible mx-auto" style={{ marginBottom: "1.5rem" }}>
+            <div
+              className="absolute inset-0 rounded-full"
+              style={{
+                background:
+                  "linear-gradient(90deg, rgba(0,82,255,0.18) 0%, rgba(0,82,255,0.85) 50%, rgba(0,82,255,0.18) 100%)",
+                boxShadow: "0 0 24px rgba(0, 82, 255, 0.9), 0 0 56px rgba(0, 82, 255, 0.55)",
+                filter: "drop-shadow(0 0 20px rgba(0, 82, 255, 0.65))",
+                height: "100%",
+                borderRadius: "999px",
+              }}
+            />
+            <div
+              className="absolute inset-0 rounded-full blur-lg pointer-events-none"
+              style={{
+                background:
+                  "linear-gradient(90deg, rgba(0,82,255,0.12) 0%, rgba(0,82,255,0.4) 50%, rgba(0,82,255,0.12) 100%)",
+              }}
+            />
+          </div>
+          <p
+            className="text-white/70 leading-relaxed mx-auto about-subline"
+            style={{
+              letterSpacing: isSmallScreen ? "0.14em" : "0.22em",
+              textTransform: "none",
+              maxWidth: "56ch",
+              fontSize: isSmallScreen ? "0.72rem" : "clamp(0.9rem, 1.8vw, 1.02rem)",
+              textAlign: "center",
+            }}
+          >
+            Learn the LUCID BODY · MIND · SOUL SYSTEM at your own pace.<br />
+            The Academy is a structured, in-depth video program that teaches you how to build energy, mental clarity, emotional regulation, and purpose-driven execution — step by step.
+          </p>
+
+          <div style={{ marginTop: "2.5rem" }}>
+            <div className="contact-footer flex flex-wrap justify-center gap-3">
+              <AuroraButton
+                label="ENTER ACADEMY"
+                className="px-10 sm:px-14 py-4 text-base tracking-[0.3em]"
+                onClick={() => (window.location.href = "/academy")}
+              />
+              <AuroraButton
+                label="VIEW BMS-SYSTEM"
+                className="px-9 sm:px-12 py-4 text-xs sm:text-sm tracking-[0.26em]"
+                onClick={() => scrollToSection("services")}
+              />
+            </div>
+          </div>
         </div>
 
       </section>
@@ -461,7 +540,7 @@ export default function MarketingPage() {
                 marginBottom: "0.4rem",
               }}
             >
-              MY SERVICES
+              BODY · MIND · SOUL
             </h2>
             <div
               className="text-lg md:text-xl font-semibold text-white/90 tracking-[0.18em] uppercase"

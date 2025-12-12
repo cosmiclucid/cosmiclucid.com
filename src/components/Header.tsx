@@ -57,13 +57,15 @@ export function Header() {
         {/* Navigation */}
         <div className="site-nav-container flex items-center">
           <SparkleNavbar
-            items={['About', 'Academy', 'Coaching', 'Contact', 'Portfolio']}
+            items={['About', 'Marketing', 'Mentoring', 'Portfolio', 'Contact']}
             color="#5A00FF"
             activeLabel={
               ({
                 '/about': 'About',
-                '/academy': 'Academy',
-                '/coaching': 'Coaching',
+                '/mentoring': 'Mentoring',
+                '/coaching': 'Mentoring',
+                '/academy': 'Mentoring',
+                '/portfolio/marketing': 'Marketing',
                 '/contact': 'Contact',
                 '/portfolio': 'Portfolio',
               } as Record<string, string | undefined>)[location.pathname] ?? null
@@ -71,8 +73,8 @@ export function Header() {
             onItemClick={(_, label) => {
               const routes: Record<string, string> = {
                 About: '/about',
-                Academy: '/academy',
-                Coaching: '/coaching',
+                Mentoring: '/mentoring',
+                Marketing: '/portfolio/marketing',
                 Contact: '/contact',
                 Portfolio: '/portfolio',
               };

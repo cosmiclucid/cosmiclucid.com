@@ -1,8 +1,11 @@
 import { motion } from 'motion/react';
-import { ChevronDown, Play } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import AuroraButton from '../components/ui/AuroraButton';
 import { useClientEnv } from '../hooks/useClientEnv';
+import { useNavigate } from 'react-router-dom';
+import { UniverseCard } from '../components/UniverseCard';
+
 function Tilt({ children, disabled = false }: { children: React.ReactNode; disabled?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const [rot, setRot] = useState({ rx: 0, ry: 0 });
@@ -51,8 +54,6 @@ function Tilt({ children, disabled = false }: { children: React.ReactNode; disab
     </div>
   );
 }
-import { useNavigate } from 'react-router-dom';
-import { UniverseCard } from '../components/UniverseCard';
 
 export default function Home() {
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -265,7 +266,7 @@ export default function Home() {
               <Tilt disabled={disableTilt}>
                 <div
                   className="relative mb-10 rounded-3xl"
-                  style={{ transform: disableTilt ? 'translateX(0px) translateY(0px)' : 'translateX(-20px) translateY(0px)' }}
+                  style={{ transform: 'translateX(0px) translateY(0px)' }}
                 >
                   <div className="relative z-10">
                     <UniverseCard
@@ -304,19 +305,19 @@ export default function Home() {
                   textShadow: '0 0 12px rgba(255, 215, 0, 0.8)',
                 }}
               >
-                TRANSFORMATION
+                MENTORING
               </motion.h3>
               <Tilt disabled={disableTilt}>
                 <div className="relative mb-10 rounded-3xl" style={{ transform: 'translateX(0px) translateY(0px)' }}>
                   <div className="relative z-10">
                     <UniverseCard
                       icon={<span>🧘‍♂️</span>}
-                      title="LUCID BODY–MIND–SOUL SYSTEM"
-                      description="Personal 1:1 energetic coaching to align your body, mind, and soul — and operate in total clarity and power."
-                      buttonText="Explore Coaching"
-                      buttonHref="/coaching"
+                      title="LUCID MENTORING"
+                      description="A single mentorship portal combining energetic coaching and conscious strategy — for creators, founders, and athletes who want aligned performance."
+                      buttonText="Explore Mentoring"
+                      buttonHref="/mentoring"
                       glowColor="gold"
-                      delay={0.4}
+                      delay={0.35}
                       tilt="center"
                     />
                   </div>
@@ -345,7 +346,7 @@ export default function Home() {
                   textShadow: '0 0 12px rgba(173, 128, 255, 0.8)',
                 }}
               >
-                EVOLUTION
+                AMPLIFICATION
               </motion.h3>
               <Tilt disabled={disableTilt}>
                 <div
@@ -354,13 +355,13 @@ export default function Home() {
                 >
                   <div className="relative z-10">
                     <UniverseCard
-                      icon={<span>🎓</span>}
-                      title="LUCID ACADEMY"
-                      description="Learn to master your energy, align body, mind, and soul, and elevate your consciousness — in life and business."
-                      buttonText="Visit Academy"
-                      buttonHref="/academy"
-                      glowColor="violet"
-                      delay={0.6}
+                      icon={<span>🚀</span>}
+                      title="COSMICLUCID MARKETING"
+                      description="Cinematic marketing systems, launch strategy, and performance creative to scale conscious brands."
+                      buttonText="View Marketing"
+                      buttonHref="/portfolio/marketing"
+                      glowColor="purple"
+                      delay={0.5}
                       tilt="right"
                     />
                   </div>
@@ -429,21 +430,21 @@ export default function Home() {
           />
           <UniverseCard
             icon={<span>🧘‍♂️</span>}
-            title="LUCID BODY–MIND–SOUL SYSTEM"
-            description="Personal 1:1 energetic coaching to align your body, mind, and soul."
-            buttonText="Explore Coaching"
-            buttonHref="/coaching"
+            title="LUCID MENTORING"
+            description="One mentorship portal blending energetic coaching and conscious strategy."
+            buttonText="Explore Mentoring"
+            buttonHref="/mentoring"
             glowColor="gold"
             delay={0}
             tilt="center"
           />
           <UniverseCard
-            icon={<span>🎓</span>}
-            title="LUCID ACADEMY"
-            description="Learn to master your energy, align body, mind, and soul."
-            buttonText="Visit Academy"
-            buttonHref="/academy"
-            glowColor="violet"
+            icon={<span>🚀</span>}
+            title="COSMICLUCID MARKETING"
+            description="Cinematic marketing systems, launch strategy, and performance creative to scale conscious brands."
+            buttonText="View Marketing"
+            buttonHref="/portfolio/marketing"
+            glowColor="purple"
             delay={0}
             tilt="right"
           />

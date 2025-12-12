@@ -8,8 +8,7 @@ import { detectLowPerformance } from './utils/detectLowPerformance';
 
 import Home from './pages/Home';
 import Portfolio from './pages/Portfolio';
-import Coaching from './pages/Coaching';
-import Academy from './pages/Academy';
+import Mentoring from './pages/Mentoring';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Datenschutz from './pages/Datenschutz';
@@ -72,8 +71,9 @@ export default function App() {
             <Route path="/portfolio/photography" element={<Photography />} />
             <Route path="/portfolio/audio" element={<Audio />} />
             <Route path="/portfolio/marketing" element={<Marketing />} />
-            <Route path="/coaching" element={<Coaching />} />
-            <Route path="/academy" element={<Academy />} />
+            <Route path="/mentoring" element={<Mentoring />} />
+            <Route path="/coaching" element={<Mentoring />} />
+            <Route path="/academy" element={<Mentoring />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/impressum" element={<Impressum />} />

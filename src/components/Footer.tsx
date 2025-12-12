@@ -43,7 +43,7 @@ export function Footer() {
             COSMICLUCID
           </h3>
           <p className="text-white/60 tracking-wider">
-            Art | Film | Music | Coaching
+            Art | Film | Music | Mentoring
           </p>
         </motion.div>
 
