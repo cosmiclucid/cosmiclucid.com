@@ -1,3 +1,5 @@
+"use client";
+
 import { Instagram, Youtube, Music, Mail } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -10,6 +12,16 @@ export function Footer() {
   ];
 
   const navLinks = ['Home', 'About', 'Contact', 'Impressum (Imprint)', 'Datenschutzerklärung (Privacy Policy)'];
+
+  const resetCookieConsent = () => {
+    try {
+      localStorage.removeItem("cookie-consent-v2");
+      // legacy keys
+      localStorage.removeItem("cookie-consent");
+      localStorage.removeItem("cookie-consent-v1");
+    } catch (e) {}
+    window.location.reload();
+  };
 
   return (
     <footer className="relative pt-32 pb-12 overflow-hidden">
@@ -95,6 +107,13 @@ export function Footer() {
               {link}
             </a>
           ))}
+          <button
+            type="button"
+            onClick={resetCookieConsent}
+            className="text-white/60 hover:text-white transition text-xs tracking-wide"
+          >
+            Cookie settings
+          </button>
         </motion.nav>
 
         {/* Copyright */}

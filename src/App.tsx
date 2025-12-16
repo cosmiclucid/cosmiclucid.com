@@ -17,6 +17,7 @@ import Photography from './pages/Photography';
 import Audio from './pages/Audio';
 import Marketing from './pages/Marketing';
 import Impressum from './pages/Impressum';
+import YourContent from './pages/YourContent';
 
 const CosmicBackground = lazy(async () => ({
   default: (await import('./components/CosmicBackground')).CosmicBackground,
@@ -78,6 +79,7 @@ export default function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/impressum" element={<Impressum />} />
             <Route path="/datenschutz" element={<Datenschutz />} />
+            <Route path="/your-content" element={<YourContent />} />
           </Routes>
         </main>
         <Footer />

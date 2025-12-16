@@ -385,9 +385,9 @@ export default function MentoringPage() {
               className="absolute inset-0 rounded-full"
               style={{
                 background:
-                  "linear-gradient(90deg, rgba(255,215,0,0.2) 0%, rgba(255,215,0,0.9) 50%, rgba(255,215,0,0.2) 100%)",
-                boxShadow: "0 0 24px rgba(255, 215, 0, 0.9), 0 0 56px rgba(255, 215, 0, 0.55)",
-                filter: "drop-shadow(0 0 20px rgba(255, 215, 0, 0.8))",
+                  "linear-gradient(90deg, rgba(160,120,32,0.2) 0%, rgba(160,120,32,0.9) 50%, rgba(160,120,32,0.2) 100%)",
+                boxShadow: "0 0 24px rgba(160,120,32,0.8), 0 0 56px rgba(160,120,32,0.5)",
+                filter: "drop-shadow(0 0 20px rgba(160,120,32,0.75))",
                 height: "100%",
                 borderRadius: "999px",
               }}
@@ -396,7 +396,7 @@ export default function MentoringPage() {
               className="absolute inset-0 rounded-full blur-lg pointer-events-none"
               style={{
                 background:
-                  "linear-gradient(90deg, rgba(255,215,0,0.1) 0%, rgba(255,215,0,0.35) 50%, rgba(255,215,0,0.1) 100%)",
+                  "linear-gradient(90deg, rgba(160,120,32,0.1) 0%, rgba(160,120,32,0.32) 50%, rgba(160,120,32,0.1) 100%)",
               }}
             />
           </div>
