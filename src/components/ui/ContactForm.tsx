@@ -5,7 +5,15 @@ import AuroraLogo from "./AuroraLogo";
 
 type FormStatus = "idle" | "loading" | "success" | "error";
 
-const WEB3FORMS_ACCESS_KEY = "8aaeb7f4-fedd-40fb-813b-dd9bab0eedb9";
+// n8n webhook (Option A: your site posts directly to n8n)
+// Set NEXT_PUBLIC_N8N_NEWSLETTER_SIGNUP_URL in .env for easy switching.
+// Example (dev):  https://n8n.cosmiclucid.com/webhook-test/newsletter/signup
+// Example (prod): https://n8n.cosmiclucid.com/webhook/newsletter/signup
+const N8N_NEWSLETTER_SIGNUP_URL =
+  process.env.NEXT_PUBLIC_N8N_NEWSLETTER_SIGNUP_URL ||
+  (process.env.NODE_ENV === "production"
+    ? "https://n8n.cosmiclucid.com/webhook/newsletter/signup"
+    : "https://n8n.cosmiclucid.com/webhook-test/newsletter/signup");
 
 export default function ContactForm() {
   const [status, setStatus] = useState<FormStatus>("idle");
@@ -25,6 +33,15 @@ export default function ContactForm() {
 
     const form = event.currentTarget;
     const formData = new FormData(form);
+
+    const botcheck = ((formData.get("botcheck") as string) || "").trim();
+    // If the hidden field is filled, treat as spam and exit silently.
+    if (botcheck) {
+      setStatus("success");
+      setMessage("Message sent!");
+      form.reset();
+      return;
+    }
 
     const firstName = ((formData.get("first_name") as string) || "").trim();
     const lastName = ((formData.get("last_name") as string) || "").trim();
@@ -55,34 +72,57 @@ export default function ContactForm() {
       return;
     }
 
-    formData.set("first_name", firstName);
-    formData.set("last_name", lastName);
-    formData.set("email", email);
-    formData.set("subject", subject);
-    formData.set("message", bodyMessage);
-
-    formData.append("access_key", WEB3FORMS_ACCESS_KEY);
-
-    const name = firstName || "Unknown";
-    formData.append("subject", `New message from ${name} via cosmiclucid.com`);
-    formData.append("from_name", "COSMICLUCID Contact Form");
+    // Send to n8n (newsletter signup + double opt-in email)
+    // IMPORTANT: n8n expects JSON. Make sure your webhook node is set to accept JSON.
+    const payload = {
+      Email: email,
+      "First Name": firstName,
+      "Last Name": lastName,
+      Subject: subject,
+      Message: bodyMessage,
+      Source: "contact_form",
+      Consent: true,
+      ConsentText: "Website form submission (double opt-in email will be sent)",
+      SubmittedAt: new Date().toISOString(),
+    };
 
     try {
-      const response = await fetch("https://api.web3forms.com/submit", {
+      const response = await fetch(N8N_NEWSLETTER_SIGNUP_URL, {
         method: "POST",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+        body: JSON.stringify(payload),
       });
 
-      const data = await response.json();
+      // Try to parse JSON even on non-2xx, but handle gracefully
+      let data: any = null;
+      try {
+        data = await response.json();
+      } catch {
+        data = null;
+      }
 
-      if (data.success) {
+      if (!response.ok) {
+        const details = data?.message || data?.error || `HTTP ${response.status}`;
+        setStatus("error");
+        setMessage("Something went wrong. Please try again.");
+        setErrorDetail(details);
+        return;
+      }
+
+      // Accept either { ok: true } or { success: true }
+      const ok = data?.ok === true || data?.success === true || response.ok;
+
+      if (ok) {
         setStatus("success");
-        setMessage("Message sent!");
+        setMessage("Almost done — please check your email to confirm (double opt-in). ");
         form.reset();
       } else {
         setStatus("error");
         setMessage("Something went wrong. Please try again.");
-        setErrorDetail(data.message || null);
+        setErrorDetail(data?.message || null);
       }
     } catch (err) {
       setStatus("error");
