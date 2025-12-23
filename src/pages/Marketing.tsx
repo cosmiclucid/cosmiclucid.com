@@ -324,6 +324,27 @@ export default function MarketingPage() {
           </motion.div>
         </div>
       </section>
+ 
+ {/* Subtext */}
+          <motion.p
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.95, ease: 'easeOut' }}
+            className="portfolio-subline text-center text-white leading-relaxed"
+            style={{
+              marginTop: '-2.8rem',
+              marginBottom: '1.2rem',
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              fontSize: 'clamp(0.82rem, 3vw, 1.05rem)',
+            }}
+          >
+            I fuse strategy, storytelling & performance into high-impact marketing
+            <br />
+            — turning attention into brands people trust and buy from —
+          </motion.p>
+
+        
 
       {/* HERO (Copied from About hero setup) */}
       <section

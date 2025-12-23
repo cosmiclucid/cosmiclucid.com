@@ -949,6 +949,20 @@ html {
   font-size: 0.85rem;
   opacity: 0.8;
 }
+
+/* Calendly embed: hide default spinner/loading dot */
+.calendly-inline-widget .calendly-spinner,
+.calendly-inline-widget .calendly-spinner > div {
+  display: none !important;
+}
+
+/* Responsive tweak: book-your-call heading spacing on mobile */
+@media (max-width: 768px) {
+  .contact-book-heading {
+    margin-top: 1.8rem !important;
+  }
+
+}
 /* =========================
    CONTACT PAGE LAYOUT
    ========================= */

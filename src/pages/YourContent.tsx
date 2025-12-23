@@ -28,7 +28,7 @@ export default function YourContentPage() {
     : "Your content is ready.";
 
   const openLink = (url: string) => window.open(url, "_blank", "noopener,noreferrer");
-  const fallbackDrive = "https://drive.google.com/drive/folders/1Ami8UHW2ll32mGtHDqSXoD8eCjmnSDbg?usp=sharing";
+  const fallbackDrive = "https://drive.google.com/drive/folders/1rldycd76dr_aO9we4zySdIr929kGEfVh?usp=sharing";
   const fallbackReview = "https://g.page/r/CQEWDof6Dmk5EBM/review";
   const reviewTarget = reviewValid && review ? review : fallbackReview;
 

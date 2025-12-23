@@ -2,6 +2,9 @@ import React from "react";
 import { motion } from "motion/react";
 import ContactForm from "../components/ui/ContactForm";
 import AuroraButton from "../components/ui/AuroraButton";
+import CalendlyInline from "../components/ui/CalendlyInline";
+
+const CALENDLY_URL = "https://calendly.com/louiskuschnir/30min?month=2025-12";
 
 const ContactPage: React.FC = () => {
   return (
@@ -39,7 +42,7 @@ const ContactPage: React.FC = () => {
 
         <motion.div
           initial={{ width: 0, opacity: 0 }}
-          whileInView={{ width: "520px", opacity: 1 }}
+          whileInView={{ width: "620px", opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 1, ease: "easeOut" }}
           className="contact-divider mx-auto h-[2px] w-full max-w-[580px] relative overflow-visible"
@@ -66,84 +69,156 @@ const ContactPage: React.FC = () => {
             }}
           />
         </motion.div>
+
+        <motion.p
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+          className="portfolio-subline text-center text-white leading-relaxed"
+          style={{
+            marginTop: "1rem",
+            marginBottom: "1.2rem",
+            letterSpacing: "0.14em",
+            textTransform: "uppercase",
+            fontSize: "clamp(0.82rem, 3vw, 1.05rem)",
+            whiteSpace: "pre-line",
+          }}
+        >
+          Connect with me{"\n"}— and bring your vision to life —
+        </motion.p>
       </motion.div>
 
       <div className="contact-layout">
-        <section className="contact-left" style={{ marginTop: "0.5rem" }}>
+        <section
+          className="contact-left"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            textAlign: "center",
+          }}
+        >
           <h2
-            className="headline-gradient"
+            className="headline-gradient contact-book-heading"
             style={{
               fontSize: "clamp(2rem, 3.4vw, 2.8rem)",
               lineHeight: 1.3,
               textTransform: "uppercase",
               letterSpacing: "0.01em",
               color: "transparent",
+              marginBottom: "0.8rem",
             }}
           >
-            Connect with me
-            <br />
-            and bring your
-            <br />
-            vision to life
+            Share your vision
           </h2>
-          <p
-            className="contact-subline"
+
+          <div
             style={{
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-              fontSize: "1rem",
-              marginTop: "0.1rem",
-              marginBottom: "0.3rem",
+              marginTop: "1rem",
+              width: "100%",
+              maxWidth: "780px",
             }}
           >
-            <br />
-            SHARE YOUR IDEAS, 
-            <br />YOUR CHALLENGES
-            <br /> AND YOUR GOALS AND VISIONS.
-            <br />
-            <br />
-            I&apos;LL HELP YOU TURN THEM INTO REALITY!
-          </p>
+            <div
+              className="contact-form-card"
+              style={{
+                width: "100%",
+              }}
+            >
+              <ContactForm />
+              <div
+                style={{
+                  marginTop: "2rem",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  textAlign: "center",
+                  gap: "0.75rem",
+                }}
+              >
+                <p
+                  className="contact-subline"
+                  style={{
+                    letterSpacing: "0.12em",
+                    textTransform: "uppercase",
+                    fontSize: "0.95rem",
+                    marginBottom: "0.35rem",
+                    marginTop: "0.2rem",
+                  }}
+                >
+                  Prefer a quick chat? <br />
+                  Reach me instantly via WhatsApp.
+                </p>
+                <form className="contact-form" onSubmit={(e) => e.preventDefault()} noValidate>
+                  <div className="contact-footer">
+                    <AuroraButton
+                      label="WRITE ME ON WHATSAPP"
+                      className="px-12 py-4 text-sm tracking-[0.28em]"
+                      onClick={() => window.open("https://wa.me/4915257256800", "_blank", "noopener,noreferrer")}
+                    />
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
 
         </section>
 
-        <section className="contact-right">
-          <div className="contact-form-card" style={{ marginTop: "1rem" }}>
-            <ContactForm />
+        <section
+          className="contact-right"
+          style={{
+            marginTop: "0.5rem",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            textAlign: "center",
+          }}
+        >
+          <h2
+            className="headline-gradient contact-book-heading"
+            style={{
+              fontSize: "clamp(2rem, 3.4vw, 2.8rem)",
+              lineHeight: 1.3,
+              textTransform: "uppercase",
+              letterSpacing: "0.01em",
+              color: "transparent",
+              marginTop: "-0.5rem",
+            }}
+          >
+            Book your call
+          </h2>
+
+          <div
+            style={{
+              marginTop: "1.8rem",
+              width: "100%",
+              maxWidth: "720px",
+            }}
+          >
             <div
               style={{
-                marginTop: "2rem",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                textAlign: "center",
-                gap: "0.75rem",
+                background: "rgba(255,255,255,0.02)",
+                border: "1px solid rgba(255,255,255,0.08)",
+                borderRadius: "16px",
+                padding: "0.75rem",
+                boxShadow: "0 20px 60px rgba(0,0,0,0.35)",
+                margin: "0 auto",
               }}
             >
-              <p
-                className="contact-subline"
-                style={{
-                  letterSpacing: "0.12em",
-                  textTransform: "uppercase",
-                  fontSize: "0.95rem",
-                  marginBottom: "0.35rem",
-                  marginTop: "0.2rem",
-                }}
-              >
-                Prefer a quick chat? <br />
-                Reach me instantly via WhatsApp.
-              </p>
-              <form className="contact-form" onSubmit={(e) => e.preventDefault()} noValidate>
-                <div className="contact-footer">
-                  <AuroraButton
-                    label="WRITE ME ON WHATSAPP"
-                    className="px-12 py-4 text-sm tracking-[0.28em]"
-                    onClick={() => window.open("https://wa.me/4915257256800", "_blank", "noopener,noreferrer")}
-                  />
-                </div>
-              </form>
+              <CalendlyInline url={CALENDLY_URL} height={760} />
+            </div>
+            <div className="contact-footer" style={{ marginTop: "0.9rem" }}>
+              <AuroraButton
+                label="Open Calendly in a new tab"
+                className="px-10 py-4 text-sm tracking-[0.26em] w-full"
+                href={CALENDLY_URL}
+                target="_blank"
+                rel="noopener,noreferrer"
+              />
             </div>
           </div>
+
         </section>
       </div>
     </main>

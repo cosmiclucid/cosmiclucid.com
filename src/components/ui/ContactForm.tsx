@@ -16,6 +16,9 @@ export default function ContactForm() {
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (status === "loading") return;
+
     setStatus("loading");
     setMessage("Sending your message...");
     setErrorDetail(null);
@@ -74,7 +77,7 @@ export default function ContactForm() {
 
       if (data.success) {
         setStatus("success");
-        setMessage("YOUR MESSAGE HAS BEEN SENT 💫");
+        setMessage("Message sent!");
         form.reset();
       } else {
         setStatus("error");
@@ -207,6 +210,7 @@ export default function ContactForm() {
           <div
             className={`contact-status contact-status--${status}`}
             aria-live="polite"
+            style={{ marginTop: "-0.5rem" }}
           >
             {message}
             {status === "error" && errorDetail && (
