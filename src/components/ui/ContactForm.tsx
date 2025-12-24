@@ -3,17 +3,36 @@
 import React, { useState } from "react";
 import AuroraLogo from "./AuroraLogo";
 
+
 type FormStatus = "idle" | "loading" | "success" | "error";
 
-// n8n webhook (Option A: your site posts directly to n8n)
-// Set NEXT_PUBLIC_N8N_NEWSLETTER_SIGNUP_URL in .env for easy switching.
-// Example (dev):  https://n8n.cosmiclucid.com/webhook-test/newsletter/signup
+const WEB3FORMS_ACCESS_KEY = "8aaeb7f4-fedd-40fb-813b-dd9bab0eedb9";
+
+
+// n8n newsletter signup webhook (client-safe)
+// Works in Vite (import.meta.env) and Next.js (process.env).
+// Vite: set VITE_N8N_NEWSLETTER_SIGNUP_URL in `.env` / `.env.local`
+// Next: set NEXT_PUBLIC_N8N_NEWSLETTER_SIGNUP_URL in `.env.local` / `.env`
+// Example (test): https://n8n.cosmiclucid.com/webhook-test/newsletter/signup
 // Example (prod): https://n8n.cosmiclucid.com/webhook/newsletter/signup
-const N8N_NEWSLETTER_SIGNUP_URL =
-  process.env.NEXT_PUBLIC_N8N_NEWSLETTER_SIGNUP_URL ||
-  (process.env.NODE_ENV === "production"
-    ? "https://n8n.cosmiclucid.com/webhook/newsletter/signup"
-    : "https://n8n.cosmiclucid.com/webhook-test/newsletter/signup");
+const getPublicEnv = (key: string): string => {
+  // Vite
+  const viteEnv = (typeof import.meta !== "undefined" && (import.meta as any).env)
+    ? (import.meta as any).env
+    : undefined;
+  if (viteEnv && typeof viteEnv[key] === "string") return String(viteEnv[key]);
+
+  // Next.js / Node-ish bundlers
+  const procEnv = (globalThis as any)?.process?.env;
+  if (procEnv && typeof procEnv[key] === "string") return String(procEnv[key]);
+
+  return "";
+};
+
+const N8N_NEWSLETTER_SIGNUP_URL = (
+  getPublicEnv("VITE_N8N_NEWSLETTER_SIGNUP_URL") ||
+  getPublicEnv("NEXT_PUBLIC_N8N_NEWSLETTER_SIGNUP_URL")
+).trim();
 
 export default function ContactForm() {
   const [status, setStatus] = useState<FormStatus>("idle");
@@ -72,9 +91,14 @@ export default function ContactForm() {
       return;
     }
 
-    // Send to n8n (newsletter signup + double opt-in email)
-    // IMPORTANT: n8n expects JSON. Make sure your webhook node is set to accept JSON.
-    const payload = {
+    formData.set("first_name", firstName);
+    formData.set("last_name", lastName);
+    formData.set("email", email);
+    formData.set("subject", subject);
+    formData.set("message", bodyMessage);
+
+    // 1) Try n8n first (newsletter signup + Google Sheets + double opt-in)
+    const n8nPayload = {
       Email: email,
       "First Name": firstName,
       "Last Name": lastName,
@@ -82,53 +106,73 @@ export default function ContactForm() {
       Message: bodyMessage,
       Source: "contact_form",
       Consent: true,
-      ConsentText: "Website form submission (double opt-in email will be sent)",
       SubmittedAt: new Date().toISOString(),
+
+      // lowercase/camel variants for robustness
+      email,
+      firstName,
+      lastName,
+      subject,
+      message: bodyMessage,
+      source: "contact_form",
+      consent: true,
     };
 
+    let n8nOk = false;
+
     try {
-      const response = await fetch(N8N_NEWSLETTER_SIGNUP_URL, {
+      if (!N8N_NEWSLETTER_SIGNUP_URL) {
+        throw new Error("N8N webhook URL is not configured");
+      }
+
+      const n8nRes = await fetch(N8N_NEWSLETTER_SIGNUP_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Accept": "application/json",
+          Accept: "application/json",
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(n8nPayload),
       });
 
-      // Try to parse JSON even on non-2xx, but handle gracefully
-      let data: any = null;
-      try {
-        data = await response.json();
-      } catch {
-        data = null;
+      if (n8nRes.ok) {
+        n8nOk = true;
       }
+    } catch {
+      n8nOk = false;
+    }
 
-      if (!response.ok) {
-        const details = data?.message || data?.error || `HTTP ${response.status}`;
+    // 2) If n8n failed, FALL BACK to Web3Forms so dev never breaks
+    if (!n8nOk) {
+      try {
+        const fallbackData = new FormData();
+        fallbackData.set("first_name", firstName);
+        fallbackData.set("last_name", lastName);
+        fallbackData.set("email", email);
+        fallbackData.set("subject", subject);
+        fallbackData.set("message", bodyMessage);
+        fallbackData.append("access_key", WEB3FORMS_ACCESS_KEY);
+
+        const response = await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          body: fallbackData,
+        });
+
+        const data = await response.json();
+        if (!data.success) {
+          throw new Error(data.message || "Web3Forms failed");
+        }
+      } catch (err) {
         setStatus("error");
         setMessage("Something went wrong. Please try again.");
-        setErrorDetail(details);
+        setErrorDetail(err instanceof Error ? err.message : null);
         return;
       }
-
-      // Accept either { ok: true } or { success: true }
-      const ok = data?.ok === true || data?.success === true || response.ok;
-
-      if (ok) {
-        setStatus("success");
-        setMessage("Almost done — please check your email to confirm (double opt-in). ");
-        form.reset();
-      } else {
-        setStatus("error");
-        setMessage("Something went wrong. Please try again.");
-        setErrorDetail(data?.message || null);
-      }
-    } catch (err) {
-      setStatus("error");
-      setMessage("Network error. Please try again.");
-      setErrorDetail(err instanceof Error ? err.message : null);
     }
+
+    // 3) Success UI (either path)
+    setStatus("success");
+    setMessage("Almost done — please check your email to confirm your subscription.");
+    form.reset();
   };
 
   return (
