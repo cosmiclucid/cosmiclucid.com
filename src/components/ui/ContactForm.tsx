@@ -171,7 +171,7 @@ export default function ContactForm() {
 
     // 3) Success UI (either path)
     setStatus("success");
-    setMessage("Almost done — please check your email to confirm your subscription.");
+    setMessage("Message Sent!\nCheck your email to confirm!");
     form.reset();
   };
 

@@ -46,9 +46,9 @@ export default function Datenschutz() {
 
           <motion.div
             initial={{ width: 0, opacity: 0 }}
-            animate={{ width: '420px', opacity: 1 }}
+            animate={{ width: '600px', opacity: 1 }}
             transition={{ duration: 1.1, delay: 0.7, ease: 'easeOut' }}
-            className="mx-auto h-[2px] w-full max-w-[460px] rounded-full"
+            className="mx-auto h-[2px] w-full max-w-[580px] rounded-full"
             style={{
               background: 'linear-gradient(90deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.9) 50%, rgba(255,255,255,0.08) 100%)',
               boxShadow: '0 0 14px rgba(255, 255, 255, 0.55)',
@@ -121,9 +121,9 @@ export default function Datenschutz() {
                   <h3 className="text-white text-sm tracking-[0.12em] uppercase" style={{ marginTop: '0.4rem' }}>Verantwortlicher</h3>
                   <p className="text-white/80 leading-relaxed" style={{ lineHeight: 1.7 }}>
                     Louis Kuschnir<br />
-                    Herdegert 27<br />
-                    74523 Schwäbisch Hall<br />
-                    (moving soon)<br />
+                    1209 Mountain Road PL NE, STE R<br />
+                    Albuquerque, NM 87110<br />
+                    New Mexico, USA<br />
                     E-Mail: <a href="mailto:louiskuschnir@gmail.com" className="underline underline-offset-4 text-white">louiskuschnir@gmail.com</a><br />
                     Verantwortlich für die Datenverarbeitung gemäß Art. 4 Nr. 7 DSGVO: Louis Kuschnir.
                   </p>
@@ -244,9 +244,9 @@ export default function Datenschutz() {
                   <h3 className="text-white text-sm tracking-[0.12em] uppercase" style={{ marginTop: '0.4rem' }}>Controller</h3>
                   <p className="text-white/70 leading-relaxed" style={{ lineHeight: 1.7 }}>
                     Responsible according to Art. 4(7) GDPR: Louis Kuschnir<br />
-                    Herdegert 27<br />
-                    74523 Schwäbisch Hall<br />
-                    (moving soon)<br />
+                    1209 Mountain Road PL NE, STE R<br />
+                    Albuquerque, NM 87110<br />
+                    New Mexico, USA<br />
                     Email: <a href="mailto:louiskuschnir@gmail.com" className="underline underline-offset-4 text-white">louiskuschnir@gmail.com</a>
                   </p>
                 </div>

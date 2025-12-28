@@ -9,11 +9,12 @@ interface UniverseCardProps {
   icon: ReactNode;
   title: string;
   description: string;
-  buttonText: string;
+  buttonText?: string;
   buttonHref?: string;
   glowColor: 'blue' | 'purple' | 'violet' | 'gold';
   delay?: number;
   tilt?: TiltDirection;
+  cardHeight?: number;
 }
 
 const glowStyles = {
@@ -51,7 +52,8 @@ export function UniverseCard({
   buttonHref = '#', 
   glowColor,
   delay = 0,
-  tilt = 'left'
+  tilt = 'left',
+  cardHeight = 450
 }: UniverseCardProps) {
   const { prefersReducedMotion, isSmallScreen, isMobile } = useClientEnv();
   const hoverable = !(prefersReducedMotion || isSmallScreen || isMobile);
@@ -77,9 +79,10 @@ export function UniverseCard({
     >
       {/* Glassmorphic card */}
       <div 
-        className={`cosmic-card ${tiltClass} relative bg-white/[0.03] backdrop-blur-xl rounded-3xl p-10 h-[450px] w-full max-w-[380px] flex flex-col items-center text-center border border-white/10 heavy-blur`}
+        className={`cosmic-card ${tiltClass} relative bg-white/[0.03] backdrop-blur-xl rounded-3xl p-10 w-full max-w-[380px] flex flex-col items-center text-center border border-white/10 heavy-blur`}
         style={{
           boxShadow: glow.shadow,
+          height: `${cardHeight}px`,
         }}
       >
         {/* Animated gradient background */}
@@ -118,18 +121,20 @@ export function UniverseCard({
             ))}
           </p>
 
-          {/* CTA Button */}
-          <motion.div
-            whileHover={hoverable ? { scale: 1.01 } : undefined}
-            whileTap={hoverable ? { scale: 0.985 } : undefined}
-            transition={{ duration: 0.18, ease: 'easeOut' }}
-          >
-            <AuroraButton
-              href={buttonHref}
-              label={buttonText}
-              className="px-7 py-3.5 text-sm tracking-[0.3em]"
-            />
-          </motion.div>
+          {/* CTA Button (optional) */}
+          {buttonText && (
+            <motion.div
+              whileHover={hoverable ? { scale: 1.01 } : undefined}
+              whileTap={hoverable ? { scale: 0.985 } : undefined}
+              transition={{ duration: 0.18, ease: 'easeOut' }}
+            >
+              <AuroraButton
+                href={buttonHref}
+                label={buttonText}
+                className="px-7 py-3.5 text-sm tracking-[0.3em]"
+              />
+            </motion.div>
+          )}
         </div>
 
         {/* Hover glow overlay */}

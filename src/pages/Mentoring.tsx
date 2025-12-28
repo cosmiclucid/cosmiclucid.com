@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import AuroraButton from "../components/ui/AuroraButton";
-import { ScrollTimeline } from "../components/ui/ScrollTimeline";
 import { UniverseCard } from "../components/UniverseCard";
 import { CountUp } from "../components/ui/CountUp";
 import { useClientEnv } from "../hooks/useClientEnv";
@@ -60,61 +59,35 @@ const serviceCards = [
   {
     icon: <span className="text-5xl">💪🏽</span>,
     title: "Body",
-    description: ["• Energy", "• Discipline", "• Nervous system", "• Physical presence"].join("\n"),
+    description: [
+      "• Build sustainable energy + strength",
+      "• Nervous system regulation",
+      "• Discipline & recovery routines",
+      "• Embodied confidence + presence",
+    ].join("\n"),
     glow: "blue" as const,
-    buttonText: "Explore Body",
   },
   {
     icon: <span className="text-5xl">🧠</span>,
     title: "Mind",
-    description: ["• Identity", "• Focus", "• Emotional mastery", "• Decision clarity"].join("\n"),
+    description: [
+      "• Identity upgrade + self-leadership",
+      "• Focus, clarity & execution",
+      "• Emotional mastery under pressure",
+      "• Clean decisions & boundaries",
+    ].join("\n"),
     glow: "violet" as const,
-    buttonText: "Explore Mind",
   },
   {
     icon: <span className="text-5xl">✨</span>,
     title: "Soul",
-    description: ["• Purpose", "• Intuition", "• Alignment", "• Meaningful action"].join("\n"),
+    description: [
+      "• Purpose, meaning & direction",
+      "• Intuition & inner alignment",
+      "• Values-based action",
+      "• Create a life that feels true",
+    ].join("\n"),
     glow: "gold" as const,
-    buttonText: "Explore Soul",
-  },
-];
-
-const timelineEvents = [
-  {
-    id: "discover",
-    year: "01",
-    title: "⭐ 01 — Discover",
-    description:
-      "We analyze your brand, audience, competitors and current performance.\nPain points, positioning gaps, opportunities — everything becomes clear.",
-  },
-  {
-    id: "design",
-    year: "02",
-    title: "⭐ 02 — Design",
-    description:
-      "We craft your brand system, messaging, content strategy, and funnel architecture.\nThis is the blueprint for scaling — identity, strategy, content direction.",
-  },
-  {
-    id: "build",
-    year: "03",
-    title: "⭐ 03 — Build",
-    description:
-      "We produce cinematic content, design your assets, and develop your website or landing system.\nYour brand gets the visuals and infrastructure it needs to convert.",
-  },
-  {
-    id: "deploy",
-    year: "04",
-    title: "⭐ 04 — Deploy",
-    description:
-      "We launch your content, website, ads, and growth engine across the right channels.\nFull system goes live.",
-  },
-  {
-    id: "scale",
-    year: "05",
-    title: "⭐ 05 — Scale (optional but powerful)",
-    description:
-      "We optimize campaigns, upgrade content, refine funnels, and scale what works.\nThis shows long-term partnership — not just a project.",
   },
 ];
 
@@ -300,7 +273,7 @@ export default function MentoringPage() {
               className="absolute inset-0 rounded-full"
               style={{
                 background:
-                  "linear-gradient(90deg, rgba(160,120,32,0.92) 0%, rgba(160,120,32,0.76) 42%, rgba(150,150,210,0.32) 50%, rgba(0,72,220,0.68) 58%, rgba(0,72,220,0.9) 100%)",
+                  "linear-gradient(90deg, rgba(160,120,32,0.92) 0%, rgba(160,120,32,0.82) 35%, rgba(140,118,140,0.55) 48%, rgba(110,120,180,0.62) 60%, rgba(40,100,210,0.78) 72%, rgba(0,72,220,0.9) 100%)",
                 boxShadow:
                   "0 0 24px rgba(160,120,32,0.48), 0 0 32px rgba(0,72,220,0.52), 0 0 54px rgba(124, 58, 237, 0.3)",
                 filter: "drop-shadow(0 0 22px rgba(124, 58, 237, 0.85))",
@@ -314,7 +287,7 @@ export default function MentoringPage() {
               style={{
                 marginBottom: "4rem",
                 background:
-                  "linear-gradient(90deg, rgba(160,120,32,0.2) 0%, rgba(160,120,32,0.14) 44%, rgba(160,160,220,0.22) 50%, rgba(0,72,220,0.22) 56%, rgba(0,72,220,0.3) 100%)",
+                  "linear-gradient(90deg, rgba(160,120,32,0.2) 0%, rgba(160,120,32,0.16) 34%, rgba(140,120,180,0.18) 48%, rgba(90,120,200,0.2) 62%, rgba(0,72,220,0.24) 78%, rgba(0,72,220,0.3) 100%)",
               }}
             />
           </motion.div>
@@ -546,13 +519,13 @@ export default function MentoringPage() {
               className="text-lg md:text-xl font-semibold text-white/90 tracking-[0.18em] uppercase"
               style={{ marginBottom: "0.2rem" }}
             >
-              From Brand to Funnel
+              The BMS System
             </div>
             <div
               className="text-white text-xs md:text-sm tracking-[0.22em] uppercase"
               style={{ marginBottom: "0.2rem" }}
             >
-              — A Complete Growth Engine to Scale Your Business —.
+              — Three pillars for conscious performance & real transformation —
             </div>
           </div>
 
@@ -576,78 +549,27 @@ export default function MentoringPage() {
                         icon={card.icon}
                         title={card.title.toUpperCase()}
                         description={card.description}
-                        buttonText={card.buttonText ?? "REQUEST OFFER"}
-                        buttonHref="#contact"
                         glowColor={card.glow}
                         delay={0.15 * index}
                         tilt={tilt}
+                        cardHeight={400}
                       />
                     </div>
                   </div>
-                </Tilt>
+                </Tilt> 
               );
             })}
           </div>
-        </div>
-      </section>
-
-      {/* SERVICES PIPELINE TIMELINE */}
-      <section className="py-24 bg-white/5 border-y border-white/10">
-        <div className="max-w-6xl mx-auto px-6">
           <div
-            className="text-center"
-            style={{
-              marginTop: "8rem",
-              marginBottom: "-4rem",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: "0.6rem",
-            }}
+            className="flex justify-center"
+            style={{ marginTop: "4rem", marginBottom: "8rem" }}
           >
-            <h2
-              className="tracking-wide headline-gradient"
-              style={{
-                fontSize: "clamp(1.6rem, 3vw, 2.8rem)",
-                lineHeight: 1.05,
-                textTransform: "uppercase",
-                color: "transparent",
-                marginBottom: "0.4rem",
-              }}
-            >
-              SERVICE PIPELINE
-            </h2>
+            <AuroraButton
+              label="discover your Potential"
+              className="px-10 sm:px-14 py-4 text-base tracking-[0.3em]"
+              onClick={() => scrollToSection("contact")}
+            />
           </div>
-          <ScrollTimeline
-            subtitle="How We Build Your Growth Engine"
-            events={timelineEvents}
-            finalCard={{
-              title: "⭐ 06 — Let’s Build Your Growth Engine",
-              subtitle: "06",
-              paragraphs: [
-                "You now have a complete, aligned brand system — identity, content, website, and marketing — all working together. The final step: putting it to work for you.",
-                "I tailor a custom offer around your goals and create a growth engine built to scale sustainably. This is where clarity turns into momentum — and momentum becomes measurable growth.",
-              ],
-            }}
-            ctaSlot={
-              <div
-                className="contact-footer"
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  margin: "-1rem auto 0rem",
-                  gap: "1rem",
-                }}
-              >
-                <AuroraButton
-                  label="Build YOUR Growth Engine 🚀"
-                  className="px-8 sm:px-12 py-3.5 text-sm sm:text-base tracking-[0.28em] timeline-cta-button"
-                  onClick={() => scrollToSection("contact")}
-                />
-              </div>
-            }
-          />
         </div>
       </section>
 
