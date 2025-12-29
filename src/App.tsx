@@ -4,7 +4,7 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { CookieBanner } from './components/ui/CookieBanner';
 import { detectLowPerformance } from './utils/detectLowPerformance';
-import { getQualityMode, QualityMode } from './components/lib/qualityMode';
+import { getQualityMode, QualityMode, detectSafari } from './components/lib/qualityMode';
 
 const Home = lazy(() => import('./pages/Home'));
 const Portfolio = lazy(() => import('./pages/Portfolio'));
@@ -31,7 +31,8 @@ export default function App() {
     return typeof window !== 'undefined' ? getQualityMode() : 'full';
   });
   const lowPerf = typeof navigator !== 'undefined' ? detectLowPerformance() : false;
-  const isLite = lowPerf || qualityMode === 'lite';
+  const safari = typeof navigator !== 'undefined' ? detectSafari() : false;
+  const isLite = lowPerf || safari || qualityMode === 'lite';
 
   useEffect(() => {
     const next = getQualityMode();

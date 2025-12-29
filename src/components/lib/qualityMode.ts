@@ -61,15 +61,14 @@ export function detectSafari(): boolean {
 
 /**
  * Decide quality mode.
- * - "lite" on Safari and/or iOS (more stable performance)
- * - "full" otherwise
+ * - "lite" on iOS (mobile Safari hardware is the bottleneck)
+ * - "full" otherwise, including desktop Safari (keep full visuals there)
  */
 export function getQualityMode(): QualityMode {
   // Default to full on the server; caller should run client-side.
   if (typeof window === "undefined") return "full";
 
-  const safari = detectSafari();
   const ios = detectIOS();
 
-  return safari || ios ? "lite" : "full";
+  return ios ? "lite" : "full";
 }
