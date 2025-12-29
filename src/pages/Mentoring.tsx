@@ -1,59 +1,9 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState, Suspense, lazy } from "react";
 import { motion } from "framer-motion";
 import AuroraButton from "../components/ui/AuroraButton";
-import { UniverseCard } from "../components/UniverseCard";
 import { CountUp } from "../components/ui/CountUp";
 import { useClientEnv } from "../hooks/useClientEnv";
-
-// Tilt interaction (mirrors homepage behavior)
-function Tilt({ children, disabled = false }: { children: React.ReactNode; disabled?: boolean }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [rot, setRot] = useState({ rx: 0, ry: 0 });
-  const frameRef = useRef<number | null>(null);
-  const pendingPos = useRef<{ x: number; y: number } | null>(null);
-
-  if (disabled) return <>{children}</>;
-
-  return (
-    <div
-      ref={ref}
-      onMouseMove={(e) => {
-        const el = ref.current;
-        if (!el) return;
-        const rect = el.getBoundingClientRect();
-        pendingPos.current = {
-          x: (e.clientX - rect.left) / rect.width,
-          y: (e.clientY - rect.top) / rect.height,
-        };
-        if (frameRef.current) return;
-        frameRef.current = requestAnimationFrame(() => {
-          frameRef.current = null;
-          const next = pendingPos.current;
-          if (!next) return;
-          const rx = (0.5 - next.y) * 6;
-          const ry = (next.x - 0.5) * 6;
-          setRot({ rx, ry });
-        });
-      }}
-      onMouseLeave={() => {
-        pendingPos.current = null;
-        frameRef.current && cancelAnimationFrame(frameRef.current);
-        frameRef.current = null;
-        setRot({ rx: 0, ry: 0 });
-      }}
-      style={{ perspective: "1000px" }}
-      className="will-change-transform"
-    >
-      <motion.div
-        style={{ transformStyle: "preserve-3d" }}
-        animate={{ rotateX: rot.rx, rotateY: rot.ry }}
-        transition={{ type: "spring", stiffness: 140, damping: 14, mass: 0.6 }}
-      >
-        {children}
-      </motion.div>
-    </div>
-  );
-}
+const ServicesSection = lazy(() => import("../components/mentoring/ServicesSection"));
 
 const serviceCards = [
   {
@@ -491,92 +441,25 @@ export default function MentoringPage() {
         className="py-24"
         style={{ scrollMarginTop: "6rem" }}
       >
-        <div className="max-w-6xl mx-auto px-6 space-y-12">
-          <div
-            className="text-center"
-            style={{
-              marginTop: isSmallScreen ? "-3rem" : "8rem",
-              marginBottom: "2rem",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: "0.6rem",
-            }}
-          >
-            <h2
-              className="tracking-wide headline-gradient"
-              style={{
-                fontSize: "clamp(1.6rem, 3vw, 2.8rem)",
-                lineHeight: 1.05,
-                textTransform: "uppercase",
-                color: "transparent",
-                marginBottom: "0.4rem",
-              }}
-            >
-              BODY · MIND · SOUL
-            </h2>
-            <div
-              className="text-lg md:text-xl font-semibold text-white/90 tracking-[0.18em] uppercase"
-              style={{ marginBottom: "0.2rem" }}
-            >
-              The BMS System
+        <Suspense
+          fallback={
+            <div className="max-w-6xl mx-auto px-6">
+              <div className="h-96 w-full rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm" />
             </div>
-            <div
-              className="text-white text-xs md:text-sm tracking-[0.22em] uppercase"
-              style={{ marginBottom: "0.2rem" }}
-            >
-              — Three pillars for conscious performance & real transformation —
-            </div>
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-10 items-stretch">
-            {serviceCards.map((card, index) => {
-              const tilt = index === 1 ? "center" : index === 2 ? "right" : "left";
-              const offset =
-                tilt === "left" ? "-20px" : tilt === "right" ? "20px" : "0px";
-              return (
-                <Tilt key={card.title} disabled={disableTilt}>
-                  <div
-                    className="relative"
-                    style={{
-                      transform: disableTilt
-                        ? "translateX(0px) translateY(0px)"
-                        : `translateX(${offset}) translateY(0px)`,
-                    }}
-                  >
-                    <div className="relative z-10">
-                      <UniverseCard
-                        icon={card.icon}
-                        title={card.title.toUpperCase()}
-                        description={card.description}
-                        glowColor={card.glow}
-                        delay={0.15 * index}
-                        tilt={tilt}
-                        cardHeight={400}
-                      />
-                    </div>
-                  </div>
-                </Tilt> 
-              );
-            })}
-          </div>
-          <div
-            className="flex justify-center"
-            style={{ marginTop: "4rem", marginBottom: "8rem" }}
-          >
-            <AuroraButton
-              label="discover your Potential"
-              className="px-10 sm:px-14 py-4 text-base tracking-[0.3em]"
-              onClick={() => scrollToSection("contact")}
-            />
-          </div>
-        </div>
+          }
+        >
+          <ServicesSection
+            cards={serviceCards}
+            disableTilt={disableTilt}
+            onContactClick={() => scrollToSection("contact")}
+          />
+        </Suspense>
       </section>
 
       {/* ABOUT HERO CLONE */}
       <section
         className="hero"
-        style={{ position: "relative", zIndex: 1, padding: "6rem 10%", marginTop: "-20rem" }}
+        style={{ position: "relative", zIndex: 1, padding: "6rem 10%", marginTop: "0" }}
       >
         <div
           className="hero-text reveal"

@@ -1,23 +1,23 @@
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
-import ElectroBorder from './components/ui/electro-border';
 import { CookieBanner } from './components/ui/CookieBanner';
 import { detectLowPerformance } from './utils/detectLowPerformance';
+import { getQualityMode, QualityMode } from './components/lib/qualityMode';
 
-import Home from './pages/Home';
-import Portfolio from './pages/Portfolio';
-import Mentoring from './pages/Mentoring';
-import About from './pages/About';
-import Contact from './pages/Contact';
-import Datenschutz from './pages/Datenschutz';
-import Film from './pages/Film';
-import Photography from './pages/Photography';
-import Audio from './pages/Audio';
-import Marketing from './pages/Marketing';
-import Impressum from './pages/Impressum';
-import YourContent from './pages/YourContent';
+const Home = lazy(() => import('./pages/Home'));
+const Portfolio = lazy(() => import('./pages/Portfolio'));
+const Mentoring = lazy(() => import('./pages/Mentoring'));
+const About = lazy(() => import('./pages/About'));
+const Contact = lazy(() => import('./pages/Contact'));
+const Datenschutz = lazy(() => import('./pages/Datenschutz'));
+const Film = lazy(() => import('./pages/Film'));
+const Photography = lazy(() => import('./pages/Photography'));
+const Audio = lazy(() => import('./pages/Audio'));
+const Marketing = lazy(() => import('./pages/Marketing'));
+const Impressum = lazy(() => import('./pages/Impressum'));
+const YourContent = lazy(() => import('./pages/YourContent'));
 
 const CosmicBackground = lazy(async () => ({
   default: (await import('./components/CosmicBackground')).CosmicBackground,
@@ -27,18 +27,38 @@ const SmokeyCursorFullScreen = lazy(() => import('./components/lightswind/smokey
 
 
 export default function App() {
+  const [qualityMode, setQualityMode] = useState<QualityMode>(() => {
+    return typeof window !== 'undefined' ? getQualityMode() : 'full';
+  });
   const lowPerf = typeof navigator !== 'undefined' ? detectLowPerformance() : false;
+  const isLite = lowPerf || qualityMode === 'lite';
+
+  useEffect(() => {
+    const next = getQualityMode();
+    setQualityMode((prev) => (prev === next ? prev : next));
+  }, []);
 
   return (
     <>
       <div className="relative z-0 min-h-screen overflow-x-hidden">
-        {/* Cosmic animated background */}
-        <Suspense fallback={null}>
-          <CosmicBackground />
-        </Suspense>
+        {/* Background: full = animated, lite = static */}
+        {!isLite ? (
+          <Suspense fallback={null}>
+            <CosmicBackground />
+          </Suspense>
+        ) : (
+          <div
+            aria-hidden
+            className="pointer-events-none fixed inset-0 -z-[10]"
+            style={{
+              background:
+                'radial-gradient(circle at 20% 20%, rgba(90,0,255,0.22), transparent 55%), radial-gradient(circle at 80% 30%, rgba(56,189,248,0.16), transparent 52%), radial-gradient(circle at 50% 85%, rgba(17,24,39,0.9), rgba(2,6,23,1))',
+            }}
+          />
+        )}
         
         {/* smokey cursor animation */}
-        {!lowPerf && (
+        {!isLite && (
           <Suspense fallback={null}>
             <SmokeyCursorFullScreen
               className="-z-[5]"
@@ -65,22 +85,24 @@ export default function App() {
         {/* Main content */}
         <Header />
         <main>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/portfolio" element={<Portfolio />} />
-            <Route path="/portfolio/film" element={<Film />} />
-            <Route path="/portfolio/photography" element={<Photography />} />
-            <Route path="/portfolio/audio" element={<Audio />} />
-            <Route path="/portfolio/marketing" element={<Marketing />} />
-            <Route path="/mentoring" element={<Mentoring />} />
-            <Route path="/coaching" element={<Mentoring />} />
-            <Route path="/academy" element={<Mentoring />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/impressum" element={<Impressum />} />
-            <Route path="/datenschutz" element={<Datenschutz />} />
-            <Route path="/your-content" element={<YourContent />} />
-          </Routes>
+          <Suspense fallback={null}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/portfolio" element={<Portfolio />} />
+              <Route path="/portfolio/film" element={<Film />} />
+              <Route path="/portfolio/photography" element={<Photography />} />
+              <Route path="/portfolio/audio" element={<Audio />} />
+              <Route path="/portfolio/marketing" element={<Marketing />} />
+              <Route path="/mentoring" element={<Mentoring />} />
+              <Route path="/coaching" element={<Mentoring />} />
+              <Route path="/academy" element={<Mentoring />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/impressum" element={<Impressum />} />
+              <Route path="/datenschutz" element={<Datenschutz />} />
+              <Route path="/your-content" element={<YourContent />} />
+            </Routes>
+          </Suspense>
         </main>
         <Footer />
         <CookieBanner />
