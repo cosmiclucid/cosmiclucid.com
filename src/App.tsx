@@ -1,10 +1,8 @@
-import { Suspense, lazy, useEffect, useState } from 'react';
+import { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { CookieBanner } from './components/ui/CookieBanner';
-import { detectLowPerformance } from './utils/detectLowPerformance';
-import { getQualityMode, QualityMode, detectSafari } from './components/lib/qualityMode';
 
 const Home = lazy(() => import('./pages/Home'));
 const Portfolio = lazy(() => import('./pages/Portfolio'));
@@ -27,17 +25,7 @@ const SmokeyCursorFullScreen = lazy(() => import('./components/lightswind/smokey
 
 
 export default function App() {
-  const [qualityMode, setQualityMode] = useState<QualityMode>(() => {
-    return typeof window !== 'undefined' ? getQualityMode() : 'full';
-  });
-  const lowPerf = typeof navigator !== 'undefined' ? detectLowPerformance() : false;
-  const safari = typeof navigator !== 'undefined' ? detectSafari() : false;
-  const isLite = lowPerf || safari || qualityMode === 'lite';
-
-  useEffect(() => {
-    const next = getQualityMode();
-    setQualityMode((prev) => (prev === next ? prev : next));
-  }, []);
+  const isLite = false;
 
   return (
     <>

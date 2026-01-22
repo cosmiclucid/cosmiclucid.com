@@ -43,8 +43,12 @@
   --header-mobile-height-sm: 4rem;    /* 58px */
   --header-mobile-pt: 1rem;
   --header-mobile-pb: 1rem;
-  --header-mobile-pt-sm: 2rem;
-  --header-mobile-pb-sm: -4rem;
+  --header-mobile-pt-sm: 1rem;
+  --header-mobile-pb-sm: -8rem;
+  --header-nav-mt: -1rem;          /* raise/lower nav relative to logo */
+  --header-nav-mt-sm: -2rem;
+  --header-logo-mt: 0.25rem;       /* raise/lower logo relative to header */
+  --header-logo-mt-sm: 0.1rem;
 }
 
 .dark {
@@ -92,8 +96,12 @@
   --header-mobile-pb-sm: 0.8rem;
   --header-mobile-gap: 0.25rem;       /* space between logo and nav on phones */
   --header-mobile-gap-sm: 0.18rem;    /* very small phones */
-  --header-logo-mb: 0.0rem;          /* margin under logo wrapper */
-  --header-logo-mb-sm: 0.08rem;
+  --header-logo-mb: 0%;          /* margin under logo wrapper */
+  --header-logo-mb-sm: -0.08rem;
+  --header-nav-mt: -1.8rem;          /* raise/lower nav relative to logo */
+  --header-nav-mt-sm: -1.4rem;
+  --header-logo-mt: 0.25rem;       /* raise/lower logo relative to header */
+  --header-logo-mt-sm: 0.1rem;
 }
 
 @layer base {
@@ -1607,7 +1615,7 @@ body {
     transform-origin: center;
     letter-spacing: 0.24em;
     margin-bottom: var(--header-logo-mb); /* adjustable space below logo */
-    margin-top: -3.2rem; /* move logo further up */
+    margin-top: var(--header-logo-mt);
   }
 
   .site-logo .site-logo-mark {
@@ -1628,7 +1636,7 @@ body {
   .site-nav-container {
     width: 100%;
     justify-content: center;
-    margin-top: -1.4rem; /* lower nav to increase gap from logo */
+    margin-top: var(--header-nav-mt);
   }
 
   .hero-section {
@@ -1659,6 +1667,11 @@ body {
     margin-inline: auto !important;
     max-width: 90vw !important;
     line-height: 1.6;
+  }
+
+  .marketing-page .portfolio-subline {
+    margin-inline: auto;
+    text-align: center;
   }
 
   .hero-cta-row {
@@ -1848,11 +1861,11 @@ body {
   .site-logo {
     transform: scale(1.14);
     margin-bottom: var(--header-logo-mb-sm);
-    margin-top: -2.6rem;
+    margin-top: var(--header-logo-mt-sm);
   }
 
   .site-nav-container {
-    margin-top: -1rem;
+    margin-top: var(--header-nav-mt-sm);
   }
 
   .hero-section {
