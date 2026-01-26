@@ -4,7 +4,8 @@ import ContactForm from "../components/ui/ContactForm";
 import AuroraButton from "../components/ui/AuroraButton";
 import CalendlyInline from "../components/ui/CalendlyInline";
 
-const CALENDLY_URL = "https://calendly.com/louiskuschnir/30min?month=2025-12";
+const CALENDLY_URL =
+  "https://calendly.com/louiskuschnir/30min?month=2025-12&background_color=000000&text_color=ffffff&primary_color=5a00ff";
 
 const ContactPage: React.FC = () => {
   return (

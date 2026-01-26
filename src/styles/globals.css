@@ -964,6 +964,17 @@ html {
   display: none !important;
 }
 
+/* Calendly inline embed: force dark appearance when URL params are ignored */
+.contact-page .calendly-inline-widget {
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.contact-page .calendly-inline-widget iframe {
+  filter: invert(1) hue-rotate(180deg) saturate(1.2) !important;
+}
+
 /* Responsive tweak: book-your-call heading spacing on mobile */
 @media (max-width: 768px) {
   .contact-book-heading {

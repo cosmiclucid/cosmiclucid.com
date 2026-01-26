@@ -67,7 +67,7 @@ export default function Home() {
     const id =
       'requestIdleCallback' in window
         ? (window as any).requestIdleCallback(() => setPreloadCards(true))
-        : window.setTimeout(() => setPreloadCards(true), 150);
+        : (window as any).setTimeout(() => setPreloadCards(true), 150);
     return () => {
       if ('cancelIdleCallback' in window) {
         (window as any).cancelIdleCallback(id);
