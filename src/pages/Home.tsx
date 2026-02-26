@@ -108,13 +108,14 @@ export default function Home() {
               transition={{ duration: 0.8, delay: 0.6, ease: 'easeOut' }}
               className="hero-headline mb-6 tracking-tight headline-gradient"
               style={{
-                fontSize: 'clamp(2.5rem, 5vw, 4.5rem)',
+                fontSize: 'clamp(3.5rem, 5vw, 3.5rem)',
                 lineHeight: 1.05,
                 textTransform: 'uppercase',
                 color: 'transparent',
               }}
             >
-              AUDIOVISUAL PRODUCTION & ENERGETIC FITNESS
+              Social Media Marketing, Branding & Content Production
+
             </motion.h1>
 
             <motion.p
@@ -130,7 +131,8 @@ export default function Home() {
                 marginBottom: '3rem',
               }}
             >
-              WHERE ART, FREQUENCY, AND CONSCIOUSNESS MERGE INTO MOTION.
+              Where strategy, creativity and consciousness turn into measurable growth.
+
             </motion.p>
 
             <motion.div
@@ -141,12 +143,18 @@ export default function Home() {
             >
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <AuroraButton
-                  label="ENTER THE COSMOS"
+                  label="BOOK A STRATEGY CALL"
+                  className="px-10 sm:px-12 py-4 text-base tracking-[0.3em]"
+                  onClick={() => navigate('/contact')}
+                />
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <AuroraButton
+                  label="VIEW SERVICES"
                   className="px-10 sm:px-12 py-4 text-base tracking-[0.3em]"
                   onClick={() => handleEnterCosmos()}
                 />
               </motion.div>
-
             </motion.div>
           </div>
         </div>
@@ -224,7 +232,7 @@ export default function Home() {
               className="text-white mb-5 tracking-wide glow-text"
               style={{ fontSize: 'clamp(2.5rem, 2.5vw, 2.5rem)', lineHeight: 1.05 }}
             >
-              CHOOSE YOUR COSMOS
+              CHOOSE YOUR GROWTH COSMOS
             </h2>
 
             <motion.div
@@ -261,7 +269,7 @@ export default function Home() {
                   textShadow: '0 0 12px rgba(64, 128, 255, 0.8)',
                 }}
               >
-                CREATION
+                MARKETING & BRAND GROWTH
               </motion.h3>
               <Tilt disabled={disableTilt}>
                 <div
@@ -270,14 +278,55 @@ export default function Home() {
                 >
                   <div className="relative z-10">
                     <UniverseCard
-                      icon={<span>🎥</span>}
-                      title="COSMICLUCID PRODUCTION"
-                      description="Audiovisual production and creative marketing for conscious brands and artists."
-                      buttonText="View Portfolio"
-                      buttonHref="/portfolio"
+                      icon={<span>🚀</span>}
+                      title="Strategic Social Media Marketing & Brand Scaling"
+                      description="We build digital systems that attract attention, generate leads and turn visibility into revenue — through brand positioning, high-converting websites and SMM."
+                      buttonText="View Marketing"
+                      buttonHref="/portfolio/marketing"
                       glowColor="blue"
                       delay={0.2}
                       tilt="left"
+                    />
+                  </div>
+                </div>
+              </Tilt>
+            </div>
+
+            <div className="flex flex-col items-center">
+              <motion.h3
+                className="text-white/90 text-lg tracking-[0.25em] uppercase mb-6 glow-text"
+                animate={
+                  prefersReducedMotion
+                    ? { opacity: 1, scale: 1 }
+                    : {
+                        opacity: [0.9, 1, 0.9],
+                        scale: [1, 1.02, 1],
+                        textShadow: [
+                          '0 0 12px rgba(173, 128, 255, 0.6), 0 0 24px rgba(173, 128, 255, 0.4)',
+                          '0 0 18px rgba(173, 128, 255, 0.7), 0 0 32px rgba(173, 128, 255, 0.5)',
+                          '0 0 12px rgba(173, 128, 255, 0.6), 0 0 24px rgba(173, 128, 255, 0.4)',
+                        ],
+                      }
+                }
+                transition={{ duration: 3, repeat: prefersReducedMotion ? 0 : Infinity, ease: 'easeInOut' }}
+                style={{
+                  textShadow: '0 0 12px rgba(173, 128, 255, 0.8)',
+                }}
+              >
+                PRODUCTION
+              </motion.h3>
+              <Tilt disabled={disableTilt}>
+                <div className="relative mb-10 rounded-3xl" style={{ transform: 'translateX(0px) translateY(0px)' }}>
+                  <div className="relative z-10">
+                    <UniverseCard
+                      icon={<span>🎥</span>}
+                      title="Cinematic Content & creative AudioVisual Production"
+                      description="We create high-impact visual content that captures attention, strengthens authority and drives engagement across digital platforms."
+                      buttonText="View Portfolio"
+                      buttonHref="/portfolio"
+                      glowColor="purple"
+                      delay={0.35}
+                      tilt="center"
                     />
                   </div>
                 </div>
@@ -308,59 +357,18 @@ export default function Home() {
                 MENTORING
               </motion.h3>
               <Tilt disabled={disableTilt}>
-                <div className="relative mb-10 rounded-3xl" style={{ transform: 'translateX(0px) translateY(0px)' }}>
-                  <div className="relative z-10">
-                    <UniverseCard
-                      icon={<span>🧘‍♂️</span>}
-                      title="LUCID MENTORING"
-                      description="A single mentorship portal combining energetic coaching and conscious strategy — for creators, founders, and athletes who want aligned performance."
-                      buttonText="Explore Mentoring"
-                      buttonHref="/mentoring"
-                      glowColor="gold"
-                      delay={0.35}
-                      tilt="center"
-                    />
-                  </div>
-                </div>
-              </Tilt>
-            </div>
-
-            <div className="flex flex-col items-center">
-              <motion.h3
-                className="text-white/90 text-lg tracking-[0.25em] uppercase mb-6 glow-text"
-                animate={
-                  prefersReducedMotion
-                    ? { opacity: 1, scale: 1 }
-                    : {
-                        opacity: [0.9, 1, 0.9],
-                        scale: [1, 1.02, 1],
-                        textShadow: [
-                          '0 0 12px rgba(173, 128, 255, 0.6), 0 0 24px rgba(173, 128, 255, 0.4)',
-                          '0 0 18px rgba(173, 128, 255, 0.7), 0 0 32px rgba(173, 128, 255, 0.5)',
-                          '0 0 12px rgba(173, 128, 255, 0.6), 0 0 24px rgba(173, 128, 255, 0.4)',
-                        ],
-                      }
-                }
-                transition={{ duration: 3, repeat: prefersReducedMotion ? 0 : Infinity, ease: 'easeInOut' }}
-                style={{
-                  textShadow: '0 0 12px rgba(173, 128, 255, 0.8)',
-                }}
-              >
-                AMPLIFICATION
-              </motion.h3>
-              <Tilt disabled={disableTilt}>
                 <div
                   className="relative mb-10 rounded-3xl"
                   style={{ transform: disableTilt ? 'translateX(0px) translateY(0px)' : 'translateX(20px) translateY(0px)' }}
                 >
                   <div className="relative z-10">
                     <UniverseCard
-                      icon={<span>🚀</span>}
-                      title="COSMICLUCID MARKETING"
-                      description="Cinematic marketing systems, launch strategy, and performance creative to scale conscious brands."
-                      buttonText="View Marketing"
-                      buttonHref="/portfolio/marketing"
-                      glowColor="purple"
+                      icon={<span>🧘‍♂️</span>}
+                      title="Energetic Fitness & Lucid Mentorship"
+                      description="We help founders align Body, Mind and Soul — building physical resilience, mental clarity and purpose-driven leadership for sustainable growth."
+                      buttonText="Explore Mentoring"
+                      buttonHref="/mentoring"
+                      glowColor="gold"
                       delay={0.5}
                       tilt="right"
                     />
@@ -419,32 +427,32 @@ export default function Home() {
           style={{ position: 'absolute', opacity: 0, pointerEvents: 'none', height: 0, overflow: 'hidden' }}
         >
           <UniverseCard
-            icon={<span>🎥</span>}
-            title="COSMICLUCID PRODUCTION"
-            description="Audiovisual production and creative marketing for conscious brands and artists."
-            buttonText="View Portfolio"
-            buttonHref="/portfolio"
+            icon={<span>🚀</span>}
+            title="Strategic Social Media Marketing & Brand Scaling"
+            description="We build strategic digital ecosystems that attract attention, generate leads and turn visibility into revenue. From social media marketing and brand positioning to launch strategy and performance creative — we help ambitious brands grow with clarity and impact."
+            buttonText="View Marketing"
+            buttonHref="/portfolio/marketing"
             glowColor="blue"
             delay={0}
             tilt="left"
           />
           <UniverseCard
-            icon={<span>🧘‍♂️</span>}
-            title="LUCID MENTORING"
-            description="One mentorship portal blending energetic coaching and conscious strategy."
-            buttonText="Explore Mentoring"
-            buttonHref="/mentoring"
-            glowColor="gold"
+            icon={<span>🎥</span>}
+            title="Cinematic Content & High-Impact Visual Production"
+            description="Premium videography, photography and audiovisual storytelling designed to elevate your brand presence. We create scroll-stopping content that strengthens identity, builds authority and performs across digital platforms."
+            buttonText="View Portfolio"
+            buttonHref="/portfolio"
+            glowColor="purple"
             delay={0}
             tilt="center"
           />
           <UniverseCard
-            icon={<span>🚀</span>}
-            title="COSMICLUCID MARKETING"
-            description="Cinematic marketing systems, launch strategy, and performance creative to scale conscious brands."
-            buttonText="View Marketing"
-            buttonHref="/portfolio/marketing"
-            glowColor="purple"
+            icon={<span>🧘‍♂️</span>}
+            title="Energetic Performance & Conscious Leadership Mentorship"
+            description="A high-level mentorship experience combining strategic clarity with energetic alignment. Designed for founders, creators and performers who want to align Body, Mind and Business for sustained growth and peak performance."
+            buttonText="Explore Mentoring"
+            buttonHref="/mentoring"
+            glowColor="gold"
             delay={0}
             tilt="right"
           />

@@ -680,9 +680,9 @@ export default function About() {
               lineHeight: 1.6,
             }}
           >
-            Currently based near <strong>Stuttgart</strong>
+            Currently travelling <strong>All around the World</strong>
             <br />
-            — but creating from everywhere in the cosmos —
+            — creating from everywhere in the cosmos —
           </p>
 
           <LazyMount rootMargin={isMobile ? '0px 0px 50px 0px' : '0px 0px 200px 0px'}>
