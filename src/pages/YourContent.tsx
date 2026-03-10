@@ -24,11 +24,11 @@ export default function YourContentPage() {
   const reviewValid = isValidUrl(review);
 
   const subline = name
-    ? `Your content is ready, ${name}.`
-    : "Your content is ready.";
+    ? `Your cosmic content is ready, ${name}.`
+    : "Your cosmic content is ready.";
 
   const openLink = (url: string) => window.open(url, "_blank", "noopener,noreferrer");
-  const fallbackDrive = "https://drive.google.com/drive/folders/1rldycd76dr_aO9we4zySdIr929kGEfVh?usp=sharing";
+  const fallbackDrive = "https://drive.google.com/drive/folders/1l_1H6qrpgPdygkOyCPsTWHld9wePaNrv?usp=sharing";
   const fallbackReview = "https://g.page/r/CQEWDof6Dmk5EBM/review";
   const reviewTarget = reviewValid && review ? review : fallbackReview;
 
@@ -101,6 +101,24 @@ export default function YourContentPage() {
           >
             {subline}
           </motion.p>
+
+          <motion.img
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: [0, -8, 0] }}
+            transition={{
+              opacity: { duration: 0.9, delay: 0.55, ease: "easeOut" },
+              y: { duration: 4.2, repeat: Infinity, ease: "easeInOut", delay: 1.1 },
+            }}
+            src="/Random/IMG_5994.jpg"
+            alt="Cosmic content ready"
+            className="rounded-3xl"
+            style={{
+              marginTop: "1rem",
+              marginBottom: "-6rem",
+              width: "min(80%, 32rem)",
+              boxShadow: "0 24px 60px rgba(16,18,58,0.45), 0 0 42px rgba(124,58,237,0.5)",
+            }}
+          />
         </div>
 
         <div className="space-y-6 flex flex-col items-center text-center">
@@ -110,7 +128,7 @@ export default function YourContentPage() {
               className="text-white/70 text-[0.8rem] sm:text-[0.85rem] tracking-[0.12em] uppercase"
               style={{ marginBottom: "1rem", marginLeft: "auto", marginRight: "auto" }}
             >
-              Your files are ready for download.
+              Your divine files are ready for download.
             </p>
 
             <AuroraButton

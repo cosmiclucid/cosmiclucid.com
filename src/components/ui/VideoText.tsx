@@ -111,12 +111,10 @@ export function VideoText({
         </div>
       )}
 
-      {/* Always include fallback element (some CSS may rely on it), but only show it when video mask is disabled */}
-      {!useVideoMask && (
-        <span className="video-text-aurora-fallback">
-          <AuroraLogo text={content} />
-        </span>
-      )}
+      {/* Always include fallback element (CSS toggles visibility, especially on mobile) */}
+      <span className="video-text-aurora-fallback">
+        <AuroraLogo text={content} />
+      </span>
     </MotionComponent>
   );
 }

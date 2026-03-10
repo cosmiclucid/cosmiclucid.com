@@ -37,7 +37,7 @@ export default function AuroraLogo({ text = "COSMICLUCID", className = "" }: Pro
           will-change: background-position, background-size;
           transform: translateZ(0);
 
-          animation: aurora-highlight 16s linear infinite, aurora-bg-zoom 18s ease-in-out infinite alternate;
+          animation: aurora-highlight 16s linear infinite alternate, aurora-bg-zoom 18s ease-in-out infinite alternate;
           display: inline-block;
         }
 
