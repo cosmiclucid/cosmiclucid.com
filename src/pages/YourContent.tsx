@@ -34,7 +34,7 @@ export default function YourContentPage() {
 
   return (
     <main
-      className="relative z-10 min-h-screen flex flex-col items-center justify-start px-6 text-white"
+      className="your-content-page relative z-10 min-h-screen flex flex-col items-center justify-start px-6 text-white"
       style={{ paddingTop: "6rem", paddingBottom: "6rem" }}
     >
       <div
@@ -55,7 +55,7 @@ export default function YourContentPage() {
               backgroundImage: "linear-gradient(90deg, #1BA3FF 0%, #0052FF 52%, #5A00FF 100%)",
               WebkitBackgroundClip: "text",
               backgroundClip: "text",
-              marginTop: "1.5rem",
+              marginTop: "var(--your-content-headline-mt, 1.5rem)",
             }}
           >
             YOUR CONTENT

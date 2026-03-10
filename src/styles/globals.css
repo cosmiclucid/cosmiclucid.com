@@ -1580,6 +1580,10 @@ body {
 }
 
 @media (max-width: 768px) {
+  .your-content-page {
+    --your-content-headline-mt: 0.6rem;
+  }
+
   h1 {
     font-size: clamp(1.9rem, 6.5vw, 2.6rem);
     line-height: 1.15;
