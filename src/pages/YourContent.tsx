@@ -28,7 +28,7 @@ export default function YourContentPage() {
     : "Your cosmic content is ready.";
 
   const openLink = (url: string) => window.open(url, "_blank", "noopener,noreferrer");
-  const fallbackDrive = "https://drive.google.com/drive/folders/1l_1H6qrpgPdygkOyCPsTWHld9wePaNrv?usp=sharing";
+  const fallbackDrive = "https://apps.scrappbook.de/ry0SVmRYbx";
   const fallbackReview = "https://g.page/r/CQEWDof6Dmk5EBM/review";
   const reviewTarget = reviewValid && review ? review : fallbackReview;
 
@@ -141,7 +141,7 @@ export default function YourContentPage() {
           {/* Review prompt */}
           <p
             className="text-white/70 text-[0.8rem] sm:text-[0.85rem] tracking-[0.08em] text-center"
-            style={{ marginTop: "4rem", marginLeft: "auto", marginRight: "auto", maxWidth: "28rem" }}
+            style={{ marginTop: "2.5rem", marginLeft: "auto", marginRight: "auto", maxWidth: "28rem" }}
           >
             If you enjoyed the experience,
             <br className="block sm:hidden" />
