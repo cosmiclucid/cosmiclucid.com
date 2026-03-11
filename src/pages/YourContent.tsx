@@ -141,7 +141,7 @@ export default function YourContentPage() {
           {/* Review prompt */}
           <p
             className="text-white/70 text-[0.8rem] sm:text-[0.85rem] tracking-[0.08em] text-center"
-            style={{ marginTop: "2.5rem", marginLeft: "auto", marginRight: "auto", maxWidth: "28rem" }}
+            style={{ marginTop: "2rem", marginLeft: "auto", marginRight: "auto", maxWidth: "28rem" }}
           >
             If you enjoyed the experience,
             <br className="block sm:hidden" />
