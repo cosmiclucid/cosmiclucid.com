@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { VideoText } from './ui/VideoText';
 import SparkleNavbar from './ui/SparkleNavbar';
 
 export function Header() {
@@ -35,7 +34,8 @@ export function Header() {
       <div className="site-header__inner max-w-[1440px] mx-auto px-20 h-20 flex items-center justify-between">
         {/* Logo - Home Button */}
         <motion.button
-          className="site-logo cursor-pointer transition-all duration-300 uppercase tracking-[0.35em]"
+          className="site-logo cursor-pointer transition-all duration-300"
+          aria-label="Go to homepage"
           onClick={() => {
             navigate('/');
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -43,15 +43,11 @@ export function Header() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <VideoText
-            src="/Film/speed.mp4"
-            className="site-logo-mark h-9 w-[150px]"
-            fontSize="clamp(32px, 8vw, 44px)"
-            fontWeight={800}
-            fontFamily="ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-          >
-            COSMICLUCID
-          </VideoText>
+          <img
+            src="/favicon.png?v=7"
+            alt=""
+            className="site-logo-mark h-12 w-12 object-contain"
+          />
         </motion.button>
 
         {/* Navigation */}

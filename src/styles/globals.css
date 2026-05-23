@@ -1621,21 +1621,12 @@ body {
   }
 
   .site-logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    overflow: visible;
-    transform: scale(1.45);
-    transform-origin: center;
-    letter-spacing: 0.24em;
-    margin-bottom: var(--header-logo-mb); /* adjustable space below logo */
-    margin-top: var(--header-logo-mt);
+    display: none;
   }
 
   .site-logo .site-logo-mark {
-    width: clamp(240px, 78vw, 320px);
-    height: clamp(48px, 18vw, 60px);
+    width: clamp(44px, 14vw, 56px);
+    height: clamp(44px, 14vw, 56px);
   }
 
   /* On mobile, replace video text with aurora text */
@@ -1651,7 +1642,7 @@ body {
   .site-nav-container {
     width: 100%;
     justify-content: center;
-    margin-top: var(--header-nav-mt);
+    margin-top: 0;
   }
 
   .hero-section {
@@ -1874,13 +1865,11 @@ body {
   }
 
   .site-logo {
-    transform: scale(1.14);
-    margin-bottom: var(--header-logo-mb-sm);
-    margin-top: var(--header-logo-mt-sm);
+    display: none;
   }
 
   .site-nav-container {
-    margin-top: var(--header-nav-mt-sm);
+    margin-top: 0;
   }
 
   .hero-section {
