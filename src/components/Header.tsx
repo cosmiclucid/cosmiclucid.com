@@ -44,7 +44,7 @@ export function Header() {
           whileTap={{ scale: 0.95 }}
         >
           <img
-            src="/favicon.png?v=7"
+            src="/favicon.png?v=8"
             alt=""
             className="site-logo-mark h-12 w-12 object-contain"
           />

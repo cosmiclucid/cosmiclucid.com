@@ -37,11 +37,13 @@ import {
   AgentDefinition,
   Artifact,
   ArtifactType,
+  AutomationWorkflow,
   MemoryNote,
   Mission,
   MissionStatus,
   OperatingSystemState,
 } from "@/lib/os-types";
+import { HermesAgentPanelState, HermesAgentProxyResponse } from "@/lib/hermes-agent-types";
 
 type ChatMessage = {
   id: string;
@@ -104,6 +106,8 @@ export function DashboardShell() {
   const [selectedAgentId, setSelectedAgentId] = useState("hermes");
   const [state, setState] = useState<OperatingSystemState>(fallbackState);
   const [hermesHealth, setHermesHealth] = useState<{ ok: boolean; url: string; message?: string } | null>(null);
+  const [hermesAgentState, setHermesAgentState] = useState<HermesAgentPanelState | null>(null);
+  const [hermesAgentError, setHermesAgentError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const chatRef = useRef<HTMLDivElement>(null);
@@ -143,8 +147,33 @@ export function DashboardShell() {
     }
   }
 
+  async function refreshHermesAgent() {
+    setHermesAgentError(null);
+
+    try {
+      const endpoints = ["overview", "graph", "sessions", "memory", "processes"] as const;
+      const responses = await Promise.all(
+        endpoints.map(async (endpoint) => {
+          const response = await fetch(`/api/hermes/agent/${endpoint}`, { cache: "no-store" });
+          const payload = (await response.json().catch(() => null)) as HermesAgentProxyResponse | { error?: string } | null;
+
+          if (!response.ok) {
+            throw new Error(payload && "error" in payload && payload.error ? payload.error : `Could not load Hermes ${endpoint}.`);
+          }
+
+          return [endpoint, (payload as HermesAgentProxyResponse).data] as const;
+        }),
+      );
+
+      setHermesAgentState(Object.fromEntries(responses) as HermesAgentPanelState);
+    } catch (agentError) {
+      setHermesAgentError(agentError instanceof Error ? agentError.message : "Could not load Hermes Agent OS.");
+    }
+  }
+
   useEffect(() => {
     void refreshState();
+    void refreshHermesAgent();
   }, []);
 
   function selectSection(section: string) {
@@ -176,6 +205,11 @@ export function DashboardShell() {
           ) : null}
           <SevenLayerPanel />
           <HermesConnectionPanel health={hermesHealth} />
+          <HermesAgentPanel
+            data={hermesAgentState}
+            error={hermesAgentError}
+            onRefresh={refreshHermesAgent}
+          />
           <AgentNetworkPanel
             agents={state.agents}
             selectedAgentId={selectedAgentId}
@@ -422,6 +456,233 @@ function HermesConnectionPanel({
         </div>
       </div>
     </GlassPanel>
+  );
+}
+
+function HermesAgentPanel({
+  data,
+  error,
+  onRefresh,
+}: {
+  data: HermesAgentPanelState | null;
+  error: string | null;
+  onRefresh: () => Promise<void>;
+}) {
+  const [prompt, setPrompt] = useState("");
+  const [isRunning, setIsRunning] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [reply, setReply] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+
+  const sessions = normalizeList(data?.sessions, ["sessions", "recentSessions", "items"]);
+  const memoryItems = normalizeList(data?.memory, ["memory", "items", "notes"]);
+  const processes = normalizeList(data?.processes, ["processes", "tasks", "running"]);
+  const scheduledJobs = normalizeList(data?.overview, ["cron", "scheduledJobs", "jobs", "schedules"]);
+  const graphNodes = normalizeList(data?.graph, ["nodes", "agents", "items"]);
+  const graphEdges = normalizeList(data?.graph, ["edges", "links"]);
+  const overviewStatus = getStringValue(data?.overview, ["status", "state", "health"]) || (data ? "online" : "loading");
+
+  async function runAgent(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!prompt.trim() || isRunning) {
+      return;
+    }
+
+    setIsRunning(true);
+    setActionError(null);
+    setReply(null);
+
+    try {
+      const response = await fetch("/api/hermes/agent/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: prompt,
+          prompt,
+          agent: "hermes",
+          source: "cosmic-cortana",
+        }),
+      });
+      const payload = (await response.json().catch(() => null)) as HermesAgentProxyResponse | { error?: string } | null;
+
+      if (!response.ok) {
+        throw new Error(payload && "error" in payload && payload.error ? payload.error : "Hermes run failed.");
+      }
+
+      setReply(formatUnknown((payload as HermesAgentProxyResponse).data));
+      setPrompt("");
+      await onRefresh();
+    } catch (runError) {
+      setActionError(runError instanceof Error ? runError.message : "Hermes run failed.");
+    } finally {
+      setIsRunning(false);
+    }
+  }
+
+  async function syncObsidian() {
+    setIsSyncing(true);
+    setActionError(null);
+
+    try {
+      const response = await fetch("/api/hermes/agent/obsidian/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ source: "cosmic-cortana" }),
+      });
+      const payload = (await response.json().catch(() => null)) as HermesAgentProxyResponse | { error?: string } | null;
+
+      if (!response.ok) {
+        throw new Error(payload && "error" in payload && payload.error ? payload.error : "Obsidian sync failed.");
+      }
+
+      setReply(`Obsidian sync complete: ${formatUnknown((payload as HermesAgentProxyResponse).data)}`);
+      await onRefresh();
+    } catch (syncError) {
+      setActionError(syncError instanceof Error ? syncError.message : "Obsidian sync failed.");
+    } finally {
+      setIsSyncing(false);
+    }
+  }
+
+  return (
+    <GlassPanel className="p-4 sm:p-5">
+      <div className="mb-5 flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+        <div>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.24em] text-aurora">Hermes Agent</p>
+          <h2 className="text-2xl font-semibold text-white sm:text-4xl">Cosmic Agent Panel</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-mist">
+            Hermes runs inside COSMIC CORTANA as an agent surface: sessions, memory, processes, cron jobs, and prompt execution all proxy through protected Next.js routes.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => void onRefresh()}
+            className="inline-flex h-10 items-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-4 text-sm font-semibold text-white transition hover:bg-white/15"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Refresh Hermes
+          </button>
+          <button
+            type="button"
+            onClick={() => void syncObsidian()}
+            disabled={isSyncing}
+            className="inline-flex h-10 items-center gap-2 rounded-2xl bg-white px-4 text-sm font-semibold text-void shadow-cyan transition hover:bg-aurora disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <Database className="h-4 w-4" />
+            {isSyncing ? "Syncing..." : "Sync Obsidian"}
+          </button>
+        </div>
+      </div>
+
+      {error ? (
+        <p className="mb-4 rounded-2xl border border-amber-200/20 bg-amber-200/10 px-4 py-3 text-sm leading-6 text-amber-100">
+          {error}
+        </p>
+      ) : null}
+
+      <div className="mb-4 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+        <MetricCard icon={Workflow} label="Hermes status" value={overviewStatus} tone="text-emerald-300" />
+        <MetricCard icon={MessageSquareText} label="Recent sessions" value={sessions.length} tone="text-aurora" />
+        <MetricCard icon={BrainCircuit} label="Memory items" value={memoryItems.length} tone="text-lime-200" />
+        <MetricCard icon={Zap} label="Running tasks" value={processes.length} tone="text-amber-200" />
+        <MetricCard icon={RefreshCw} label="Scheduled jobs" value={scheduledJobs.length} tone="text-pink-200" />
+      </div>
+
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
+        <form className="rounded-2xl border border-white/10 bg-black/20 p-4" onSubmit={runAgent}>
+          <div className="mb-3 flex items-center gap-2">
+            <Command className="h-4 w-4 text-aurora" />
+            <p className="text-sm font-semibold text-white">Prompt Hermes</p>
+          </div>
+          <textarea
+            value={prompt}
+            onChange={(event) => setPrompt(event.target.value)}
+            className="min-h-28 w-full resize-none rounded-2xl border border-white/12 bg-black/25 px-4 py-3 text-sm leading-6 text-white outline-none placeholder:text-slate-500"
+            placeholder="Ask Hermes to research, plan, summarize memory, or run an agent task..."
+            maxLength={2000}
+          />
+          <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-xs uppercase tracking-[0.18em] text-mist">POST /agent-os/api/agents/run</p>
+            <button
+              type="submit"
+              disabled={!prompt.trim() || isRunning}
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-white px-5 text-sm font-semibold text-void shadow-cyan transition hover:bg-aurora disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <SendHorizontal className="h-4 w-4" />
+              {isRunning ? "Running..." : "Run Hermes"}
+            </button>
+          </div>
+          {actionError ? <p className="mt-3 text-sm leading-6 text-red-100">{actionError}</p> : null}
+          {reply ? (
+            <div className="mt-4 max-h-56 overflow-auto rounded-2xl border border-white/10 bg-black/25 p-3 text-sm leading-6 text-slate-200">
+              {reply}
+            </div>
+          ) : null}
+        </form>
+
+        <div className="grid gap-3">
+          <CompactList title="Recent Sessions" items={sessions} empty="No sessions returned yet." />
+          <CompactList title="Running Agent Tasks" items={processes} empty="No running processes returned." />
+        </div>
+      </div>
+
+      <div className="mt-4 grid gap-4 xl:grid-cols-3">
+        <CompactList title="Memory Summary" items={memoryItems} empty="No memory items returned." />
+        <CompactList title="Cron / Scheduled Jobs" items={scheduledJobs} empty="No scheduled jobs returned." />
+        <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+          <h3 className="mb-3 text-sm font-semibold text-white">Agent Graph</h3>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="rounded-xl bg-white/[0.06] p-3">
+              <p className="text-xs text-mist">Nodes</p>
+              <p className="mt-1 text-2xl font-semibold text-white">{graphNodes.length}</p>
+            </div>
+            <div className="rounded-xl bg-white/[0.06] p-3">
+              <p className="text-xs text-mist">Edges</p>
+              <p className="mt-1 text-2xl font-semibold text-white">{graphEdges.length}</p>
+            </div>
+          </div>
+          <p className="mt-3 line-clamp-4 text-xs leading-5 text-mist">{formatUnknown(data?.graph)}</p>
+        </div>
+      </div>
+    </GlassPanel>
+  );
+}
+
+function MetricCard({
+  icon: Icon,
+  label,
+  value,
+  tone,
+}: {
+  icon: typeof FileText;
+  label: string;
+  value: string | number;
+  tone: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+      <Icon className={`mb-3 h-4 w-4 ${tone}`} />
+      <p className="text-2xl font-semibold text-white">{value}</p>
+      <p className="mt-1 text-xs leading-5 text-mist">{label}</p>
+    </div>
+  );
+}
+
+function CompactList({ title, items, empty }: { title: string; items: unknown[]; empty: string }) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+      <h3 className="mb-3 text-sm font-semibold text-white">{title}</h3>
+      <div className="space-y-2">
+        {items.slice(0, 5).map((item, index) => (
+          <div key={index} className="rounded-xl bg-white/[0.06] p-3">
+            <p className="line-clamp-2 text-xs leading-5 text-slate-300">{formatUnknown(item)}</p>
+          </div>
+        ))}
+        {!items.length ? <p className="text-xs leading-5 text-mist">{empty}</p> : null}
+      </div>
+    </div>
   );
 }
 
@@ -1321,4 +1582,74 @@ function iconForAgent(agent: AgentDefinition) {
   if (agent.layer === "execution") return Zap;
   if (agent.layer === "model") return BrainCircuit;
   return Orbit;
+}
+
+function normalizeList(value: unknown, keys: string[]) {
+  if (Array.isArray(value)) {
+    return value;
+  }
+
+  if (value && typeof value === "object") {
+    const record = value as Record<string, unknown>;
+
+    for (const key of keys) {
+      if (Array.isArray(record[key])) {
+        return record[key] as unknown[];
+      }
+    }
+  }
+
+  return [];
+}
+
+function getStringValue(value: unknown, keys: string[]) {
+  if (!value || typeof value !== "object") {
+    return null;
+  }
+
+  const record = value as Record<string, unknown>;
+
+  for (const key of keys) {
+    const current = record[key];
+
+    if (typeof current === "string" || typeof current === "number" || typeof current === "boolean") {
+      return String(current);
+    }
+  }
+
+  return null;
+}
+
+function formatUnknown(value: unknown): string {
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  if (typeof value === "string") {
+    return value;
+  }
+
+  if (typeof value === "number" || typeof value === "boolean") {
+    return String(value);
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((item) => formatUnknown(item)).join(", ");
+  }
+
+  if (typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    const preferred = ["title", "name", "id", "status", "state", "summary", "message"]
+      .map((key) => record[key])
+      .filter(Boolean)
+      .map((item) => formatUnknown(item));
+
+    if (preferred.length) {
+      return preferred.join(" - ");
+    }
+
+    return JSON.stringify(value);
+  }
+
+  return String(value);
 }
