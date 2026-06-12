@@ -37,7 +37,6 @@ import {
   AgentDefinition,
   Artifact,
   ArtifactType,
-  AutomationWorkflow,
   MemoryNote,
   Mission,
   MissionStatus,
@@ -480,7 +479,7 @@ function HermesAgentPanel({
   const scheduledJobs = normalizeList(data?.overview, ["cron", "scheduledJobs", "jobs", "schedules"]);
   const graphNodes = normalizeList(data?.graph, ["nodes", "agents", "items"]);
   const graphEdges = normalizeList(data?.graph, ["edges", "links"]);
-  const overviewStatus = getStringValue(data?.overview, ["status", "state", "health"]) || (data ? "online" : "loading");
+  const overviewStatus = getStringValue(data?.overview, ["status", "state", "health"]) || (error ? "offline" : data ? "online" : "loading");
 
   async function runAgent(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -583,12 +582,14 @@ function HermesAgentPanel({
       ) : null}
 
       <div className="mb-4 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-        <MetricCard icon={Workflow} label="Hermes status" value={overviewStatus} tone="text-emerald-300" />
+        <MetricCard icon={Workflow} label="Hermes status" value={overviewStatus} tone={error ? "text-amber-200" : "text-emerald-300"} />
         <MetricCard icon={MessageSquareText} label="Recent sessions" value={sessions.length} tone="text-aurora" />
         <MetricCard icon={BrainCircuit} label="Memory items" value={memoryItems.length} tone="text-lime-200" />
         <MetricCard icon={Zap} label="Running tasks" value={processes.length} tone="text-amber-200" />
         <MetricCard icon={RefreshCw} label="Scheduled jobs" value={scheduledJobs.length} tone="text-pink-200" />
       </div>
+
+      <HermesMissionControl data={data} />
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
         <form className="rounded-2xl border border-white/10 bg-black/20 p-4" onSubmit={runAgent}>
@@ -666,6 +667,278 @@ function MetricCard({
       <Icon className={`mb-3 h-4 w-4 ${tone}`} />
       <p className="text-2xl font-semibold text-white">{value}</p>
       <p className="mt-1 text-xs leading-5 text-mist">{label}</p>
+    </div>
+  );
+}
+
+function HermesMissionControl({ data }: { data: HermesAgentPanelState | null }) {
+  const [tab, setTab] = useState<"overview" | "agents" | "tasks" | "schedule" | "content">("overview");
+  const overview = asRecord(data?.overview);
+  const activity = normalizeList(data?.overview, ["activity", "activities", "feed"]);
+  const tasks = getNestedList(overview, ["board", "tasks"]);
+  const cronJobs = getNestedList(overview, ["cron", "jobs"]).length
+    ? getNestedList(overview, ["cron", "jobs"])
+    : normalizeList(data?.overview, ["crons", "jobs", "schedules"]);
+  const contentItems = normalizeList(data?.memory, ["content", "documents", "notes", "items"]);
+  const sessionItems = normalizeList(data?.sessions, ["sessions", "items"]);
+  const gateway = asRecord(overview.gateway);
+  const vps = asRecord(overview.vps);
+  const stats = asRecord(overview.stats);
+  const specialistAgents = [
+    { id: "orchestrator", name: "Orchestrator", code: "ORC", role: "Coordinates the team", icon: Orbit, tone: "text-amber-200" },
+    { id: "scout", name: "Scout", code: "SCT", role: "Research and briefs", icon: BrainCircuit, tone: "text-aurora" },
+    { id: "scribe", name: "Scribe", code: "SCR", role: "Writing and documents", icon: FileText, tone: "text-pink-200" },
+    { id: "reach", name: "Reach", code: "RCH", role: "Marketing and distribution", icon: MonitorUp, tone: "text-emerald-300" },
+    { id: "dev", name: "Dev", code: "DEV", role: "Code and infrastructure", icon: Code2, tone: "text-violet-200" },
+  ];
+
+  return (
+    <div className="mb-4 rounded-[24px] border border-white/10 bg-black/20 p-3 sm:p-4">
+      <div className="mb-4 flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-mist">Hermes Mission Control</p>
+          <p className="mt-1 text-sm text-slate-300">Five specialist agents, one visible operating workflow.</p>
+        </div>
+        <div className="flex gap-1 overflow-x-auto rounded-2xl border border-white/10 bg-black/20 p-1.5">
+          {(["overview", "agents", "tasks", "schedule", "content"] as const).map((item) => (
+            <button
+              key={item}
+              type="button"
+              onClick={() => setTab(item)}
+              className={`h-9 shrink-0 rounded-xl px-3 text-xs font-semibold capitalize transition ${
+                tab === item ? "bg-white text-void" : "text-slate-300 hover:bg-white/10 hover:text-white"
+              }`}
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {tab === "overview" ? (
+        <div className="grid gap-3 xl:grid-cols-[minmax(0,1.1fr)_minmax(300px,0.9fr)]">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <div>
+                <p className="text-xs uppercase tracking-[0.18em] text-mist">Operational Directive</p>
+                <h3 className="mt-2 text-xl font-semibold text-white">Specialists execute. Orchestrator coordinates.</h3>
+              </div>
+              <span className="inline-flex items-center gap-2 rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs text-emerald-200">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" />
+                {getStringValue(gateway, ["state", "status"]) || "waiting"}
+              </span>
+            </div>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              <SmallStat label="Tasks" value={getNumberValue(stats, ["total"]) || tasks.length} />
+              <SmallStat label="Completed" value={getNumberValue(stats, ["completed"])} />
+              <SmallStat label="Sessions" value={sessionItems.length} />
+              <SmallStat label="Activity" value={activity.length} />
+            </div>
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              <HealthBar label="CPU" value={getNumberValue(vps, ["cpu_pct"])} tone="bg-sky-300" />
+              <HealthBar label="RAM" value={getNumberValue(vps, ["mem_pct"])} tone="bg-violet-300" />
+              <HealthBar label="Disk" value={getNumberValue(vps, ["disk_pct"])} tone="bg-emerald-300" />
+            </div>
+          </div>
+          <ActivityList activity={activity} />
+        </div>
+      ) : null}
+
+      {tab === "agents" ? (
+        <div>
+          <div className="mb-4 grid gap-2 md:grid-cols-5">
+            {specialistAgents.map((agent, index) => (
+              <div key={agent.id} className="relative rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+                <div className="flex items-center justify-between gap-2">
+                  <agent.icon className={`h-5 w-5 ${agent.tone}`} />
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-mist">{agent.code}</span>
+                </div>
+                <p className="mt-4 text-sm font-semibold text-white">{agent.name}</p>
+                <p className="mt-1 text-xs leading-5 text-mist">{agent.role}</p>
+                <p className="mt-3 text-[11px] text-lime-200">Shared memory enabled</p>
+                {index < specialistAgents.length - 1 ? (
+                  <ChevronRight className="absolute -right-3 top-1/2 z-10 hidden h-5 w-5 -translate-y-1/2 text-slate-500 md:block" />
+                ) : null}
+              </div>
+            ))}
+          </div>
+          <ActivityList activity={activity} />
+        </div>
+      ) : null}
+
+      {tab === "tasks" ? <OperatorTaskBoard tasks={tasks} /> : null}
+      {tab === "schedule" ? <OperatorSchedule jobs={cronJobs} /> : null}
+      {tab === "content" ? <OperatorContent items={contentItems} activity={activity} /> : null}
+    </div>
+  );
+}
+
+function SmallStat({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+      <p className="text-xl font-semibold text-white">{value}</p>
+      <p className="mt-1 text-[11px] uppercase tracking-[0.14em] text-mist">{label}</p>
+    </div>
+  );
+}
+
+function HealthBar({ label, value, tone }: { label: string; value: number; tone: string }) {
+  const safeValue = Math.max(0, Math.min(100, value));
+  return (
+    <div>
+      <div className="mb-2 flex items-center justify-between text-xs">
+        <span className="text-mist">{label}</span>
+        <span className="text-white">{safeValue.toFixed(0)}%</span>
+      </div>
+      <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
+        <div className={`h-full rounded-full ${tone}`} style={{ width: `${safeValue}%` }} />
+      </div>
+    </div>
+  );
+}
+
+function ActivityList({ activity }: { activity: unknown[] }) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <h3 className="text-sm font-semibold text-white">Live Agent Activity</h3>
+        <span className="text-xs text-mist">{activity.length} entries</span>
+      </div>
+      <div className="max-h-64 space-y-2 overflow-auto">
+        {activity.slice(0, 8).map((item, index) => {
+          const record = asRecord(item);
+          return (
+            <div key={index} className="grid gap-1 rounded-xl border border-white/5 bg-black/20 p-3 sm:grid-cols-[90px_minmax(0,1fr)_auto] sm:items-center">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-aurora">
+                {getStringValue(record, ["agent_name", "agent", "name"]) || "agent"}
+              </span>
+              <span className="truncate text-xs text-slate-300">
+                {getStringValue(record, ["task_description", "description", "title", "message"]) || formatUnknown(item)}
+              </span>
+              <span className="text-[11px] text-mist">
+                {getStringValue(record, ["model_used", "model", "status"]) || "complete"}
+              </span>
+            </div>
+          );
+        })}
+        {!activity.length ? <p className="text-xs leading-5 text-mist">No activity returned by Hermes yet.</p> : null}
+      </div>
+    </div>
+  );
+}
+
+function OperatorTaskBoard({ tasks }: { tasks: unknown[] }) {
+  const columns = [
+    { id: "pending", label: "Pending", tone: "text-amber-200" },
+    { id: "in_progress", label: "In Progress", tone: "text-aurora" },
+    { id: "done", label: "Done", tone: "text-emerald-300" },
+  ];
+
+  return (
+    <div className="grid gap-3 md:grid-cols-3">
+      {columns.map((column) => {
+        const columnTasks = tasks.filter((task) => normalizeTaskStatus(getStringValue(asRecord(task), ["status", "state"])) === column.id);
+        return (
+          <div key={column.id} className="min-h-64 rounded-2xl border border-white/10 bg-white/[0.04] p-3">
+            <div className="mb-3 flex items-center justify-between">
+              <p className={`text-xs font-semibold uppercase tracking-[0.16em] ${column.tone}`}>{column.label}</p>
+              <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs text-mist">{columnTasks.length}</span>
+            </div>
+            <div className="space-y-2">
+              {columnTasks.slice(0, 8).map((task, index) => {
+                const record = asRecord(task);
+                return (
+                  <div key={index} className="rounded-xl border border-white/5 bg-black/20 p-3">
+                    <p className="text-sm font-semibold text-white">{getStringValue(record, ["title", "name"]) || "Untitled task"}</p>
+                    <p className="mt-2 line-clamp-2 text-xs leading-5 text-mist">
+                      {getStringValue(record, ["notes", "description", "detail"]) || "No task notes."}
+                    </p>
+                    <p className="mt-2 text-[11px] uppercase tracking-[0.12em] text-slate-500">
+                      {getStringValue(record, ["priority"]) || "medium"}
+                    </p>
+                  </div>
+                );
+              })}
+              {!columnTasks.length ? <p className="text-xs text-slate-500">No tasks.</p> : null}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function OperatorSchedule({ jobs }: { jobs: unknown[] }) {
+  return (
+    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+      {jobs.slice(0, 12).map((job, index) => {
+        const record = asRecord(job);
+        return (
+          <div key={index} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-200">
+              {getStringValue(record, ["english", "schedule", "next_run_at"]) || "Scheduled"}
+            </p>
+            <p className="mt-3 text-sm font-semibold text-white">{getStringValue(record, ["name", "label"]) || "Hermes job"}</p>
+            <p className="mt-2 line-clamp-3 text-xs leading-5 text-mist">
+              {getStringValue(record, ["detail", "command", "description"]) || formatUnknown(job)}
+            </p>
+          </div>
+        );
+      })}
+      {!jobs.length ? <p className="text-xs leading-5 text-mist">No cron jobs returned by Hermes yet.</p> : null}
+    </div>
+  );
+}
+
+function OperatorContent({ items, activity }: { items: unknown[]; activity: unknown[] }) {
+  const content = items.length
+    ? items
+    : activity.filter((item) => {
+        const record = asRecord(item);
+        const agent = getStringValue(record, ["agent_name", "agent"]);
+        return agent === "scribe" || agent === "reach";
+      });
+
+  return (
+    <div className="grid gap-3 lg:grid-cols-[260px_minmax(0,1fr)]">
+      <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
+        <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-mist">Content Library</p>
+        <div className="space-y-2">
+          {content.slice(0, 8).map((item, index) => {
+            const record = asRecord(item);
+            return (
+              <div key={index} className="rounded-xl bg-black/20 p-3">
+                <p className="text-xs font-semibold text-white">
+                  {getStringValue(record, ["title", "name", "task_description"]) || `Document ${index + 1}`}
+                </p>
+                <p className="mt-1 text-[11px] uppercase tracking-[0.12em] text-aurora">
+                  {getStringValue(record, ["agent", "agent_name", "source"]) || "Hermes"}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-mist">Pipeline</p>
+        <div className="mt-4 grid gap-2 sm:grid-cols-4">
+          {[
+            ["Scout", "Research"],
+            ["Scribe", "Draft"],
+            ["Reach", "Distribute"],
+            ["Orchestrator", "Review"],
+          ].map(([agent, action], index) => (
+            <div key={agent} className="relative rounded-xl border border-white/10 bg-black/20 p-3">
+              <p className="text-sm font-semibold text-white">{agent}</p>
+              <p className="mt-1 text-xs text-mist">{action}</p>
+              {index < 3 ? <ChevronRight className="absolute -right-3 top-1/2 hidden h-5 w-5 -translate-y-1/2 text-slate-500 sm:block" /> : null}
+            </div>
+          ))}
+        </div>
+        <p className="mt-4 text-sm leading-6 text-slate-300">
+          Research moves to writing, writing moves to distribution, and the orchestrator records the final result in shared memory.
+        </p>
+      </div>
     </div>
   );
 }
@@ -1618,6 +1891,65 @@ function getStringValue(value: unknown, keys: string[]) {
   }
 
   return null;
+}
+
+function getNumberValue(value: unknown, keys: string[]) {
+  if (!value || typeof value !== "object") {
+    return 0;
+  }
+
+  const record = value as Record<string, unknown>;
+
+  for (const key of keys) {
+    const current = record[key];
+
+    if (typeof current === "number" && Number.isFinite(current)) {
+      return current;
+    }
+
+    if (typeof current === "string") {
+      const parsed = Number(current);
+      if (Number.isFinite(parsed)) {
+        return parsed;
+      }
+    }
+  }
+
+  return 0;
+}
+
+function asRecord(value: unknown): Record<string, unknown> {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
+}
+
+function getNestedList(record: Record<string, unknown>, path: string[]) {
+  let current: unknown = record;
+
+  for (const segment of path) {
+    if (!current || typeof current !== "object" || Array.isArray(current)) {
+      return [];
+    }
+
+    current = (current as Record<string, unknown>)[segment];
+  }
+
+  return Array.isArray(current) ? current : [];
+}
+
+function normalizeTaskStatus(status: string | null) {
+  const value = (status || "pending").toLowerCase().replace(/[\s-]+/g, "_");
+
+  if (value === "done" || value === "completed" || value === "complete") {
+    return "done";
+  }
+
+  if (value === "in_progress" || value === "running" || value === "active" || value === "build") {
+    return "in_progress";
+  }
+
+  return "pending";
 }
 
 function formatUnknown(value: unknown): string {

@@ -19,6 +19,7 @@ const MEMORY_VAULT_PATH = process.env.CORTANA_MEMORY_VAULT_PATH || path.join(DAT
 const STATE_PATH = path.join(DATA_ROOT, "state.json");
 
 const ARTIFACT_BUCKETS: ArtifactType[] = ["app", "image", "video", "voice", "research", "chat", "mission", "note"];
+const HERMES_SPECIALIST_IDS = new Set(["orchestrator", "scout", "scribe", "reach", "dev"]);
 
 type WriteMemoryInput = {
   title: string;
@@ -49,6 +50,15 @@ export async function getOperatingSystemState(): Promise<OperatingSystemState> {
   await ensureStore();
   const raw = await readFile(STATE_PATH, "utf8");
   const state = JSON.parse(raw) as OperatingSystemState;
+  const existingAgentIds = new Set(state.agents.map((agent) => agent.id));
+  const missingSpecialists = createSeedState().agents.filter(
+    (agent) => HERMES_SPECIALIST_IDS.has(agent.id) && !existingAgentIds.has(agent.id),
+  );
+
+  if (missingSpecialists.length > 0) {
+    state.agents.splice(2, 0, ...missingSpecialists);
+    await saveState(state);
+  }
 
   return {
     ...state,
@@ -242,6 +252,66 @@ function createSeedState(): OperatingSystemState {
       endpoint: process.env.HERMES_API_URL || "http://127.0.0.1:8001/chat",
       description: "Runs local research, long-horizon goals, and workflow commands through the private bridge.",
       tools: ["research", "goal-mode", "web-briefs", "content-drafts"],
+      memoryAccess: true,
+      status: "ready",
+      lastSeen: now,
+    },
+    {
+      id: "orchestrator",
+      name: "Orchestrator",
+      role: "Agent team coordinator",
+      layer: "command",
+      provider: "Hermes Agent OS",
+      description: "Breaks goals into work, routes tasks between specialists, and keeps the pipeline moving.",
+      tools: ["delegation", "planning", "handoffs", "quality-control"],
+      memoryAccess: true,
+      status: "ready",
+      lastSeen: now,
+    },
+    {
+      id: "scout",
+      name: "Scout",
+      role: "Research specialist",
+      layer: "research",
+      provider: "Hermes Agent OS",
+      description: "Collects source material, current information, briefs, and structured research.",
+      tools: ["web-research", "briefs", "source-analysis", "trend-monitoring"],
+      memoryAccess: true,
+      status: "ready",
+      lastSeen: now,
+    },
+    {
+      id: "scribe",
+      name: "Scribe",
+      role: "Writing specialist",
+      layer: "research",
+      provider: "Hermes Agent OS",
+      description: "Turns research and memory into scripts, documents, articles, and reusable content.",
+      tools: ["writing", "editing", "scripts", "long-form-content"],
+      memoryAccess: true,
+      status: "ready",
+      lastSeen: now,
+    },
+    {
+      id: "reach",
+      name: "Reach",
+      role: "Marketing specialist",
+      layer: "automation",
+      provider: "Hermes Agent OS",
+      description: "Adapts finished content for distribution, campaigns, social media, and audience growth.",
+      tools: ["distribution", "campaigns", "social-content", "positioning"],
+      memoryAccess: true,
+      status: "ready",
+      lastSeen: now,
+    },
+    {
+      id: "dev",
+      name: "Dev",
+      role: "Technical specialist",
+      layer: "execution",
+      provider: "Hermes Agent OS",
+      description: "Handles code, technical implementation, infrastructure work, and dashboard improvements.",
+      tools: ["code", "infrastructure", "debugging", "deployment"],
       memoryAccess: true,
       status: "ready",
       lastSeen: now,
