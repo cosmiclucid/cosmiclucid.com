@@ -31,7 +31,7 @@ export function CosmicBackground() {
     }
 
     const stars: Star[] = [];
-    const starCount = 260; // tuned for smoother performance while keeping density
+    const starCount = Math.min(140, Math.max(100, Math.round((canvas.width * canvas.height) / 12000)));
 
     for (let i = 0; i < starCount; i++) {
       const x = Math.random() * canvas.width;
@@ -49,16 +49,28 @@ export function CosmicBackground() {
     }
 
     // Animation loop
-    let animationFrame: number;
+    let animationFrame = 0;
     let frame = 0;
-    const animate = () => {
+    let lastFrameTime = 0;
+    const frameInterval = 1000 / 30;
+
+    const animate = (timestamp: number) => {
+      if (document.hidden) {
+        animationFrame = 0;
+        return;
+      }
+
+      animationFrame = requestAnimationFrame(animate);
+      if (timestamp - lastFrameTime < frameInterval) return;
+
+      lastFrameTime = timestamp - ((timestamp - lastFrameTime) % frameInterval);
       frame += 1;
       // Very subtle fade for trails - creates the neural network effect
       ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Draw neural connections between nearby stars
-      if (frame % 2 === 0) {
+      if (frame % 4 === 0) {
         const cellSize = 140;
         const neighborOffsets = [-1, 0, 1];
         const grid = new Map<string, number[]>();
@@ -104,7 +116,7 @@ export function CosmicBackground() {
                   ctx.lineTo(neighbour.x, neighbour.y);
                   ctx.stroke();
                   connections += 1;
-                  if (connections >= 6) break outer;
+                  if (connections >= 3) break outer;
                 }
               }
             }
@@ -117,11 +129,7 @@ export function CosmicBackground() {
       // Draw stars and their trails
       stars.forEach((star) => {
         // Draw trail from previous position
-        const gradient = ctx.createLinearGradient(star.prevX, star.prevY, star.x, star.y);
-        gradient.addColorStop(0, `hsla(${star.hue}, 70%, 80%, 0)`);
-        gradient.addColorStop(1, `hsla(${star.hue}, 70%, 80%, ${star.opacity * 0.4})`);
-        
-        ctx.strokeStyle = gradient;
+        ctx.strokeStyle = `hsla(${star.hue}, 70%, 80%, ${star.opacity * 0.28})`;
         ctx.lineWidth = star.size * 0.8;
         ctx.beginPath();
         ctx.moveTo(star.prevX, star.prevY);
@@ -129,14 +137,9 @@ export function CosmicBackground() {
         ctx.stroke();
 
         // Draw star point
-        const starGradient = ctx.createRadialGradient(star.x, star.y, 0, star.x, star.y, star.size * 2);
-        starGradient.addColorStop(0, `hsla(${star.hue}, 80%, 90%, ${star.opacity})`);
-        starGradient.addColorStop(0.5, `hsla(${star.hue}, 70%, 80%, ${star.opacity * 0.5})`);
-        starGradient.addColorStop(1, `hsla(${star.hue}, 60%, 70%, 0)`);
-        
-        ctx.fillStyle = starGradient;
+        ctx.fillStyle = `hsla(${star.hue}, 80%, 88%, ${star.opacity})`;
         ctx.beginPath();
-        ctx.arc(star.x, star.y, star.size * 1.5, 0, Math.PI * 2);
+        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
         ctx.fill();
 
         // Store previous position
@@ -156,13 +159,27 @@ export function CosmicBackground() {
         }
       });
 
-      animationFrame = requestAnimationFrame(animate);
     };
 
-    animate();
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(animationFrame);
+        animationFrame = 0;
+        return;
+      }
+
+      lastFrameTime = performance.now();
+      if (animationFrame === 0) {
+        animationFrame = requestAnimationFrame(animate);
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    animationFrame = requestAnimationFrame(animate);
 
     return () => {
       window.removeEventListener('resize', resize);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       cancelAnimationFrame(animationFrame);
     };
   }, []);
@@ -184,8 +201,7 @@ export function CosmicBackground() {
       {/* Aurora glow effect */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-gradient-radial from-[#182E6F]/30 via-[#51158C]/10 to-transparent blur-3xl opacity-60" />
 
-      {/* Progressive gaussian blur: starts near "Scroll to Explore" and strengthens toward cards */}
-      {/* Mobile-first (top starts a bit lower) */}
+      {/* Lightweight depth overlay; avoids live backdrop blur over the moving canvas. */}
       <div
         className="absolute left-0 right-0 bottom-0 block md:hidden pointer-events-none"
         style={{
@@ -197,17 +213,9 @@ export function CosmicBackground() {
             'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 75%, rgba(0,0,0,1) 100%)',
         }}
       >
-        <div
-          className="w-full h-full backdrop-blur-[24px]"
-          style={{ willChange: 'backdrop-filter' }}
-        />
-        {/* soft darkening to enhance depth without hard edge */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/25" />
-        {/* micro feather at the start to avoid a visible line */}
-        <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-transparent to-black/10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/50" />
       </div>
 
-      {/* Desktop & larger: start slightly higher for better composition */}
       <div
         className="absolute left-0 right-0 bottom-0 hidden md:block pointer-events-none"
         style={{
@@ -219,12 +227,7 @@ export function CosmicBackground() {
             'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 65%, rgba(0,0,0,1) 100%)',
         }}
       >
-        <div
-          className="w-full h-full backdrop-blur-[28px]"
-          style={{ willChange: 'backdrop-filter' }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/25" />
-        <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-transparent to-black/10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/50" />
       </div>
     </div>
   );

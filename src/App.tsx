@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { CookieBanner } from './components/ui/CookieBanner';
+import { useFxPreference } from './hooks/useFxPreference';
 
 const Home = lazy(() => import('./pages/Home'));
 const Portfolio = lazy(() => import('./pages/Portfolio'));
@@ -23,15 +24,17 @@ const CosmicBackground = lazy(async () => ({
 
 const SmokeyCursorFullScreen = lazy(() => import('./components/lightswind/smokey-cursor-full'));
 
+const SMOKE_BACKGROUND = { r: 0.02, g: 0.03, b: 0.08 };
 
 export default function App() {
-  const isLite = false;
+  const { preference, setPreference } = useFxPreference();
+  const fxEnabled = preference === 'on';
 
   return (
     <>
       <div className="relative z-0 min-h-screen overflow-x-hidden">
         {/* Background: full = animated, lite = static */}
-        {!isLite ? (
+        {fxEnabled ? (
           <Suspense fallback={null}>
             <CosmicBackground />
           </Suspense>
@@ -47,23 +50,23 @@ export default function App() {
         )}
         
         {/* smokey cursor animation */}
-        {!isLite && (
+        {fxEnabled && (
           <Suspense fallback={null}>
             <SmokeyCursorFullScreen
               className="-z-[5]"
-              simulationResolution={320}
-              dyeResolution={4096}
-              captureResolution={1024}
+              simulationResolution={96}
+              dyeResolution={768}
+              captureResolution={512}
               densityDissipation={2.4}
               velocityDissipation={1.9}
               pressure={0.12}
-              pressureIterations={28}
+              pressureIterations={18}
               curl={12}
               splatRadius={0.2}
               splatForce={4200}
               colorUpdateSpeed={2.6}
               enableShading
-              backgroundColor={{ r: 0.02, g: 0.03, b: 0.08 }}
+              backgroundColor={SMOKE_BACKGROUND}
               transparent
               autoColors
               intensity={0.6}
@@ -72,7 +75,10 @@ export default function App() {
         )}
 
         {/* Main content */}
-        <Header />
+        <Header
+          fxPreference={preference}
+          onFxPreferenceChange={setPreference}
+        />
         <main>
           <Suspense fallback={null}>
             <Routes>

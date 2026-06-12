@@ -4,7 +4,7 @@ export function detectLowPerformance() {
 
   const isLowCPU = cores <= 4;
   const isLowMemory = memory <= 4;
-  const isMobile = /Android|iPhone|iPad|Mobile/i.test(navigator.userAgent);
+  const saveData = navigator.connection?.saveData === true;
 
-  return isLowCPU || isLowMemory || isMobile;
+  return isLowCPU || isLowMemory || saveData;
 }

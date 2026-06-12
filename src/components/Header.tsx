@@ -1,9 +1,24 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'motion/react';
+import { Sparkles } from 'lucide-react';
 import SparkleNavbar from './ui/SparkleNavbar';
+import type { FxPreference } from '../hooks/useFxPreference';
 
-export function Header() {
+type HeaderProps = {
+  fxPreference: FxPreference;
+  onFxPreferenceChange: (preference: FxPreference) => void;
+};
+
+const FX_OPTIONS: Array<{ value: FxPreference; label: string }> = [
+  { value: 'on', label: 'FX On' },
+  { value: 'off', label: 'FX Off' },
+];
+
+export function Header({
+  fxPreference,
+  onFxPreferenceChange,
+}: HeaderProps) {
   const [fade, setFade] = useState(0); // 0..1
   const navigate = useNavigate();
   const location = useLocation();
@@ -83,6 +98,36 @@ export function Header() {
               }
             }}
           />
+        </div>
+
+        <div className="fx-control">
+          <details className="fx-control__dropdown">
+            <summary
+              className="fx-control__menu"
+              aria-label={`Visual effects: ${fxPreference}`}
+              title="Visual effects"
+            >
+              <Sparkles aria-hidden="true" size={17} />
+            </summary>
+            <div className="fx-control__popover">
+              <div className="fx-control__label">Visual effects</div>
+              {FX_OPTIONS.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  className="fx-control__option"
+                  data-active={fxPreference === option.value}
+                  onClick={(event) => {
+                    onFxPreferenceChange(option.value);
+                    event.currentTarget.closest('details')?.removeAttribute('open');
+                  }}
+                >
+                  <span aria-hidden="true" className="fx-control__indicator" />
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </details>
         </div>
       </div>
     </motion.header>

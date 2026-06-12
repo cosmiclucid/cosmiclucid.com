@@ -2,23 +2,17 @@
 
 import type { ComponentProps } from "react";
 import OriginalSmokeyCursor from "../ui/smokey-cursor-original";
-import { useClientEnv } from "../../hooks/useClientEnv";
 
 type SmokeyCursorProps = ComponentProps<typeof OriginalSmokeyCursor>;
 
 export default function SmokeyCursorFullScreen(props: SmokeyCursorProps) {
-  const { isMobile, isSmallScreen, prefersReducedMotion } = useClientEnv();
-  // Disable on mobile/small devices to avoid perf and UX issues; also respect reduced motion or explicit disable.
-  const disabled = prefersReducedMotion || isMobile || props.disabled;
-
-  if (disabled) return null;
+  if (props.disabled) return null;
 
   return (
     <OriginalSmokeyCursor
       {...props}
-      simulationResolution={Math.min(props.simulationResolution ?? 128, isSmallScreen ? 64 : 128)}
-      dyeResolution={Math.min(props.dyeResolution ?? 1440, isSmallScreen ? 720 : 1024)}
-      disabled={disabled}
+      simulationResolution={Math.min(props.simulationResolution ?? 128, 128)}
+      dyeResolution={Math.min(props.dyeResolution ?? 1024, 1024)}
     />
   );
 }

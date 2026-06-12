@@ -1052,8 +1052,13 @@ export default function SmokeyCursor({
     let colorUpdateTimer = 0.0;
 
     let rafId: number | null = null;
+    let renderingStarted = false;
 
     function updateFrame() {
+      if (document.hidden) {
+        rafId = null;
+        return;
+      }
       const dt = calcDeltaTime();
       if (resizeCanvas()) initFramebuffers();
       updateColors(dt);
@@ -1061,6 +1066,24 @@ export default function SmokeyCursor({
       step(dt);
       render(null);
       rafId = requestAnimationFrame(updateFrame);
+    }
+
+    function startRendering() {
+      renderingStarted = true;
+      if (rafId === null && !document.hidden) {
+        lastUpdateTime = Date.now();
+        rafId = requestAnimationFrame(updateFrame);
+      }
+    }
+
+    function handleVisibilityChange() {
+      if (document.hidden) {
+        if (rafId !== null) cancelAnimationFrame(rafId);
+        rafId = null;
+        return;
+      }
+
+      if (renderingStarted) startRendering();
     }
 
     function calcDeltaTime() {
@@ -1492,7 +1515,7 @@ export default function SmokeyCursor({
       const posX = scaleByPixelRatio(e.clientX, false);
       const posY = scaleByPixelRatio(e.clientY, false);
       const color = generateColor();
-      updateFrame();
+      startRendering();
       updatePointerMoveData(pointer, posX, posY, color);
       document.body.removeEventListener("mousemove", handleFirstMouseMove);
     }
@@ -1513,7 +1536,7 @@ export default function SmokeyCursor({
       for (let i = 0; i < touches.length; i++) {
         const posX = scaleByPixelRatio(touches[i].clientX, false);
         const posY = scaleByPixelRatio(touches[i].clientY, false);
-        updateFrame();
+        startRendering();
         updatePointerDownData(pointer, touches[i].identifier, posX, posY);
       }
       document.body.removeEventListener("touchstart", handleFirstTouchStart);
@@ -1553,6 +1576,7 @@ export default function SmokeyCursor({
     window.addEventListener("touchstart", handleTouchStart, false);
     window.addEventListener("touchmove", handleTouchMove, false);
     window.addEventListener("touchend", handleTouchEnd);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     // ------------------------------------------------------------
     return () => {
@@ -1562,6 +1586,7 @@ export default function SmokeyCursor({
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("touchend", handleTouchEnd);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
       document.body.removeEventListener("mousemove", handleFirstMouseMove);
       document.body.removeEventListener("touchstart", handleFirstTouchStart);
     };
