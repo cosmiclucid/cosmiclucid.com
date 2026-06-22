@@ -1,5 +1,12 @@
 import "server-only";
 
+import {
+  getHermesAgentConfig,
+  HermesAgentProxyError,
+  proxyHermesAgent,
+  requestHermesWebUi,
+} from "@/lib/hermes-agent";
+
 export type HermesChatRequest = {
   message: string;
   context?: Record<string, unknown>;
@@ -7,6 +14,7 @@ export type HermesChatRequest = {
 
 export type HermesChatResponse = {
   reply: string;
+  sessionId?: string;
 };
 
 export type HermesHealthResponse = {
@@ -15,9 +23,6 @@ export type HermesHealthResponse = {
   url: string;
   message?: string;
 };
-
-const HERMES_TIMEOUT_MS = 50_000;
-const DEFAULT_HERMES_BRIDGE_URL = "http://127.0.0.1:8001/chat";
 
 export class HermesChatError extends Error {
   status: number;
@@ -33,86 +38,79 @@ export async function sendHermesChat({
   message,
   context,
 }: HermesChatRequest): Promise<HermesChatResponse> {
-  const hermesUrl = process.env.HERMES_API_URL || DEFAULT_HERMES_BRIDGE_URL;
-  const hermesToken = process.env.HERMES_API_TOKEN;
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), HERMES_TIMEOUT_MS);
-
   try {
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-    };
-
-    if (hermesToken) {
-      headers.Authorization = `Bearer ${hermesToken}`;
-    }
-
-    const response = await fetch(hermesUrl, {
+    const response = await proxyHermesAgent("agents/run", {
       method: "POST",
-      headers,
-      body: JSON.stringify({ message, context }),
-      cache: "no-store",
-      signal: controller.signal,
+      body: {
+        message,
+        session_id: context?.sessionId,
+        profile: context?.profile,
+        model: context?.model,
+      },
     });
+    const data = asRecord(response.data);
+    const reply = getString(data, ["answer", "reply", "response"]);
 
-    if (!response.ok) {
-      throw new HermesChatError(`Hermes returned HTTP ${response.status}.`, response.status);
+    if (!reply) {
+      throw new HermesChatError("Hermes WebUI returned an empty response.");
     }
 
-    const data = (await response.json()) as Partial<HermesChatResponse>;
-
-    if (typeof data.reply !== "string" || !data.reply.trim()) {
-      throw new HermesChatError("Hermes returned an invalid response shape.");
-    }
-
-    return { reply: data.reply };
+    return {
+      reply,
+      sessionId: getString(data, ["session_id"]),
+    };
   } catch (error) {
     if (error instanceof HermesChatError) {
       throw error;
     }
-
-    if (error instanceof DOMException && error.name === "AbortError") {
-      throw new HermesChatError("Hermes timed out.", 504);
+    if (error instanceof HermesAgentProxyError) {
+      throw new HermesChatError(error.message, error.status);
     }
 
-    throw new HermesChatError("Hermes local runtime is unavailable.");
-  } finally {
-    clearTimeout(timeout);
+    throw new HermesChatError("Hermes WebUI request failed.");
   }
 }
 
 export async function getHermesHealth(): Promise<HermesHealthResponse> {
-  const hermesChatUrl = process.env.HERMES_API_URL || DEFAULT_HERMES_BRIDGE_URL;
-  const healthUrl = hermesChatUrl.replace(/\/chat\/?$/, "/health");
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 4_000);
+  const { baseUrl } = getHermesAgentConfig();
+  const healthUrl = `${baseUrl}/health`;
 
   try {
-    const response = await fetch(healthUrl, {
-      cache: "no-store",
-      signal: controller.signal,
-    });
-    const data = (await response.json().catch(() => null)) as { ok?: boolean; service?: string } | null;
+    const data = asRecord(await requestHermesWebUi("/health", { timeoutMs: 4_000 }));
+    const healthy = data.status === "ok";
 
     return {
-      ok: response.ok && data?.ok === true,
-      service: data?.service,
+      ok: healthy,
+      service: "Hermes WebUI",
       url: healthUrl,
-      message: response.ok ? undefined : `Bridge returned HTTP ${response.status}.`,
+      message: healthy ? undefined : `Hermes WebUI is ${String(data.status || "degraded")}.`,
     };
   } catch (error) {
     return {
       ok: false,
+      service: "Hermes WebUI",
       url: healthUrl,
       message:
-        error instanceof DOMException && error.name === "AbortError"
-          ? "Hermes bridge health check timed out."
-          : "Hermes bridge is not reachable.",
+        error instanceof HermesAgentProxyError
+          ? error.message
+          : "Hermes WebUI is not reachable.",
     };
-  } finally {
-    clearTimeout(timeout);
   }
 }
 
-// TODO: streaming - add a token/audio streaming adapter when Hermes exposes incremental output.
-// TODO: memory sync - add hooks so dashboard conversations can update Cortana memory server-side.
+function asRecord(value: unknown): Record<string, unknown> {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
+}
+
+function getString(record: Record<string, unknown>, keys: string[]) {
+  for (const key of keys) {
+    const value = record[key];
+    if (typeof value === "string" && value.trim()) {
+      return value.trim();
+    }
+  }
+
+  return undefined;
+}

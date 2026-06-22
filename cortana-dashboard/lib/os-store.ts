@@ -54,9 +54,22 @@ export async function getOperatingSystemState(): Promise<OperatingSystemState> {
   const missingSpecialists = createSeedState().agents.filter(
     (agent) => HERMES_SPECIALIST_IDS.has(agent.id) && !existingAgentIds.has(agent.id),
   );
+  const hermes = state.agents.find((agent) => agent.id === "hermes");
+  let stateChanged = missingSpecialists.length > 0;
 
   if (missingSpecialists.length > 0) {
     state.agents.splice(2, 0, ...missingSpecialists);
+  }
+
+  if (hermes && hermes.provider !== "Hermes WebUI") {
+    hermes.provider = "Hermes WebUI";
+    hermes.endpoint = process.env.HERMES_WEBUI_BASE_URL || "http://127.0.0.1:8787";
+    hermes.description = "Runs chat, sessions, tools, memory, profiles, models, workspace actions, and scheduled jobs through Hermes WebUI.";
+    hermes.tools = ["chat", "sessions", "tools", "memory", "profiles", "cron", "workspace"];
+    stateChanged = true;
+  }
+
+  if (stateChanged) {
     await saveState(state);
   }
 
@@ -248,10 +261,10 @@ function createSeedState(): OperatingSystemState {
       name: "Hermes",
       role: "Research and workflow engine",
       layer: "research",
-      provider: "Local Hermes bridge",
-      endpoint: process.env.HERMES_API_URL || "http://127.0.0.1:8001/chat",
-      description: "Runs local research, long-horizon goals, and workflow commands through the private bridge.",
-      tools: ["research", "goal-mode", "web-briefs", "content-drafts"],
+      provider: "Hermes WebUI",
+      endpoint: process.env.HERMES_WEBUI_BASE_URL || "http://127.0.0.1:8787",
+      description: "Runs chat, sessions, tools, memory, profiles, models, workspace actions, and scheduled jobs through Hermes WebUI.",
+      tools: ["chat", "sessions", "tools", "memory", "profiles", "cron", "workspace"],
       memoryAccess: true,
       status: "ready",
       lastSeen: now,

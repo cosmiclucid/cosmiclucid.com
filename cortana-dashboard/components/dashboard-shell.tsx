@@ -133,11 +133,11 @@ export function DashboardShell() {
         const health = (await healthResponse.json().catch(() => null)) as { ok?: boolean; url?: string; message?: string } | null;
         setHermesHealth({
           ok: healthResponse.ok && health?.ok === true,
-          url: health?.url || "http://127.0.0.1:8001/health",
+          url: health?.url || "http://127.0.0.1:8787/health",
           message: health?.message,
         });
       } else {
-        setHermesHealth({ ok: false, url: "http://127.0.0.1:8001/health", message: "Hermes bridge is not reachable." });
+        setHermesHealth({ ok: false, url: "http://127.0.0.1:8787/health", message: "Hermes WebUI is not reachable." });
       }
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "Could not load COSMIC CORTANA OS.");
@@ -266,6 +266,20 @@ function Sidebar({
         {navigation.map((item) => {
           const Icon = item.icon;
           const active = item.label === activeSection;
+
+          if ("href" in item && item.href) {
+            return (
+              <a
+                key={item.label}
+                href={item.href}
+                className="flex h-11 w-full items-center gap-3 rounded-2xl px-3 text-sm text-slate-300 transition hover:bg-white/10 hover:text-white"
+              >
+                <Icon className="h-4 w-4" />
+                {item.label}
+              </a>
+            );
+          }
+
           return (
             <button
               key={item.label}
@@ -308,6 +322,19 @@ function MobileNav({
       {navigation.map((item) => {
         const Icon = item.icon;
         const active = item.label === activeSection;
+
+        if ("href" in item && item.href) {
+          return (
+            <a
+              key={item.label}
+              href={item.href}
+              className="flex h-10 shrink-0 items-center gap-2 rounded-2xl px-3 text-sm text-slate-300 transition hover:bg-white/10 hover:text-white"
+            >
+              <Icon className="h-4 w-4" />
+              {item.label}
+            </a>
+          );
+        }
 
         return (
           <button
@@ -445,13 +472,13 @@ function HermesConnectionPanel({
           <div>
             <h2 className="text-lg font-semibold text-white">Hermes Connection</h2>
             <p className="mt-1 text-sm leading-6 text-mist">
-              COSMIC CORTANA calls the protected Next API, then the local bridge at <span className="text-slate-200">{health?.url || "http://127.0.0.1:8001/health"}</span>.
+              COSMIC CORTANA calls its protected API, then the Hermes WebUI runtime at <span className="text-slate-200">{health?.url || "http://127.0.0.1:8787/health"}</span>.
             </p>
           </div>
         </div>
         <div className={`inline-flex w-fit items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium ${ok ? "border-emerald-300/20 bg-emerald-300/10 text-emerald-200" : "border-amber-200/20 bg-amber-200/10 text-amber-100"}`}>
           <span className={`h-1.5 w-1.5 rounded-full ${ok ? "bg-emerald-300" : "bg-amber-200"}`} />
-          {ok ? "Bridge online" : health?.message || "Bridge not connected"}
+          {ok ? "Hermes WebUI online" : health?.message || "Hermes WebUI not connected"}
         </div>
       </div>
     </GlassPanel>
@@ -469,17 +496,18 @@ function HermesAgentPanel({
 }) {
   const [prompt, setPrompt] = useState("");
   const [isRunning, setIsRunning] = useState(false);
-  const [isSyncing, setIsSyncing] = useState(false);
   const [reply, setReply] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(null);
 
   const sessions = normalizeList(data?.sessions, ["sessions", "recentSessions", "items"]);
   const memoryItems = normalizeList(data?.memory, ["memory", "items", "notes"]);
   const processes = normalizeList(data?.processes, ["processes", "tasks", "running"]);
-  const scheduledJobs = normalizeList(data?.overview, ["cron", "scheduledJobs", "jobs", "schedules"]);
+  const scheduledJobs = getNestedList(asRecord(data?.overview), ["cron", "jobs"]);
   const graphNodes = normalizeList(data?.graph, ["nodes", "agents", "items"]);
   const graphEdges = normalizeList(data?.graph, ["edges", "links"]);
   const overviewStatus = getStringValue(data?.overview, ["status", "state", "health"]) || (error ? "offline" : data ? "online" : "loading");
+  const hermesWebUiUrl = process.env.NEXT_PUBLIC_HERMES_WEBUI_URL || "/hermes/";
 
   async function runAgent(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -499,6 +527,7 @@ function HermesAgentPanel({
         body: JSON.stringify({
           message: prompt,
           prompt,
+          session_id: sessionId,
           agent: "hermes",
           source: "cosmic-cortana",
         }),
@@ -509,38 +538,15 @@ function HermesAgentPanel({
         throw new Error(payload && "error" in payload && payload.error ? payload.error : "Hermes run failed.");
       }
 
-      setReply(formatUnknown((payload as HermesAgentProxyResponse).data));
+      const result = asRecord((payload as HermesAgentProxyResponse).data);
+      setReply(getStringValue(result, ["answer", "reply", "response"]) || formatUnknown(result));
+      setSessionId(getStringValue(result, ["session_id", "sessionId"]));
       setPrompt("");
       await onRefresh();
     } catch (runError) {
       setActionError(runError instanceof Error ? runError.message : "Hermes run failed.");
     } finally {
       setIsRunning(false);
-    }
-  }
-
-  async function syncObsidian() {
-    setIsSyncing(true);
-    setActionError(null);
-
-    try {
-      const response = await fetch("/api/hermes/agent/obsidian/sync", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ source: "cosmic-cortana" }),
-      });
-      const payload = (await response.json().catch(() => null)) as HermesAgentProxyResponse | { error?: string } | null;
-
-      if (!response.ok) {
-        throw new Error(payload && "error" in payload && payload.error ? payload.error : "Obsidian sync failed.");
-      }
-
-      setReply(`Obsidian sync complete: ${formatUnknown((payload as HermesAgentProxyResponse).data)}`);
-      await onRefresh();
-    } catch (syncError) {
-      setActionError(syncError instanceof Error ? syncError.message : "Obsidian sync failed.");
-    } finally {
-      setIsSyncing(false);
     }
   }
 
@@ -563,15 +569,15 @@ function HermesAgentPanel({
             <RefreshCw className="h-4 w-4" />
             Refresh Hermes
           </button>
-          <button
-            type="button"
-            onClick={() => void syncObsidian()}
-            disabled={isSyncing}
+          <a
+            href={hermesWebUiUrl}
+            target="_blank"
+            rel="noreferrer"
             className="inline-flex h-10 items-center gap-2 rounded-2xl bg-white px-4 text-sm font-semibold text-void shadow-cyan transition hover:bg-aurora disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <Database className="h-4 w-4" />
-            {isSyncing ? "Syncing..." : "Sync Obsidian"}
-          </button>
+            <ArrowUpRight className="h-4 w-4" />
+            Open full Hermes
+          </a>
         </div>
       </div>
 
@@ -605,7 +611,9 @@ function HermesAgentPanel({
             maxLength={2000}
           />
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-xs uppercase tracking-[0.18em] text-mist">POST /agent-os/api/agents/run</p>
+            <p className="text-xs uppercase tracking-[0.18em] text-mist">
+              {sessionId ? `Hermes session ${sessionId.slice(0, 8)}` : "Starts a Hermes WebUI session"}
+            </p>
             <button
               type="submit"
               disabled={!prompt.trim() || isRunning}
@@ -1736,7 +1744,7 @@ function MemoryPanel({
 function RightRail({ state }: { state: OperatingSystemState }) {
   const statusItems = [
     { label: "Agent Status", value: `${state.agents.length} registered`, icon: Bot, tone: "text-emerald-300" },
-    { label: "Active Model", value: "Hermes bridge", icon: Code2, tone: "text-aurora" },
+    { label: "Agent Runtime", value: "Hermes WebUI", icon: Code2, tone: "text-aurora" },
     { label: "Memory Status", value: `${state.memory.length} notes`, icon: BrainCircuit, tone: "text-lime-200" },
     { label: "Workspace", value: `${state.artifacts.length} artifacts`, icon: GalleryHorizontalEnd, tone: "text-plasma" },
     { label: "Automations", value: `${state.automations.length} workflows`, icon: Workflow, tone: "text-amber-200" },

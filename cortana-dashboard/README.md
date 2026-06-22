@@ -30,16 +30,23 @@ NEXT_PUBLIC_TELEGRAM_BOT_URL=https://t.me/your_bot
 NEXT_PUBLIC_N8N_URL=https://n8n.louislucid.com
 ```
 
-Reserved for future server-side Hermes integration:
+Hermes WebUI integration:
 
 ```bash
-HERMES_API_URL=http://127.0.0.1:8001/chat
-HERMES_API_TOKEN=
-HERMES_BRIDGE_PORT=8001
-HERMES_COMMAND_PATH=hermes
+HERMES_WEBUI_BASE_URL=http://127.0.0.1:8787
+NEXT_PUBLIC_HERMES_WEBUI_URL=/hermes/
 ```
 
-`HERMES_API_TOKEN` is optional for the local-only bridge, but if you add bridge auth later it must remain server-only. Never expose Hermes settings in client components or `NEXT_PUBLIC_*` variables.
+Keep Hermes WebUI bound to `127.0.0.1`. `HERMES_WEBUI_BASE_URL` is server-only. `NEXT_PUBLIC_HERMES_WEBUI_URL` is only the browser-facing path used by the “Open full Hermes” button.
+
+If the upstream WebUI is password protected, the dashboard adapter can forward a server-only credential:
+
+```bash
+HERMES_WEBUI_AUTH_HEADER=
+HERMES_WEBUI_COOKIE=
+```
+
+Do not place credentials in `NEXT_PUBLIC_*` variables.
 
 ## Architecture Notes
 
@@ -48,43 +55,45 @@ HERMES_COMMAND_PATH=hermes
 - Login uses a server action and stores a signed HTTP-only cookie.
 - Browser chat posts only to the protected Next.js route `app/api/chat/route.ts`.
 - The Next.js route calls the server-only Hermes adapter in `lib/hermes.ts`.
-- `lib/hermes.ts` calls the local Hermes bridge at `http://127.0.0.1:8001/chat`.
-- The bridge in `server/hermes-bridge` runs `hermes -z "<message>"` through `execFile`.
-- There are no unauthenticated public API routes that trigger Hermes, and the bridge must not be exposed through Nginx.
+- `lib/hermes-agent.ts` adapts the native Hermes WebUI API at `http://127.0.0.1:8787`.
+- Hermes WebUI remains the source of truth for sessions, memory, models, profiles, tools, approvals, workspace state, and cron jobs.
+- Cosmic Cortana owns the dashboard, specialist-agent views, mission control, and protected proxy routes.
+- There are no unauthenticated public API routes that trigger Hermes.
 
-## Hermes Bridge
+## Hermes WebUI
 
-Install the local-only bridge on the VPS:
-
-```bash
-cd cortana-dashboard/server/hermes-bridge
-npm install
-HERMES_BRIDGE_PORT=8001 HERMES_COMMAND_PATH=hermes npm start
-```
-
-If `hermes` is not available on the service PATH, set an absolute path:
+Install the supplied Hermes WebUI beside the existing Hermes Agent installation:
 
 ```bash
-HERMES_COMMAND_PATH=/usr/local/bin/hermes
+git clone https://github.com/nesquena/hermes-webui.git
+cd hermes-webui
+python3 bootstrap.py
 ```
 
-The bridge binds only to:
+For a background VPS service:
+
+```bash
+./ctl.sh start
+./ctl.sh status
+./ctl.sh logs --lines 100
+```
+
+Hermes WebUI should bind only to:
 
 ```txt
-127.0.0.1:8001
+127.0.0.1:8787
 ```
 
 The full runtime path is:
 
 ```txt
-Frontend Chat UI
--> Next.js /api/chat
--> http://127.0.0.1:8001/chat
--> hermes -z "<message>"
--> JSON reply
+Cosmic Cortana
+-> protected Next.js /api/hermes/* routes
+-> Hermes WebUI :8787
+-> existing Hermes Agent, sessions, memory, tools, models, and cron runtime
 ```
 
-Bridge details and service examples live in `server/hermes-bridge/README.md`.
+Cosmic Cortana uses Hermes WebUI’s synchronous chat endpoint for its compact embedded panel. The full Hermes WebUI remains available at `/hermes/` for streaming chat, file browsing, tool approvals, profile management, and advanced session controls.
 
 ## PWA
 
@@ -115,16 +124,11 @@ Run the app with PM2:
 ```bash
 npm install -g pm2
 pm2 start npm --name cosmic-cortana -- start -- -p 3010
-cd server/hermes-bridge
-HERMES_BRIDGE_PORT=8001 HERMES_COMMAND_PATH=hermes pm2 start index.js --name hermes-bridge
 pm2 save
 pm2 startup
 ```
 
-Systemd examples:
-
-- Dashboard: run `npm start -- -p 3010` from `/var/www/cosmiclucid.com/cortana-dashboard`
-- Hermes bridge: use the unit example in `server/hermes-bridge/README.md`
+Run Hermes WebUI separately with its included `ctl.sh` or a systemd unit. The dashboard process should not own or restart the Hermes runtime.
 
 ## Nginx Reverse Proxy
 
@@ -145,6 +149,17 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_cache_bypass $http_upgrade;
     }
+
+    location /hermes/ {
+        proxy_pass http://127.0.0.1:8787/;
+        proxy_http_version 1.1;
+        proxy_buffering off;
+        proxy_read_timeout 3600;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
 }
 ```
 
@@ -157,8 +172,13 @@ sudo systemctl reload nginx
 sudo certbot --nginx -d cosmiccortana.louislucid.com
 ```
 
-Do not add an Nginx location for `127.0.0.1:8001`. Only the dashboard should be public:
+The intended topology is:
 
 ```txt
-Internet -> Nginx -> Next.js dashboard :3010 -> Hermes bridge :8001 -> Hermes runtime
+Internet -> Nginx -> Cosmic Cortana :3010
+                  -> Hermes WebUI :8787 at /hermes/
+
+Cosmic Cortana server -> Hermes WebUI :8787 -> Hermes Agent
 ```
+
+Hermes WebUI sends `X-Frame-Options: DENY`, so Cosmic Cortana opens the full workspace as a separate page rather than embedding it in an iframe.

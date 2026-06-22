@@ -23,6 +23,7 @@ import {
 
 export const navigation = [
   { label: "Dashboard", icon: Orbit },
+  { label: "Hermes", icon: Cpu, href: "/hermes" },
   { label: "Agents", icon: Bot },
   { label: "Studio", icon: GalleryHorizontalEnd },
   { label: "Chat", icon: MessageSquareText },
@@ -44,7 +45,7 @@ export const quickActions = [
 
 export const statusItems = [
   { label: "Agent Status", value: "Standby", icon: Activity, tone: "text-emerald-300" },
-  { label: "Active Model", value: "Hermes bridge", icon: Cpu, tone: "text-aurora" },
+  { label: "Agent Runtime", value: "Hermes WebUI", icon: Cpu, tone: "text-aurora" },
   { label: "Voice Provider", value: "ElevenLabs ready", icon: RadioTower, tone: "text-plasma" },
   { label: "Memory Status", value: "Local placeholder", icon: BrainCircuit, tone: "text-violet-200" },
   { label: "API Cost", value: "EUR 0.00 today", icon: Bot, tone: "text-slate-200" },
@@ -68,7 +69,7 @@ export const agentNetwork = [
     name: "Hermes",
     role: "Local reasoning runtime",
     status: "Connected",
-    description: "Runs the secure chat bridge behind the dashboard API.",
+    description: "Runs a protected Hermes WebUI session behind the dashboard API.",
     icon: Cpu,
     accent: "text-emerald-300",
     border: "border-emerald-300/30",
