@@ -1,13 +1,24 @@
-name: Deploy cosmiclucid.com
+name: Deploy louislucid.com
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: louislucid-production
+  cancel-in-progress: false
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      WEB_ROOT: /var/www/cosmiclucid.com/build
+      DEPLOY_ROOT: /var/www/cosmiclucid.com/deployments
 
     steps:
       - name: Checkout repo
@@ -16,7 +27,8 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
@@ -25,26 +37,47 @@ jobs:
         run: npm run build
 
       - name: Verify build output
-        run: |
-          echo "📁 Build-Verzeichnis:"
-          ls -R
-          if [ ! -f "build/index.html" ]; then
-            echo "❌ build/index.html nicht gefunden – Deploy wird abgebrochen."
-            exit 1
-          fi
-          echo "✅ build/index.html gefunden."
+        run: test -s build/index.html
 
-      - name: Setup SSH key
+      - name: Configure verified server connection
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H "${{ secrets.VPS_HOST }}" >> ~/.ssh/known_hosts
+          set -euo pipefail
+          : "${SSH_PRIVATE_KEY:?Missing deployment key}"
+          : "${VPS_KNOWN_HOSTS:?Missing pinned server host keys}"
+          : "${VPS_HOST:?Missing deployment host}"
+          : "${VPS_USER:?Missing deployment user}"
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_ed25519
+          printf '%s\n' "$VPS_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/id_ed25519 ~/.ssh/known_hosts
+          printf 'Host *\n  BatchMode yes\n  IdentitiesOnly yes\n  StrictHostKeyChecking yes\n  ConnectTimeout 15\n' > ~/.ssh/config
+          ssh-keygen -y -P '' -f ~/.ssh/id_ed25519 > /dev/null
+          ssh "$VPS_USER@$VPS_HOST" "test -w '$WEB_ROOT' && test -w '$DEPLOY_ROOT'"
 
-      - name: Deploy to VPS (clean + upload)
+      - name: Back up and publish website
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
         run: |
-          echo "🧹 Entferne alte Dateien auf dem Server…"
-          ssh -i ~/.ssh/id_ed25519 ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} 'rm -rf /var/www/cosmiclucid.com/build/*'
-          echo "📤 Lade neuen Build hoch…"
-          scp -i ~/.ssh/id_ed25519 -r build/* ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/var/www/cosmiclucid.com/build/
-          echo "✅ Deploy fertig."
+          set -euo pipefail
+          target="$VPS_USER@$VPS_HOST"
+          release="${GITHUB_SHA}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          ssh "$target" "cp -al '$WEB_ROOT' '$DEPLOY_ROOT/$release-backup'"
+          rsync -azc --exclude=index.html --exclude=.DS_Store build/ "$target:$WEB_ROOT/"
+          scp build/index.html "$target:$WEB_ROOT/.index-$release.html"
+          ssh "$target" "chmod 644 '$WEB_ROOT/.index-$release.html' && mv '$WEB_ROOT/.index-$release.html' '$WEB_ROOT/index.html'"
+
+      - name: Verify live website
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --retry 3 "https://louislucid.com/?release=$GITHUB_SHA" -o /tmp/live-index.html
+          cmp build/index.html /tmp/live-index.html
+
+      - name: Remove runner deployment credentials
+        if: always()
+        run: rm -f ~/.ssh/id_ed25519
