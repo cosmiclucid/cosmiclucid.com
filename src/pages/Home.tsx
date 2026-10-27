@@ -5,6 +5,7 @@ import AuroraButton from '../components/ui/AuroraButton';
 import { useClientEnv } from '../hooks/useClientEnv';
 import { useNavigate } from 'react-router-dom';
 import { UniverseCard } from '../components/UniverseCard';
+import CollaborateSection from '../components/CollaborateSection';
 
 function Tilt({ children, disabled = false }: { children: React.ReactNode; disabled?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -114,8 +115,9 @@ export default function Home() {
                 color: 'transparent',
               }}
             >
-              Social Media Marketing, Branding & Content Production
-
+              <span style={{ display: 'block' }}>Audio Visual Production</span>{' '}
+              <span style={{ display: 'block' }}>Social Media Management</span>{' '}
+              <span style={{ display: 'block' }}>Website Design &amp; Development</span>
             </motion.h1>
 
             <motion.p
@@ -131,7 +133,7 @@ export default function Home() {
                 marginBottom: '3rem',
               }}
             >
-              Where strategy, creativity and consciousness turn into measurable growth.
+              Film, photography and sound. Social media strategy and management. Website design &amp; development — from one creative partner.
 
             </motion.p>
 
@@ -232,7 +234,7 @@ export default function Home() {
               className="text-white mb-5 tracking-wide glow-text"
               style={{ fontSize: 'clamp(2.5rem, 2.5vw, 2.5rem)', lineHeight: 1.05 }}
             >
-              CHOOSE YOUR GROWTH COSMOS
+              EXPLORE MY SERVICES
             </h2>
 
             <motion.div
@@ -269,7 +271,7 @@ export default function Home() {
                   textShadow: '0 0 12px rgba(64, 128, 255, 0.8)',
                 }}
               >
-                MARKETING & BRAND GROWTH
+                SOCIAL MEDIA MANAGEMENT
               </motion.h3>
               <Tilt disabled={disableTilt}>
                 <div
@@ -279,9 +281,9 @@ export default function Home() {
                   <div className="relative z-10">
                     <UniverseCard
                       icon={<span>🚀</span>}
-                      title="Strategic Social Media Marketing & Brand Scaling"
-                      description="We build digital systems that attract attention, generate leads and turn visibility into revenue — through brand positioning, high-converting websites and SMM."
-                      buttonText="View Marketing"
+                      title="Social Media Management"
+                      description="Content strategy, production and channel management that keep your message consistent and your audience engaged."
+                      buttonText="View Social Media"
                       buttonHref="/portfolio/marketing"
                       glowColor="blue"
                       delay={0.2}
@@ -320,10 +322,10 @@ export default function Home() {
                   <div className="relative z-10">
                     <UniverseCard
                       icon={<span>🎥</span>}
-                      title="Cinematic Content & creative AudioVisual Production"
-                      description="We create high-impact visual content that captures attention, strengthens authority and drives engagement across digital platforms."
-                      buttonText="View Portfolio"
-                      buttonHref="/portfolio"
+                      title="Audio Visual Production"
+                      description="Cinematic video, photography and sound that give your brand distinctive content for your website and social channels."
+                      buttonText="View Production"
+                      buttonHref="/production"
                       glowColor="purple"
                       delay={0.35}
                       tilt="center"
@@ -343,18 +345,18 @@ export default function Home() {
                         opacity: [0.9, 1, 0.9],
                         scale: [1, 1.02, 1],
                         textShadow: [
-                          '0 0 12px rgba(255, 215, 0, 0.6), 0 0 24px rgba(255, 215, 0, 0.4)',
-                          '0 0 18px rgba(255, 215, 0, 0.7), 0 0 32px rgba(255, 215, 0, 0.5)',
-                          '0 0 12px rgba(255, 215, 0, 0.6), 0 0 24px rgba(255, 215, 0, 0.4)',
+                          '0 0 12px rgba(168, 85, 247, 0.6), 0 0 24px rgba(168, 85, 247, 0.4)',
+                          '0 0 18px rgba(168, 85, 247, 0.7), 0 0 32px rgba(168, 85, 247, 0.5)',
+                          '0 0 12px rgba(168, 85, 247, 0.6), 0 0 24px rgba(168, 85, 247, 0.4)',
                         ],
                       }
                 }
                 transition={{ duration: 3, repeat: prefersReducedMotion ? 0 : Infinity, ease: 'easeInOut' }}
                 style={{
-                  textShadow: '0 0 12px rgba(255, 215, 0, 0.8)',
+                  textShadow: '0 0 12px rgba(168, 85, 247, 0.8)',
                 }}
               >
-                MENTORING
+                WEBSITES
               </motion.h3>
               <Tilt disabled={disableTilt}>
                 <div
@@ -363,12 +365,12 @@ export default function Home() {
                 >
                   <div className="relative z-10">
                     <UniverseCard
-                      icon={<span>🧘‍♂️</span>}
-                      title="Energetic Fitness & Lucid Mentorship"
-                      description="We help founders align Body, Mind and Soul — building physical resilience, mental clarity and purpose-driven leadership for sustainable growth."
-                      buttonText="Explore Mentoring"
-                      buttonHref="/mentoring"
-                      glowColor="gold"
+                      icon={<span>💻</span>}
+                      title="Website Design & Development"
+                      description="Fast, distinctive websites that express your brand, explain your offer and make it easy for the right clients to contact you."
+                      buttonText="Explore Websites"
+                      buttonHref="/websites"
+                      glowColor="violet"
                       delay={0.5}
                       tilt="right"
                     />
@@ -378,6 +380,15 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        <CollaborateSection
+          id="home-work-with-me"
+          portrait="portrait"
+          title="The person behind your next project"
+          intro="I'm Louis. Let's create something that feels like your business."
+          detail="From audiovisual production to social media and websites, I connect the creative work with how your audience experiences it. You collaborate directly with me throughout your project."
+          caption="Louis Kuschnir · Your creative partner at Louis Lucid"
+        />
 
         <section
           className="relative z-20 py-48 md:py-56 overflow-visible"
@@ -428,9 +439,9 @@ export default function Home() {
         >
           <UniverseCard
             icon={<span>🚀</span>}
-            title="Strategic Social Media Marketing & Brand Scaling"
-            description="We build strategic digital ecosystems that attract attention, generate leads and turn visibility into revenue. From social media marketing and brand positioning to launch strategy and performance creative — we help ambitious brands grow with clarity and impact."
-            buttonText="View Marketing"
+            title="Social Media Management"
+            description="Content strategy, production and channel management that keep your message consistent and your audience engaged."
+            buttonText="View Social Media"
             buttonHref="/portfolio/marketing"
             glowColor="blue"
             delay={0}
@@ -438,21 +449,21 @@ export default function Home() {
           />
           <UniverseCard
             icon={<span>🎥</span>}
-            title="Cinematic Content & High-Impact Visual Production"
-            description="Premium videography, photography and audiovisual storytelling designed to elevate your brand presence. We create scroll-stopping content that strengthens identity, builds authority and performs across digital platforms."
-            buttonText="View Portfolio"
-            buttonHref="/portfolio"
+            title="Audio Visual Production"
+            description="Cinematic video, photography and sound that give your brand distinctive content for your website and social channels."
+            buttonText="View Production"
+            buttonHref="/production"
             glowColor="purple"
             delay={0}
             tilt="center"
           />
           <UniverseCard
-            icon={<span>🧘‍♂️</span>}
-            title="Energetic Performance & Conscious Leadership Mentorship"
-            description="A high-level mentorship experience combining strategic clarity with energetic alignment. Designed for founders, creators and performers who want to align Body, Mind and Business for sustained growth and peak performance."
-            buttonText="Explore Mentoring"
-            buttonHref="/mentoring"
-            glowColor="gold"
+            icon={<span>💻</span>}
+            title="Website Design & Development"
+            description="Fast, distinctive websites that express your brand, explain your offer and make it easy for the right clients to contact you."
+            buttonText="Explore Websites"
+            buttonHref="/websites"
+            glowColor="violet"
             delay={0}
             tilt="right"
           />

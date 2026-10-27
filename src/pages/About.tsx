@@ -2,10 +2,11 @@
 
 import { useEffect, useMemo, useRef, useState, lazy, Suspense } from 'react';
 import { motion } from 'motion/react';
-import { ChevronDown } from 'lucide-react';
 import AuroraButton from '../components/ui/AuroraButton';
 import { CountUp } from '../components/ui/CountUp';
 import { useClientEnv } from '../hooks/useClientEnv';
+import { Link } from 'react-router-dom';
+import LouisPortrait from '../components/LouisPortrait';
 
 const ScrollTimeline = lazy(() =>
   import('../components/ui/ScrollTimeline').then((mod) => ({ default: mod.ScrollTimeline })),
@@ -18,8 +19,6 @@ type TimelineEntry = {
   body: string;
   side: 'left' | 'right';
 };
-
-const HERO_IMAGE_FILE = 'Louis neu 2.webp';
 
 function LazyMount({
   children,
@@ -56,8 +55,6 @@ function LazyMount({
 export default function About() {
   const { isSmallScreen, isMobile, prefersReducedMotion } = useClientEnv();
   const STAR_COUNT = isSmallScreen ? 12 : 48;
-  const topSpacerHeight = isSmallScreen ? 0 : 220;
-  const heroTextTransform = isSmallScreen ? 'translateY(0)' : 'translateY(-20rem)';
   // Reveal-on-scroll for any .reveal element
   useEffect(() => {
     const reveals = document.querySelectorAll('.reveal');
@@ -76,20 +73,6 @@ export default function About() {
     return () => observer.disconnect();
   }, []);
 
-  const heroAuraRef = useRef<HTMLDivElement | null>(null);
-  const heroImgStyle = {
-    display: 'block',
-    width: isSmallScreen ? '100%' : '130%',
-    height: 'auto',
-    objectFit: 'cover' as const,
-    transform: isSmallScreen ? 'translateX(0) translateY(0)' : 'translateX(5%) translateY(-20%)',
-    marginTop: isSmallScreen ? '-0.5rem' : '1.25rem',
-  };
-
-  // Build a safe public URL that respects Vite's base and encodes spaces/+ correctly
-  const HERO_IMG =
-    (import.meta as any).env.BASE_URL + 'About/' + encodeURIComponent(HERO_IMAGE_FILE);
-
   // Pre-generate a small static field of stars for background decoration (no Tailwind)
   const stars = useMemo(
     () =>
@@ -105,43 +88,8 @@ export default function About() {
     [STAR_COUNT, prefersReducedMotion],
   );
 
-  useEffect(() => {
-    const el = heroAuraRef.current;
-    if (!el) return;
-
-    const handlePointerMove = (event: PointerEvent) => {
-      const rect = el.getBoundingClientRect();
-      const x = ((event.clientX - rect.left) / rect.width) * 100;
-      const y = ((event.clientY - rect.top) / rect.height) * 100;
-      el.style.setProperty('--aura-x', `${x}%`);
-      el.style.setProperty('--aura-y', `${y}%`);
-      el.style.setProperty('--aura-opacity', '0.9');
-    };
-
-    const handlePointerLeave = () => {
-      el.style.setProperty('--aura-opacity', '0');
-    };
-
-    el.addEventListener('pointermove', handlePointerMove);
-    el.addEventListener('pointerenter', handlePointerMove);
-    el.addEventListener('pointerleave', handlePointerLeave);
-
-    return () => {
-      el.removeEventListener('pointermove', handlePointerMove);
-      el.removeEventListener('pointerenter', handlePointerMove);
-      el.removeEventListener('pointerleave', handlePointerLeave);
-    };
-  }, []);
-
-
   return (
-    <main className="about-page" style={{ position: 'relative', minHeight: '100vh' }}>
-      {/* Top guard spacer to avoid revealing hero top-edge artifact when at scrollTop=0 */}
-      <div
-        className="about-top-spacer"
-        aria-hidden
-        style={{ height: `${topSpacerHeight}px`, pointerEvents: 'none' }}
-      />
+    <div className="about-page" style={{ position: 'relative', minHeight: '100vh' }}>
       {/* ---- Cosmic background accents (uses your global colors) ---- */}
       <div
         style={{
@@ -174,122 +122,41 @@ export default function About() {
         </div>
       </div>
 
-      {/* ---- HERO ---- */}
-      <section className="hero" style={{ position: 'relative', zIndex: 1 }}>
-        <div
-          className="hero-text reveal"
-          style={{ transform: heroTextTransform, textAlign: 'center' }}
-        >
-          <motion.h1
-            initial={{ opacity: 0, filter: 'blur(20px)', y: 30 }}
-            animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
-            transition={{ duration: 1.2, delay: 0.3, ease: 'easeOut' }}
-            className="mb-5 tracking-wide headline-gradient"
-            style={{
-              fontSize: 'clamp(2.3rem, 4.4vw, 4.2rem)',
-              lineHeight: 1.05,
-              textTransform: 'uppercase',
-              color: 'transparent',
-            }}
-          >
-            I'M LOUIS KUSCHNIR
-          </motion.h1>
-          <div
-            className="mt-4 h-[2px] w-full max-w-[320px] relative overflow-visible mx-auto"
-            style={{ marginBottom: '1.5rem' }}
-          >
-            <div
-              className="absolute inset-0 rounded-full"
-              style={{
-                background:
-                  'linear-gradient(90deg, rgba(81,21,140,0.18) 0%, rgba(81,21,140,0.95) 50%, rgba(81,21,140,0.18) 100%)',
-                boxShadow: '0 0 24px rgba(81, 21, 140, 1), 0 0 56px rgba(81, 21, 140, 0.55)',
-                filter: 'drop-shadow(0 0 20px rgba(81, 21, 140, 0.8))',
-                height: '100%',
-                borderRadius: '999px',
-              }}
-            />
-            <div
-              className="absolute inset-0 rounded-full blur-lg pointer-events-none"
-              style={{
-                background:
-                  'linear-gradient(90deg, rgba(81,21,140,0.1) 0%, rgba(81,21,140,0.4) 50%, rgba(81,21,140,0.1) 100%)',
-              }}
-            />
+      <section className="about-introduction" aria-labelledby="about-introduction-title">
+        <div className="about-introduction__copy">
+          <div className="about-introduction__heading">
+            <p className="portrait-eyebrow">The person behind Louis Lucid</p>
+            <h1 id="about-introduction-title" className="headline-gradient">I'm Louis Kuschnir</h1>
           </div>
-          <p
-            className="text-white/70 leading-relaxed mx-auto about-subline"
-            style={{
-              letterSpacing: '0.22em',
-              textTransform: 'uppercase',
-              maxWidth: '56ch',
-              fontSize: '1.2rem',
-              textAlign: 'center',
-            }}
-          >
-            Filmmaker, Creator &amp; Athlete — combining cinematic storytelling,
-            physical energy and spiritual awareness to create impact.
-          </p>
-          <div style={{ marginTop: '2.5rem' }}>
-            <div className="contact-footer">
-              <AuroraButton
-                label="CONTACT ME"
-                className="px-10 sm:px-14 py-4 text-base tracking-[0.3em]"
-                onClick={() => (window.location.href = '/contact')}
-              />
-            </div>
+          <div className="about-introduction__body">
+          <p className="about-introduction__lead">Your creative partner for audiovisual production, social media and websites.</p>
+          <p className="about-introduction__description">I bring ideas to life through film, photography and sound, then connect that content with the places your audience meets you. When we work together, you work directly with me — from the first conversation to the finished project.</p>
+          <div className="collaborate-section__actions">
+            <AuroraButton label="LET'S WORK TOGETHER" href="/contact" className="px-8 py-4 text-sm tracking-[0.15em]" />
+            <Link to="/portfolio">Explore my portfolio <span aria-hidden="true">↗</span></Link>
+          </div>
           </div>
         </div>
+        <LouisPortrait kind="portrait" eager caption="Louis Kuschnir · Filmmaker, content creator & web designer" />
+      </section>
 
-        <div
-          className="hero-img reveal"
-          ref={heroAuraRef}
-          style={{ flex: 1.2, maxWidth: '650px' }}
-        >
-          <img
-            src={HERO_IMG}
-            alt="Louis Kuschnir"
-            width={520}
-            height={640}
-            loading="eager"
-            decoding="async"
-            style={heroImgStyle}
-            onError={(e) => {
-              console.warn('Hero image failed to load:', HERO_IMG);
-              (e.currentTarget as HTMLImageElement).style.outline = '2px solid red';
-            }}
-          />
+      <section className="about-craft" aria-labelledby="about-craft-title">
+        <h2 id="about-craft-title" className="headline-gradient">Hands-on from concept to creation</h2>
+        <p>Creative direction meets practical production. These are the tools I use to turn a clear idea into images and stories for your business.</p>
+        <div className="about-craft__grid">
+          <LouisPortrait kind="gimbalWide" caption="Camera & gimbal · Cinematic movement and visual storytelling" />
+          <LouisPortrait kind="drone" caption="Drone filming · A wider perspective on your story" />
         </div>
-
-        <motion.div
-          className="about-scroll-cue absolute left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 text-white/70 cursor-pointer"
-          onClick={() => {
-            const target = document.getElementById('about-my-story');
-            if (target) {
-              const top = target.getBoundingClientRect().top + window.scrollY - 80;
-              window.scrollTo({ top, behavior: 'smooth' });
-            }
-          }}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6, ease: 'easeOut' }}
-          style={{ bottom: '30rem' }}
-        >
-          <span className="text-xs tracking-[0.4em] uppercase">Scroll to My Story</span>
-          <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}>
-            <ChevronDown className="w-5 h-5" />
-          </motion.div>
-        </motion.div>
       </section>
 
       {/* ---- Section Heading ---- */}
       <div
         className="reveal"
-        style={{ textAlign: 'center', marginTop: '-4rem' }}
+        style={{ textAlign: 'center', marginTop: '0' }}
         id="about-my-story"
       >
         <div className="flex flex-col items-center gap-6">
-          <motion.h1
+          <motion.h2
             initial={{ opacity: 0, filter: 'blur(20px)', y: 30 }}
             whileInView={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
             viewport={{ once: true }}
@@ -304,7 +171,7 @@ export default function About() {
             }}
           >
             MY STORY
-          </motion.h1>
+          </motion.h2>
           <motion.div
             initial={{ width: 0, opacity: 0 }}
             whileInView={{ width: '420px', opacity: 1 }}
@@ -343,87 +210,60 @@ export default function About() {
             textAlign: 'center',
           }}
         >
-          AND HOW YOU CAN BE PART OF THIS POSITIVE TRANSFORMATION
+          FROM MAKING MUSIC TO BUILDING DIGITAL PRESENCES
         </p>
       </div>
 
       {/* ---- SCROLL TIMELINE ---- */}
-      <section style={{ position: 'relative', zIndex: 1, marginTop: '4rem' }}>
-        <LazyMount rootMargin="0px 0px 200px 0px">
+      <section className="about-story-timeline" style={{ position: 'relative', zIndex: 1, marginTop: '2rem' }}>
           <Suspense fallback={null}>
         <ScrollTimeline
-          subtitle="SCROLL TO EXPLORE THE COSMIC JOURNEY"
+          subtitle="From my first tracks to your next project"
           events={[
             {
-              id: '1',
-              year: 'Where Everything Began',
-              title: 'THE VISION',
-              description:
-                'My journey began with a clear vision: to bring positive transformation, creativity, and consciousness into this world through art and physical action. I have always believed that creativity is a sacred channel — a way to turn raw energy into something beautiful, constructive, and timeless. Through film, music, and motion, I wanted to inspire people, awaken awareness, and make this dimension a little brighter with every creation. \n🎬 Art became my medium. Energy became my message.',
+              id: 'music',
+              year: '01 · MUSIC',
+              title: 'It started with sound',
+              description: 'Producing my own music was my first creative outlet. It taught me how to turn an idea into a finished track — and how much the details matter.',
             },
             {
-              id: '2',
-              year: 'Why Change Was Needed',
-              title: 'THE CONFLICT',
-              description:
-                'As I explored the creative industry, I realized something deeply unsettling: the same powerful tools of media, sound, and visuals that can uplift humanity were often being used to manipulate, divide, and spread fear. I saw a world flooded with negative energy, disconnection, and overstimulation — people scrolling, but not feeling. That became my challenge: to reconnect humanity through sound, video, frequency, and energy — creating transformation that is both spiritual and physical. \n💫 My mission became clear: to help people feel again — and connect.',
+              id: 'film',
+              year: '02 · FILM',
+              title: 'Giving the music a visual world',
+              description: 'I wanted to make my own music videos. That curiosity brought me into camera work, editing and visual storytelling — and grew into a passion for video production.',
             },
             {
-              id: '3',
-              year: 'The Birth of COSMICLUCID',
-              title: 'THE BEGINNING',
-              description:
-                'With that mission in my heart, I founded COSMICLUCID — a creative movement dedicated to elevating consciousness through art. It all started with music, learning the language of sound and frequency. Soon after, I expanded into film and photography, becoming an audiovisual creator on a mission to blend emotion, aesthetics, and purpose. Every project became a chance to awaken awareness, motivate transformation, and inspire connection. \n🔮 From sound to vision — COSMICLUCID was born.',
+              id: 'studies',
+              year: '03 · AUDIOVISUAL MEDIA',
+              title: 'Turning curiosity into craft',
+              description: 'Studying Audiovisual Media gave me a professional foundation across filmmaking, audio production, sound design and web development. I learned to connect the technical and creative sides of a project.',
             },
             {
-              id: '4',
-              year: 'From One to a Collective',
-              title: 'THE COSMIC CULTURE',
-              description:
-                'No great vision thrives alone. Soon, like-minded souls joined the mission — artists, filmmakers, sound designers, and athletes who believed in conscious creation. Together, we built The COSMIC CULTURE — a growing collective fusing art, energy, and purpose to create experiences that move people on every level. Our movement empowers others to step into their own light, reclaim their energy, and co-create a new, more connected reality. \n🌠 COSMICLUCID became more than a brand — it became a culture.',
+              id: 'ai',
+              year: '04 · AI',
+              title: 'Exploring new tools from the start',
+              description: 'I began using AI creative tools from their earliest releases. Today, that hands-on experience informs how I create films, music, sound design and websites — choosing the tools that serve each project.',
             },
             {
-              id: '5',
-              year: 'Growth, Mastery & Impact',
-              title: 'THE JOURNEY',
-              description:
-                'Over the years, I have refined my craft — working with 100+ clients, building impactful brands, and growing an audience of over 50,000 across digital platforms. While completing my Audiovisual Media degree at HdM Stuttgart, I worked in sales and marketing, learning how to position and communicate brands with authenticity and depth. At the same time, my passion for fitness and physical mastery grew — over 10 years of training and coaching taught me how the body fuels creativity and energy flow. These experiences shaped me into a holistic creator — uniting art direction, sound design, branding, and body-mind alignment into one clear philosophy. \n🎯 Art, marketing, and movement — all serving transformation.',
+              id: 'audience',
+              year: '05 · SOCIAL MEDIA',
+              title: 'Building my own audience',
+              description: 'Alongside my studies, I built my own social media brands and grew an audience of over 33,000 followers. Creating for my own channels taught me how strategy, content and consistency work together.',
             },
             {
-              id: '6',
-              year: 'LUCID-BMS System',
-              title: 'THE TRANSFORMATION',
-              description:
-                'By combining all my disciplines, I created the LUCID-BMS System — a transformative process that activates Body, Mind, and Soul through structured practice and creative flow. This system empowers creators, entrepreneurs, and visionaries to align their energy, overcome limitations, and manifest their highest potential — both artistically and personally. \n⚙️ The vision to create positive impact is no longer a dream — it is becoming reality.',
-            },
-            {
-              id: '7',
-              year: 'The Vision Expands',
-              title: 'THE FUTURE',
-              description:
-                'And yet, this is only the beginning. COSMICLUCID is evolving into a global creative movement — connecting a Cosmic Culture of artists, athletes, and entrepreneurs who learn to channel energy consciously. The next chapter unfolds through transformational retreats, online academies, digital courses, and immersive audiovisual experiences that unite film, fitness, and self-realization. The goal is clear: to raise the collective vibration of this planet — one creation and one transformation at a time. \n💫 The future is lucid, and its already unfolding.',
+              id: 'clients',
+              year: '06 · CLIENT WORK',
+              title: 'Bringing that experience to your business',
+              description: 'As more brands reached out, I worked with artists, personal brands, YouTubers and companies. I help them sharpen their positioning and digital presence through audiovisual content, social media and websites — with visibility, client enquiries and revenue as the goals.',
             },
           ]}
           finalCard={{
-            title: 'THE AWAKENING',
-            subtitle: 'FULL LUCID CONSCIOUSNESS',
-            titleFontSize: 42,
-            titleHeight: 'clamp(45px, 7vw, 80px)',
-            titleMarginTop: '-4rem',
-            titleMarginBottom: '0rem',
-          paragraphs: [
-            'From here, the journey becomes ours.',
-            'If this story resonated with you —\nif you feel the spark to transform your energy,\nyour craft,\nyour body,\nyour mind,\nyour consciousness —',
-            'then you are already part of THE COSMIC CULTURE.',
-            'This is your invitation to step into your light,\ncreate with intention,\nand shape a reality where art, frequency,\nand human connection awaken the world.',
-            '✨ Let’s create something that transforms energy, minds & souls —\nand bring our shared vision to life.',
-          ],
-          videoText: {
-            src: '/Film/speed.mp4',
-            fontWeight: 800,
-            fontFamily:
-              "var(--font-display, 'Sora', 'Space Grotesk', 'Clash Display', 'Archivo Black', sans-serif)",
-            },
+            title: 'WHAT WE CREATE NEXT',
+            subtitle: 'YOUR PROJECT',
+            paragraphs: [
+              'Today, I bring those disciplines together for your business: audiovisual production, social media management and website design & development.',
+              "Tell me what you want to achieve. Let's build the right creative approach together.",
+            ],
           }}
           ctaSlot={
             <div
@@ -443,44 +283,16 @@ export default function About() {
                 onClick={() => (window.location.href = '/contact')}
               />
               <div className="mt-12 w-full flex flex-col items-center gap-8 text-center">
-                <div className="flex w-full justify-center">
-                  <div
-                    className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/15 px-4 py-1.2 text-[0.52rem] sm:text-[0.6rem] font-semibold uppercase tracking-[0.1em] sm:tracking-[0.16em] text-white shadow-[0_0_26px_rgba(124,58,237,0.95),0_0_46px_rgba(56,189,248,0.65)] backdrop-blur-xl"
-                    style={{
-                      letterSpacing: '0.12em',
-                      padding: '0.56rem 1.3rem',
-                      boxShadow: '0 0 8px rgba(124, 58, 237, 0.68), 0 0 14px rgba(56, 189, 248, 0.46)',
-                    }}
-                  >
-                    <CountUp
-                      value={800}
-                      suffix="+"
-                      duration={8}
-                      animationStyle="default"
-                      easing="easeInOut"
-                      triggerOnView={true}
-                      colorScheme="gradient"
-                      className="text-[0.68rem] sm:text-[0.8rem] font-semibold tracking-[0.2em]"
-                      numberClassName="mx-1"
-                    />
-                    <span
-                      className="ml-2 text-[0.52rem] tracking-[0.14em] sm:text-[0.64rem] sm:tracking-[0.2em]"
-                      style={{ whiteSpace: 'nowrap' }}
-                    >
-                      People Impacted Worldwide
-                    </span>
-                  </div>
-                </div>
                 <p
                   className="mt-4 text-center text-white/80"
                   style={{
                     textTransform: 'uppercase',
-                    whiteSpace: 'nowrap',
+                    whiteSpace: 'normal',
                     fontSize: '0.7rem',
                     letterSpacing: '0.14em',
                   }}
                 >
-                  🎥 Brand Identity • 💪🏽 Coaching • 🎵 Production
+                  Audiovisual Production • Social Media • Websites
                 </p>
 
                 <div className="flex justify-center items-center">
@@ -559,7 +371,7 @@ export default function About() {
                   >
                     <div className="text-lg">✨✨✨✨✨</div>
                     <p className="text-white/90 text-sm leading-relaxed italic">
-                      “Working with Louis shifted my entire mindset. His coaching mixes clarity, discipline, and deep emotional awareness — it activated something in me that I didn’t know I had. Total life-upgrade.”
+                      “Louis created a stunning website and delivered it in a remarkably short time. He was reliable, easy to work with, and the finished result looked fantastic. I couldn’t be happier.”
                     </p>
                     <p className="mt-4 text-white text-xs tracking-[0.22em] uppercase">
                       — LUCAS SCHÄFER
@@ -645,7 +457,6 @@ export default function About() {
           }
         />
           </Suspense>
-        </LazyMount>
       </section>
 
       {/* ---- Location ---- */}
@@ -756,6 +567,11 @@ export default function About() {
       {/* Keyframes only for local twinkle animation if not present globally */}
       <style>
         {`
+        .about-story-timeline .scroll-timeline { margin-top: 2rem; }
+        .about-story-timeline .scroll-timeline-item { margin-bottom: 2rem; }
+        .about-story-timeline .scroll-timeline-item:first-child { margin-top: 2rem !important; }
+        .about-story-timeline .scroll-timeline-final-card { margin-top: 3rem; }
+        .about-story-timeline .scroll-timeline-card-text { font-size: 1rem; line-height: 1.7; letter-spacing: 0; hyphens: none; }
           .about-page {
             /* Removed background to reveal original background */
             /* Other color, gradient, and glow styles remain unchanged elsewhere */
@@ -830,6 +646,6 @@ export default function About() {
         @media (min-width: 1440px) { .about-top-spacer { height: 260px; } }
         `}
       </style>
-    </main>
+    </div>
   );
 }

@@ -52,10 +52,10 @@ export function Footer() {
           className="mb-6"
         >
           <h3 className="text-white tracking-widest uppercase mb-3 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
-            COSMICLUCID
+            LOUIS LUCID
           </h3>
           <p className="text-white/60 tracking-wider">
-            Art | Film | Music | Mentoring
+            Audio Visual Production | Social Media Management | Website Design &amp; Development
           </p>
         </motion.div>
 
@@ -100,7 +100,7 @@ export function Footer() {
                   ? '/impressum'
                   : link.startsWith('Datenschutzerklärung')
                   ? '/datenschutz'
-                  : `/${link.toLowerCase().split(' ')[0]}`
+                  : link === 'Home' ? '/' : `/${link.toLowerCase().split(' ')[0]}`
               }
               className="text-white/60 hover:text-white transition-colors duration-300 tracking-wide"
             >

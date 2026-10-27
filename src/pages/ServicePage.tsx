@@ -1,129 +1,85 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { serviceContent, type ServiceKind } from "./serviceContent";
 import { motion } from "framer-motion";
 import AuroraButton from "../components/ui/AuroraButton";
+import CollaborateSection from "../components/CollaborateSection";
+import { ScrollTimeline } from "../components/ui/ScrollTimeline";
 import { UniverseCard } from "../components/UniverseCard";
+import ProductionVisual from "../components/ui/ProductionVisual";
+import SocialMediaVisual from "../components/ui/SocialMediaVisual";
+import WebsiteVisual from "../components/ui/WebsiteVisual";
 import { CountUp } from "../components/ui/CountUp";
 import { useClientEnv } from "../hooks/useClientEnv";
 
-const serviceCards = [
-  {
-    icon: <span className="text-5xl">💪🏽</span>,
-    title: "Body",
-    description: [
-      "• Build sustainable energy + strength",
-      "• Nervous system regulation",
-      "• Discipline & recovery routines",
-      "• Embodied confidence + presence",
-    ].join("\n"),
-    glow: "blue" as const,
-  },
-  {
-    icon: <span className="text-5xl">🧠</span>,
-    title: "Mind",
-    description: [
-      "• Identity upgrade + self-leadership",
-      "• Focus, clarity & execution",
-      "• Emotional mastery under pressure",
-      "• Clean decisions & boundaries",
-    ].join("\n"),
-    glow: "violet" as const,
-  },
-  {
-    icon: <span className="text-5xl">✨</span>,
-    title: "Soul",
-    description: [
-      "• Purpose, meaning & direction",
-      "• Intuition & inner alignment",
-      "• Values-based action",
-      "• Create a life that feels true",
-    ].join("\n"),
-    glow: "gold" as const,
-  },
-];
+// Tilt interaction (mirrors homepage behavior)
+function Tilt({ children, disabled = false }: { children: React.ReactNode; disabled?: boolean }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [rot, setRot] = useState({ rx: 0, ry: 0 });
+  const frameRef = useRef<number | null>(null);
+  const pendingPos = useRef<{ x: number; y: number } | null>(null);
 
-export default function MentoringPage() {
-  const HERO_IMAGE_FILE = "Louis Drone.webp";
-  const HERO_IMG = useMemo(
-    () => (import.meta as any).env.BASE_URL + "About/" + encodeURIComponent(HERO_IMAGE_FILE),
-    []
+  if (disabled) return <>{children}</>;
+
+  return (
+    <div
+      ref={ref}
+      onMouseMove={(e) => {
+        const el = ref.current;
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        pendingPos.current = {
+          x: (e.clientX - rect.left) / rect.width,
+          y: (e.clientY - rect.top) / rect.height,
+        };
+        if (frameRef.current) return;
+        frameRef.current = requestAnimationFrame(() => {
+          frameRef.current = null;
+          const next = pendingPos.current;
+          if (!next) return;
+          const rx = (0.5 - next.y) * 6;
+          const ry = (next.x - 0.5) * 6;
+          setRot({ rx, ry });
+        });
+      }}
+      onMouseLeave={() => {
+        pendingPos.current = null;
+        frameRef.current && cancelAnimationFrame(frameRef.current);
+        frameRef.current = null;
+        setRot({ rx: 0, ry: 0 });
+      }}
+      style={{ perspective: "1000px" }}
+      className="will-change-transform"
+    >
+      <motion.div
+        style={{ transformStyle: "preserve-3d" }}
+        animate={{ rotateX: rot.rx, rotateY: rot.ry }}
+        transition={{ type: "spring", stiffness: 140, damping: 14, mass: 0.6 }}
+      >
+        {children}
+      </motion.div>
+    </div>
   );
+}
+
+export default function ServicePage({ service }: { service: ServiceKind }) {
+  const content = serviceContent[service];
+  const serviceCards = content.cards;
+  const timelineEvents = content.timeline;
+  const navigate = useNavigate();
   const scrollToSection = useCallback((id: string) => {
     const el = document.getElementById(id);
     if (!el) return;
     el.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
 
-  const handleContact = () => scrollToSection("contact");
+  const handleContact = () => navigate("/contact");
 
   const { isSmallScreen, prefersReducedMotion, isMobile } = useClientEnv();
   const disableTilt = isSmallScreen || isMobile || prefersReducedMotion;
-  const disableAura = isSmallScreen || isMobile || prefersReducedMotion;
   const STAR_COUNT = isSmallScreen ? 12 : 48;
   const topSpacerHeight = 0;
-  const heroTextTransform = "translateY(0)";
   const heroFlexWrap = isSmallScreen ? "wrap" : "nowrap";
-  const heroAuraRef = useRef<HTMLDivElement | null>(null);
-  const auraFrameRef = useRef<number | null>(null);
-  const auraPendingPos = useRef<{ x: number; y: number } | null>(null);
-  const heroCloneImgStyle = {
-    display: "block",
-    width: isSmallScreen ? "100%" : "105%",
-    height: "auto",
-    objectFit: "cover" as const,
-    transform: isSmallScreen ? "translateX(0) translateY(0)" : "translateX(2%) translateY(10%)",
-    marginTop: isSmallScreen ? "0.8rem" : "3rem",
-  };
-
-  // Inline tilt for services section to keep hover fidelity while localizing logic.
-  const Tilt = ({ children }: { children: React.ReactNode }) => {
-    const [rot, setRot] = useState({ rx: 0, ry: 0 });
-    const frameRef = useRef<number | null>(null);
-    const pendingPos = useRef<{ x: number; y: number } | null>(null);
-    const ref = useRef<HTMLDivElement>(null);
-
-    if (disableTilt) return <>{children}</>;
-
-    return (
-      <div
-        ref={ref}
-        onMouseMove={(e) => {
-          const el = ref.current;
-          if (!el) return;
-          const rect = el.getBoundingClientRect();
-          pendingPos.current = {
-            x: (e.clientX - rect.left) / rect.width,
-            y: (e.clientY - rect.top) / rect.height,
-          };
-          if (frameRef.current) return;
-          frameRef.current = requestAnimationFrame(() => {
-            frameRef.current = null;
-            const next = pendingPos.current;
-            if (!next) return;
-            const rx = (0.5 - next.y) * 6;
-            const ry = (next.x - 0.5) * 6;
-            setRot({ rx, ry });
-          });
-        }}
-        onMouseLeave={() => {
-          pendingPos.current = null;
-          frameRef.current && cancelAnimationFrame(frameRef.current);
-          frameRef.current = null;
-          setRot({ rx: 0, ry: 0 });
-        }}
-        style={{ perspective: "1000px" }}
-        className="will-change-transform"
-      >
-        <motion.div
-          style={{ transformStyle: "preserve-3d" }}
-          animate={{ rotateX: rot.rx, rotateY: rot.ry }}
-          transition={{ type: "spring", stiffness: 140, damping: 14, mass: 0.6 }}
-        >
-          {children}
-        </motion.div>
-      </div>
-    );
-  };
-
   useEffect(() => {
     const reveals = document.querySelectorAll(".reveal");
     const observer = new IntersectionObserver(
@@ -140,52 +96,7 @@ export default function MentoringPage() {
 
     reveals.forEach((r) => observer.observe(r));
     return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (disableAura) return;
-
-    const el = heroAuraRef.current;
-    if (!el) return;
-
-    const handlePointerMove = (event: PointerEvent) => {
-      auraPendingPos.current = { x: event.clientX, y: event.clientY };
-      if (auraFrameRef.current) return;
-      auraFrameRef.current = requestAnimationFrame(() => {
-        auraFrameRef.current = null;
-        const next = auraPendingPos.current;
-        const target = heroAuraRef.current;
-        if (!target || !next) return;
-        const rect = target.getBoundingClientRect();
-        const x = ((next.x - rect.left) / rect.width) * 100;
-        const y = ((next.y - rect.top) / rect.height) * 100;
-        target.style.setProperty("--aura-x", `${x}%`);
-        target.style.setProperty("--aura-y", `${y}%`);
-        target.style.setProperty("--aura-opacity", "0.72");
-      });
-    };
-
-    const handlePointerLeave = () => {
-      auraPendingPos.current = null;
-      if (auraFrameRef.current) {
-        cancelAnimationFrame(auraFrameRef.current);
-        auraFrameRef.current = null;
-      }
-      const target = heroAuraRef.current;
-      if (!target) return;
-      target.style.setProperty("--aura-opacity", "0");
-    };
-
-    el.addEventListener("pointermove", handlePointerMove);
-    el.addEventListener("pointerenter", handlePointerMove);
-    el.addEventListener("pointerleave", handlePointerLeave);
-
-    return () => {
-      el.removeEventListener("pointermove", handlePointerMove);
-      el.removeEventListener("pointerenter", handlePointerMove);
-      el.removeEventListener("pointerleave", handlePointerLeave);
-    };
-  }, [disableAura]);
+  }, [service]);
 
   const stars = useMemo(
     () =>
@@ -203,7 +114,7 @@ export default function MentoringPage() {
 
 
   return (
-    <main className="marketing-page relative z-10 min-h-screen text-white">
+    <div className="marketing-page relative z-10 min-h-screen text-white">
       <div
         className="about-top-spacer"
         aria-hidden
@@ -250,8 +161,10 @@ export default function MentoringPage() {
           <h1
             className="mb-5 tracking-wide"
             style={{
-              fontSize: "clamp(3rem, 6vw, 5.5rem)",
+              fontSize: "clamp(2rem, 5vw, 5.5rem)",
               lineHeight: 1.05,
+              paddingInline: "1.25rem",
+              maxWidth: "100%",
               textTransform: "uppercase",
               color: "transparent",
               backgroundImage: "linear-gradient(90deg, #1BA3FF 0%, #0052FF 52%, #5A00FF 100%)",
@@ -259,7 +172,7 @@ export default function MentoringPage() {
               backgroundClip: "text",
             }}
           >
-            MENTORING
+            {content.title}
           </h1>
 
           <motion.div
@@ -273,9 +186,8 @@ export default function MentoringPage() {
               className="absolute inset-0 rounded-full"
               style={{
                 background:
-                  "linear-gradient(90deg, rgba(160,120,32,0.92) 0%, rgba(160,120,32,0.82) 35%, rgba(140,118,140,0.55) 48%, rgba(110,120,180,0.62) 60%, rgba(40,100,210,0.78) 72%, rgba(0,72,220,0.9) 100%)",
-                boxShadow:
-                  "0 0 24px rgba(160,120,32,0.48), 0 0 32px rgba(0,72,220,0.52), 0 0 54px rgba(124, 58, 237, 0.3)",
+                  "linear-gradient(90deg, rgba(81,21,140,0.28) 0%, rgba(124,58,237,0.95) 50%, rgba(81,21,140,0.28) 100%)",
+                boxShadow: "0 0 28px rgba(81, 21, 140, 0.9), 0 0 60px rgba(124, 58, 237, 0.65)",
                 filter: "drop-shadow(0 0 22px rgba(124, 58, 237, 0.85))",
                 height: "100%",
                 borderRadius: "999px",
@@ -287,30 +199,33 @@ export default function MentoringPage() {
               style={{
                 marginBottom: "4rem",
                 background:
-                  "linear-gradient(90deg, rgba(160,120,32,0.2) 0%, rgba(160,120,32,0.16) 34%, rgba(140,120,180,0.18) 48%, rgba(90,120,200,0.2) 62%, rgba(0,72,220,0.24) 78%, rgba(0,72,220,0.3) 100%)",
+                  "linear-gradient(90deg, rgba(81,21,140,0.18) 0%, rgba(124,58,237,0.35) 50%, rgba(81,21,140,0.18) 100%)",
               }}
             />
           </motion.div>
-
+        </div>
+      </section>
+ 
+ {/* Subtext */}
           <motion.p
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.95, ease: "easeOut" }}
+            transition={{ duration: 0.8, delay: 0.95, ease: 'easeOut' }}
             className="portfolio-subline text-center text-white leading-relaxed"
             style={{
-              marginTop: "-3rem",
-              marginBottom: "2rem",
-              letterSpacing: "0.14em",
-              textTransform: "uppercase",
-              fontSize: "clamp(0.82rem, 3vw, 1.05rem)",
+              marginTop: '-2.8rem',
+              marginBottom: '1.2rem',
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              fontSize: 'clamp(0.82rem, 3vw, 1.05rem)',
             }}
           >
-            Energetic Fitness · Body · Mind · Soul
+            {content.subline}
             <br />
-            — Conscious performance, clarity, and embodied growth. —
+            {content.tagline}
           </motion.p>
-        </div>
-      </section>
+
+        
 
       {/* HERO (Copied from About hero setup) */}
       <section
@@ -337,7 +252,7 @@ export default function MentoringPage() {
             alignItems: "center",
           }}
         >
-          <motion.h1
+          <motion.h2
             initial={{ opacity: 0, filter: "blur(20px)", y: 30 }}
             animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
             transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
@@ -351,246 +266,9 @@ export default function MentoringPage() {
               marginTop: isSmallScreen ? "-1.2rem" : undefined,
             }}
           >
-            ENERGETIC FITNESS
-          </motion.h1>
+            {content.heroTitle}
+          </motion.h2>
           <div className="mt-4 h-[2px] w-full max-w-[320px] relative overflow-visible mx-auto" style={{ marginBottom: "1.5rem" }}>
-            <div
-              className="absolute inset-0 rounded-full"
-              style={{
-                background:
-                  "linear-gradient(90deg, rgba(160,120,32,0.2) 0%, rgba(160,120,32,0.9) 50%, rgba(160,120,32,0.2) 100%)",
-                boxShadow: "0 0 24px rgba(160,120,32,0.8), 0 0 56px rgba(160,120,32,0.5)",
-                filter: "drop-shadow(0 0 20px rgba(160,120,32,0.75))",
-                height: "100%",
-                borderRadius: "999px",
-              }}
-            />
-            <div
-              className="absolute inset-0 rounded-full blur-lg pointer-events-none"
-              style={{
-                background:
-                  "linear-gradient(90deg, rgba(160,120,32,0.1) 0%, rgba(160,120,32,0.32) 50%, rgba(160,120,32,0.1) 100%)",
-              }}
-            />
-          </div>
-          <p
-            className="text-white/70 leading-relaxed mx-auto about-subline"
-            style={{
-              letterSpacing: isSmallScreen ? "0.14em" : "0.22em",
-              // Remove uppercase for sentence case
-              textTransform: "none",
-              maxWidth: "56ch",
-              fontSize: isSmallScreen ? "0.72rem" : "clamp(0.9rem, 1.8vw, 1.02rem)",
-              textAlign: "center",
-            }}
-          >
-            One-on-one mentoring for entrepreneurs, creators, and leaders who want real transformation.<br />
-            We work deeply across body, mind, and soul to build energy, clarity, discipline, and aligned action — so you perform at your highest level without burning out.
-          </p>
-
-          <div style={{ marginTop: "2.5rem" }}>
-            <div className="contact-footer flex flex-wrap justify-center gap-3">
-              <AuroraButton
-                label="APPLY 1:1"
-                className="px-10 sm:px-14 py-4 text-base tracking-[0.3em]"
-                onClick={() => (window.location.href = "/contact")}
-              />
-              <AuroraButton
-                label="VIEW PROCESS"
-                className="px-9 sm:px-12 py-4 text-xs sm:text-sm tracking-[0.26em]"
-                onClick={() => scrollToSection("services")}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div
-          className="hero-text reveal"
-          style={{
-            textAlign: "center",
-            maxWidth: "640px",
-            margin: "0 auto",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <motion.h1
-            initial={{ opacity: 0, filter: "blur(20px)", y: 30 }}
-            animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
-            transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
-            className="tracking-wide headline-gradient"
-            style={{
-              fontSize: "clamp(1.4rem, 3vw, 2.8rem)",
-              lineHeight: 1.05,
-              textTransform: "uppercase",
-              color: "transparent",
-              marginBottom: "1.25rem",
-              marginTop: isSmallScreen ? "-1.2rem" : undefined,
-            }}
-          >
-            EF-ACADEMY
-          </motion.h1>
-          <div className="text-white/80 uppercase tracking-[0.22em] text-xs sm:text-sm mb-2">
-          </div>
-          <div className="mt-4 h-[2px] w-full max-w-[320px] relative overflow-visible mx-auto" style={{ marginBottom: "1.5rem" }}>
-            <div
-              className="absolute inset-0 rounded-full"
-              style={{
-                background:
-                  "linear-gradient(90deg, rgba(0,82,255,0.18) 0%, rgba(0,82,255,0.85) 50%, rgba(0,82,255,0.18) 100%)",
-                boxShadow: "0 0 24px rgba(0, 82, 255, 0.9), 0 0 56px rgba(0, 82, 255, 0.55)",
-                filter: "drop-shadow(0 0 20px rgba(0, 82, 255, 0.65))",
-                height: "100%",
-                borderRadius: "999px",
-              }}
-            />
-            <div
-              className="absolute inset-0 rounded-full blur-lg pointer-events-none"
-              style={{
-                background:
-                  "linear-gradient(90deg, rgba(0,82,255,0.12) 0%, rgba(0,82,255,0.4) 50%, rgba(0,82,255,0.12) 100%)",
-              }}
-            />
-          </div>
-          <p
-            className="text-white/70 leading-relaxed mx-auto about-subline"
-            style={{
-              letterSpacing: isSmallScreen ? "0.14em" : "0.22em",
-              textTransform: "none",
-              maxWidth: "56ch",
-              fontSize: isSmallScreen ? "0.72rem" : "clamp(0.9rem, 1.8vw, 1.02rem)",
-              textAlign: "center",
-            }}
-          >
-            Learn the LUCID BODY · MIND · SOUL SYSTEM at your own pace.<br />
-            The Academy is a structured, in-depth video program that teaches you how to build energy, mental clarity, emotional regulation, and purpose-driven execution — step by step.
-          </p>
-
-          <div style={{ marginTop: "2.5rem" }}>
-            <div className="contact-footer flex flex-wrap justify-center gap-3">
-              <AuroraButton
-                label="ENTER ACADEMY"
-                className="px-10 sm:px-14 py-4 text-base tracking-[0.3em]"
-                onClick={() => (window.location.href = "/academy")}
-              />
-              <AuroraButton
-                label="VIEW BMS-SYSTEM"
-                className="px-9 sm:px-12 py-4 text-xs sm:text-sm tracking-[0.26em]"
-                onClick={() => scrollToSection("services")}
-              />
-            </div>
-          </div>
-        </div>
-
-      </section>
-
-      {/* SERVICES CARDS */}
-      <section id="services" className="py-24" style={{ scrollMarginTop: "6rem" }}>
-        <div className="max-w-6xl mx-auto px-6 text-center" style={{ marginTop: "2rem" }}>
-          <div className="flex flex-col items-center" style={{ gap: "0.6rem" }}>
-            <h2
-              className="tracking-wide headline-gradient"
-              style={{
-                marginTop: "6rem",
-                fontSize: "clamp(1.6rem, 3vw, 2.8rem)",
-                lineHeight: 1.05,
-                textTransform: "uppercase",
-                color: "transparent",
-                marginBottom: "0.4rem",
-              }}
-            >
-              BODY · MIND · SOUL
-            </h2>
-            <div
-              className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/15 px-4 py-1.2 text-[0.52rem] sm:text-[0.6rem] font-semibold uppercase tracking-[0.1em] sm:tracking-[0.16em] text-white shadow-[0_0_26px_rgba(124,58,237,0.95),0_0_46px_rgba(56,189,248,0.65)] backdrop-blur-xl"
-              style={{
-                marginBottom: "1.25rem",
-                letterSpacing: "0.12em",
-                padding: "0.56rem 1.3rem",
-                boxShadow: "0 0 8px rgba(124, 58, 237, 0.68), 0 0 14px rgba(56, 189, 248, 0.46)",
-              }}
-            >
-              THE LUCID-BMS SYSTEM
-            </div>
-            <div
-              className="text-white text-xs md:text-sm tracking-[0.22em] uppercase"
-              style={{ marginBottom: "2rem" }}
-            >
-             — A holistic system to build energy, clarity, aligned action and real transformation — 
-            </div>
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-10 items-stretch mt-10">
-            {serviceCards.map((card, index) => {
-              const tilt = index === 1 ? "center" : index === 2 ? "right" : "left";
-              const offset = tilt === "left" ? "-20px" : tilt === "right" ? "20px" : "0px";
-              return (
-                <Tilt key={card.title}>
-                  <div
-                    className="relative mb-10 rounded-3xl"
-                    style={{
-                      transform: disableTilt
-                        ? "translateX(0px) translateY(0px)"
-                        : `translateX(${offset}) translateY(0px)`,
-                    }}
-                  >
-                    <div className="relative z-10">
-                      <UniverseCard
-                        icon={card.icon}
-                        title={card.title.toUpperCase()}
-                        description={card.description}
-                        glowColor={card.glow}
-                        delay={0.15 * index}
-                        tilt={tilt as "left" | "center" | "right"}
-                        cardHeight={400}
-                      />
-                    </div>
-                  </div>
-                </Tilt>
-              );
-            })}
-          </div>
-
-          <div className="flex justify-center" style={{ marginTop: "4rem", marginBottom: "8rem" }}>
-            <AuroraButton
-              label="discover your Potential"
-              className="px-10 sm:px-14 py-4 text-base tracking-[0.3em]"
-              onClick={() => scrollToSection("contact")}
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* ABOUT HERO CLONE */}
-      <section
-        className="hero"
-        style={{ position: "relative", zIndex: 1, padding: "6rem 10%", marginTop: "0" }}
-      >
-        <div
-          className="hero-text reveal"
-          style={{ transform: heroTextTransform, textAlign: "center", flex: 1, minWidth: "320px" }}
-        >
-          <motion.h1
-            initial={{ opacity: 0, filter: "blur(20px)", y: 30 }}
-            whileInView={{ opacity: 1, filter: "blur(0px)", y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
-            className="mb-5 tracking-wide headline-gradient"
-            style={{
-              fontSize: "clamp(1.8rem, 3.2vw, 3.2rem)",
-              lineHeight: 1.05,
-              textTransform: "uppercase",
-              color: "transparent",
-              marginTop: isSmallScreen ? "8rem" : undefined,
-            }}
-          >
-            Why Work With Me
-          </motion.h1>
-          <div
-            className="mt-4 h-[2px] w-full max-w-[320px] relative overflow-visible mx-auto"
-            style={{ marginBottom: "1.5rem" }}
-          >
             <div
               className="absolute inset-0 rounded-full"
               style={{
@@ -613,52 +291,188 @@ export default function MentoringPage() {
           <p
             className="text-white/70 leading-relaxed mx-auto about-subline"
             style={{
-              letterSpacing: "0.22em",
+              letterSpacing: isSmallScreen ? "0.14em" : "0.22em",
               textTransform: "uppercase",
               maxWidth: "56ch",
-              fontSize: "1.2rem",
+              fontSize: isSmallScreen ? "0.72rem" : "clamp(0.9rem, 1.8vw, 1.02rem)",
               textAlign: "center",
             }}
           >
-            One creator. One vision. One growth engine.
-            <br />
-            — I blend branding, cinematic content, web design, and performance marketing into one aligned system — so your message is stronger, your funnel converts better, and your brand grows faster. —
+            {content.intro}
           </p>
+
           <div style={{ marginTop: "2.5rem" }}>
-            <div className="contact-footer">
+            <div className="contact-footer flex flex-wrap justify-center gap-3">
               <AuroraButton
-                label="LET'S WORK TOGETHER"
+                label={content.cta}
                 className="px-10 sm:px-14 py-4 text-base tracking-[0.3em]"
-                onClick={() => (window.location.href = "/contact")}
+                onClick={handleContact}
+              />
+              <AuroraButton
+                label="SEE SERVICES"
+                className="px-9 sm:px-12 py-4 text-xs sm:text-sm tracking-[0.26em]"
+                onClick={() => scrollToSection("services")}
               />
             </div>
-            <div
-              className="mt-4 text-white/80 text-xs sm:text-sm tracking-[0.12em] text-center leading-relaxed"
-              style={{ marginTop: "1rem" }}>
-              <div>Free brand &amp; funnel audit</div>
-              <div style={{ marginTop: "0.35rem" }}>
-                brand, content, funnel, ads, messaging, positioning, all in one place.
-              </div>
-            </div>
+          </div>
+
+          <div
+            className="flex flex-wrap items-center justify-center gap-3 text-sm text-white/85 tracking-[0.22em]"
+            style={{ marginTop: "1.5rem", textTransform: "uppercase" }}
+          >
+            <span>{content.highlights[0]}</span>
+            <span className="opacity-60">•</span>
+            <span>{content.highlights[1]}</span>
+            <span className="opacity-60">•</span>
+            <span>{content.highlights[2]}</span>
           </div>
         </div>
 
-        <div
-          className="hero-img reveal"
-          ref={disableAura ? undefined : heroAuraRef}
-          style={{ flex: 1.2, minWidth: "300px", position: "relative", isolation: "isolate", overflow: "visible" }}
-        >
-          <img
-            src={HERO_IMG}
-            alt="Louis Kuschnir"
-            width={520}
-            height={640}
-            loading="lazy"
-            decoding="async"
-            style={heroCloneImgStyle}
+        <div className="hero-img reveal flex flex-col items-center justify-center gap-6" style={{ flex: 1.1, maxWidth: "560px", margin: "0 auto" }}>
+          {service === 'production' ? <ProductionVisual /> : service === 'social' ? <SocialMediaVisual /> : <WebsiteVisual />}
+        </div>
+
+      </section>
+
+      {/* SERVICES CARDS */}
+      <section
+        id="services"
+        className="py-24"
+        style={{ scrollMarginTop: "6rem" }}
+      >
+        <div className="max-w-6xl mx-auto px-6 space-y-12">
+          <div
+            className="text-center"
+            style={{
+              marginTop: isSmallScreen ? "-3rem" : "8rem",
+              marginBottom: "2rem",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "0.6rem",
+            }}
+          >
+            <h2
+              className="tracking-wide headline-gradient"
+              style={{
+                fontSize: "clamp(1.6rem, 3vw, 2.8rem)",
+                lineHeight: 1.05,
+                textTransform: "uppercase",
+                color: "transparent",
+                marginBottom: "0.4rem",
+              }}
+            >
+              MY SERVICES
+            </h2>
+            <div
+              className="text-lg md:text-xl font-semibold text-white/90 tracking-[0.18em] uppercase"
+              style={{ marginBottom: "0.2rem" }}
+            >
+              {content.servicesTitle}
+            </div>
+            <div
+              className="text-white text-xs md:text-sm tracking-[0.22em] uppercase"
+              style={{ marginBottom: "0.2rem" }}
+            >
+              {content.servicesSubline}
+            </div>
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-10 items-stretch">
+            {serviceCards.map((card, index) => {
+              const tilt = index === 1 ? "center" : index === 2 ? "right" : "left";
+              const offset =
+                tilt === "left" ? "-20px" : tilt === "right" ? "20px" : "0px";
+              return (
+                <Tilt key={card.title} disabled={disableTilt}>
+                  <div
+                    className="relative"
+                    style={{
+                      transform: disableTilt
+                        ? "translateX(0px) translateY(0px)"
+                        : `translateX(${offset}) translateY(0px)`,
+                    }}
+                  >
+                    <div className="relative z-10">
+                      <UniverseCard
+                        icon={card.icon}
+                        title={card.title.toUpperCase()}
+                        description={card.description}
+                        buttonText={card.buttonText ?? "REQUEST OFFER"}
+                        buttonHref={card.href ?? "/contact"}
+                        glowColor={card.glow}
+                        delay={0.15 * index}
+                        tilt={tilt}
+                      />
+                    </div>
+                  </div>
+                </Tilt>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* SERVICES PIPELINE TIMELINE */}
+      <section className="py-24 bg-white/5 border-y border-white/10">
+        <div className="max-w-6xl mx-auto px-6">
+          <div
+            className="text-center"
+            style={{
+              marginTop: "8rem",
+              marginBottom: "-4rem",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "0.6rem",
+            }}
+          >
+            <h2
+              className="tracking-wide headline-gradient"
+              style={{
+                fontSize: "clamp(1.6rem, 3vw, 2.8rem)",
+                lineHeight: 1.05,
+                textTransform: "uppercase",
+                color: "transparent",
+                marginBottom: "0.4rem",
+              }}
+            >
+              {content.processTitle}
+            </h2>
+          </div>
+          <ScrollTimeline
+            subtitle={content.processSubtitle}
+            events={timelineEvents}
+            finalCard={content.finalCard}
+            ctaSlot={
+              <div
+                className="contact-footer"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  margin: "-1rem auto 0rem",
+                  gap: "1rem",
+                }}
+              >
+                <AuroraButton
+                  label={content.cta}
+                  className="px-8 sm:px-12 py-3.5 text-sm sm:text-base tracking-[0.28em] timeline-cta-button"
+                  onClick={handleContact}
+                />
+              </div>
+            }
           />
         </div>
       </section>
+
+      <CollaborateSection
+        id="work-with-me"
+        portrait={service === 'production' ? 'gimbal' : service === 'social' ? 'controller' : 'seated'}
+        intro={content.whyTitle}
+        detail={content.whyText}
+        caption={service === 'production' ? 'Louis Kuschnir · Filmmaker & audiovisual creator' : service === 'social' ? 'Louis Kuschnir · Content creation & social media management' : 'Louis Kuschnir · Your partner for website design & development'}
+      />
 
       {/* GOOGLE REVIEWS (copied from About) */}
       <section
@@ -703,7 +517,7 @@ export default function MentoringPage() {
                 className="ml-2 text-[0.44rem] tracking-[0.1em] sm:text-[0.56rem] sm:tracking-[0.14em]"
                 style={{ whiteSpace: "nowrap" }}
               >
-                Brands Scaled
+                Brands Supported
               </span>
             </div>
           </div>
@@ -715,11 +529,11 @@ export default function MentoringPage() {
               letterSpacing: "0.14em",
             }}
           >
-            <span className="block sm:inline">🚀 Brand Systems &amp; Positioning</span>
+            <span className="block sm:inline">{content.highlights[0]}</span>
             <span className="hidden sm:inline">&nbsp;•&nbsp;</span>
-            <span className="block sm:inline">🎬 Cinematic Content Production</span>
+            <span className="block sm:inline">{content.highlights[1]}</span>
             <span className="hidden sm:inline">&nbsp;•&nbsp;</span>
-            <span className="block sm:inline">⚡ Performance Marketing &amp; Funnels</span>
+            <span className="block sm:inline">{content.highlights[2]}</span>
           </p>
 
           <div className="flex justify-center items-center" style={{ marginTop: "0.75rem" }}>
@@ -880,7 +694,7 @@ export default function MentoringPage() {
         style={{ margin: "2rem auto 3rem" }}
       >
         <AuroraButton
-          label="BRNG YOUR VISION TO LIFE"
+          label="BRING YOUR VISION TO LIFE"
           className="vision-btn px-12 sm:px-16 py-5 text-lg tracking-[0.3em]"
           onClick={handleContact}
         />
@@ -979,6 +793,6 @@ export default function MentoringPage() {
           }
         `}
       </style>
-    </main>
+    </div>
   );
 }

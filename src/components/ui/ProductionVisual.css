@@ -1,0 +1,22 @@
+.production-visual { width: 100%; max-width: 560px; margin: 0 auto; perspective: 1000px; }
+.production-visual svg { display: block; width: 100%; height: auto; overflow: visible; transform-style: preserve-3d; }
+.production-visual__frame { animation: production-frame 9s ease-in-out infinite; transform-origin: 280px 228px; }
+.production-visual__back { animation: production-back 9s ease-in-out infinite; transform-origin: 280px 228px; }
+.production-visual__sound { animation: production-sound 7s ease-in-out infinite; }
+.production-visual__sun { animation: production-sun 6s ease-in-out infinite alternate; transform-origin: 319px 204px; }
+.production-visual__bar { transform-box: fill-box; transform-origin: center; animation: production-meter 1.9s ease-in-out infinite alternate; }
+.production-visual__scan { animation: production-scan 7s linear infinite; }
+.production-visual__playhead { animation: production-playhead 8s linear infinite; }
+.production-visual__record { animation: production-record 3s ease-in-out infinite; }
+.production-visual__horizon { animation: production-record 5s ease-in-out infinite; }
+@keyframes production-frame { 0%,100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-9px) rotate(1deg); } }
+@keyframes production-back { 0%,100% { transform: translate(3px,-5px) rotate(-9deg); } 50% { transform: translate(-5px,3px) rotate(-6deg); } }
+@keyframes production-sound { 0%,100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
+@keyframes production-sun { from { opacity: .65; transform: scale(.94); } to { opacity: 1; transform: scale(1.07); } }
+@keyframes production-meter { 0% { transform: scaleY(.3); opacity: .5; } 45% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(.55); opacity: .7; } }
+@keyframes production-scan { 0% { transform: translateX(0); opacity: 0; } 10% { opacity: .2; } 90% { opacity: .2; } 100% { transform: translateX(368px); opacity: 0; } }
+@keyframes production-playhead { from { transform: translateX(0); } to { transform: translateX(250px); } }
+@keyframes production-record { 0%,100% { opacity: .35; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .production-visual * { animation: none !important; }
+}

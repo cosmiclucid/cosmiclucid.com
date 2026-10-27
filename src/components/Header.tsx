@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { Sparkles } from 'lucide-react';
-import SparkleNavbar from './ui/SparkleNavbar';
+import { Sparkles, ChevronDown, Menu } from 'lucide-react';
+import './Header.css';
 import type { FxPreference } from '../hooks/useFxPreference';
 
 type HeaderProps = {
@@ -20,8 +20,15 @@ export function Header({
   onFxPreferenceChange,
 }: HeaderProps) {
   const [fade, setFade] = useState(0); // 0..1
-  const navigate = useNavigate();
-  const location = useLocation();
+  const closeMenus = () => {
+    document.querySelectorAll('.site-header details[open]').forEach((menu) => menu.removeAttribute('open'));
+  };
+
+  const serviceLinks = [
+    { label: 'Audio Visual Production', href: '/production' },
+    { label: 'Social Media Management', href: '/portfolio/marketing' },
+    { label: 'Website Design & Development', href: '/websites' },
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -47,58 +54,42 @@ export function Header({
       }}
     >
       <div className="site-header__inner max-w-[1440px] mx-auto px-20 h-20 flex items-center justify-between">
-        {/* Logo - Home Button */}
-        <motion.button
-          className="site-logo cursor-pointer transition-all duration-300"
-          aria-label="Go to homepage"
-          onClick={() => {
-            navigate('/');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <img
-            src="/Favicon/LOUIS%20LUCID%20LOGO%20%28Brand%20Colors%29.png?v=10"
-            alt=""
-            className="site-logo-mark h-12 w-12 object-contain"
-          />
-        </motion.button>
+        <Link to="/" className="site-logo" aria-label="Louis Lucid homepage" onClick={closeMenus}>
+          <img src="/Favicon/LOUIS%20LUCID%20LOGO%20%28Brand%20Colors%29.png?v=11" alt="" className="site-logo-mark" width="48" height="48" />
+        </Link>
 
-        {/* Navigation */}
-        <div className="site-nav-container flex items-center">
-          <SparkleNavbar
-            items={['About', 'Marketing', 'Mentoring', 'Portfolio', 'Contact']}
-            color="#5A00FF"
-            activeLabel={
-              ({
-                '/about': 'About',
-                '/mentoring': 'Mentoring',
-                '/coaching': 'Mentoring',
-                '/academy': 'Mentoring',
-                '/portfolio/marketing': 'Marketing',
-                '/contact': 'Contact',
-                '/portfolio': 'Portfolio',
-              } as Record<string, string | undefined>)[location.pathname] ?? null
-            }
-            onItemClick={(_, label) => {
-              const routes: Record<string, string> = {
-                About: '/about',
-                Mentoring: '/mentoring',
-                Marketing: '/portfolio/marketing',
-                Contact: '/contact',
-                Portfolio: '/portfolio',
-              };
-              const target = routes[label];
-              if (target) {
-                setTimeout(() => {
-                  navigate(target);
-                  window.scrollTo({ top: 0, behavior: 'auto' });
-                }, 450);
-              }
-            }}
-          />
-        </div>
+        <nav className="primary-nav" aria-label="Main navigation" onKeyDown={(event) => {
+          if (event.key === 'Escape') {
+            const details = (event.target as HTMLElement).closest('details');
+            details?.removeAttribute('open');
+            details?.querySelector('summary')?.focus();
+          }
+        }}>
+          <div className="desktop-links">
+            <details className="services-menu">
+              <summary>Services <ChevronDown size={14} aria-hidden="true" /></summary>
+              <div className="services-panel">
+                {serviceLinks.map(({ label, href }) => <Link key={label} to={href} onClick={closeMenus}>{label}</Link>)}
+              </div>
+            </details>
+            <NavLink to="/portfolio" onClick={closeMenus}>Portfolio</NavLink>
+            <NavLink to="/about" onClick={closeMenus}>About</NavLink>
+            <NavLink to="/contact" onClick={closeMenus}>Contact</NavLink>
+          </div>
+          <Link className="header-book-call" to="/contact" onClick={closeMenus}>Book a Call</Link>
+          <details className="mobile-menu">
+            <summary aria-label="Open navigation"><Menu size={23} aria-hidden="true" /></summary>
+            <div className="mobile-panel">
+              <span className="mobile-services-label">Services</span>
+              {serviceLinks.map(({ label, href }) => <Link key={label} to={href} onClick={closeMenus}>{label}</Link>)}
+              <div className="mobile-main-links">
+                <Link to="/portfolio" onClick={closeMenus}>Portfolio</Link>
+                <Link to="/about" onClick={closeMenus}>About</Link>
+                <Link to="/contact" onClick={closeMenus}>Contact</Link>
+              </div>
+            </div>
+          </details>
+        </nav>
 
         <div className="fx-control">
           <details className="fx-control__dropdown">
