@@ -337,9 +337,111 @@ body[data-page="player"] #inhalt{padding-top:max(16px,env(safe-area-inset-top));
   .sv-player .svp-progress-row, .sv-player progress { order: 2; }
   .sv-player .svp-progress-row { margin-top: .7rem; }
   .sv-player progress { margin-bottom: .35rem; }
-  .sv-player .svp-media-tools, .sv-player .svp-notice, .sv-player .svp-next { order: 3; }
-  .sv-player .svp-media-tools { margin-top: .15rem; }
+  .sv-player .svp-tools, .sv-player .svp-notice, .sv-player .svp-next { order: 3; }
   .sv-player .svp-next { margin-top: .4rem; padding-top: .4rem; }
+}
+
+.sv-player .svp-tools {
+  display: flex; align-items: center; flex-wrap: wrap; gap: .15rem .4rem; margin-top: .55rem;
+}
+.sv-player .svp-tools .svp-media-tools { margin: 0; }
+.sv-player .svp-tools [data-ref="fullscreen"] { color: #224c3a; }
+.sv-player .svp-extras { min-width: 0; }
+body:has(.sv-player[data-fullscreen]) { overflow: hidden; }
+body:has(.sv-player[data-fullscreen]) .skip-link { display: none; }
+
+/* The same surface works in browser fullscreen and on phones that only allow
+   native fullscreen on the bare video. The dock has its own space below it. */
+.sv-player[data-fullscreen] {
+  position: fixed; inset: 0; z-index: 11000; box-sizing: border-box;
+  display: flex; flex-direction: column; overflow: hidden; isolation: isolate;
+  margin: 0; padding: 0; width: 100%; max-width: none; height: 100%; height: 100dvh;
+  background: #102c24; color: #fff;
+}
+.sv-player[data-fullscreen] [data-ref="body"] {
+  flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 0; align-items: stretch;
+}
+.sv-player[data-fullscreen] .svp-stage {
+  position: relative; top: auto; aspect-ratio: auto; flex: 1; min-height: 0;
+  max-height: none; border-radius: 0; background: #102c24;
+}
+.sv-player[data-fullscreen] video {
+  position: absolute; inset: 0; object-fit: contain;
+  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) 0 env(safe-area-inset-left, 0px);
+}
+.sv-player[data-fullscreen] .svp-rest {
+  padding-left: max(clamp(16px, 7vw, 96px), env(safe-area-inset-left, 0px));
+  padding-right: max(clamp(16px, 7vw, 96px), env(safe-area-inset-right, 0px));
+}
+.sv-player[data-fullscreen] .svp-heading,
+.sv-player[data-fullscreen] [data-ref="segmentInfo"],
+.sv-player[data-fullscreen] .svp-progress-row,
+.sv-player[data-fullscreen] progress,
+.sv-player[data-fullscreen] .svp-next { display: none; }
+.sv-player[data-fullscreen] .svp-panel {
+  position: relative; flex: none; display: flex; flex-direction: row; flex-wrap: wrap;
+  justify-content: center; align-items: center; gap: .3rem .9rem;
+  padding: .4rem max(.65rem, env(safe-area-inset-right, 0px))
+    max(.4rem, env(safe-area-inset-bottom, 0px)) max(.65rem, env(safe-area-inset-left, 0px));
+  background: #19392f; border: 0; border-radius: 0;
+}
+.sv-player[data-fullscreen] .svp-controls,
+.sv-player[data-fullscreen] .svp-tools {
+  order: 0; display: flex; align-items: stretch; flex-wrap: wrap;
+  justify-content: center; margin: 0; gap: .25rem;
+}
+.sv-player[data-fullscreen] .svp-controls > button,
+.sv-player[data-fullscreen] .svp-tools > button {
+  min-width: 44px; min-height: 44px; padding: .45rem .65rem; border-radius: .65rem;
+}
+.sv-player[data-fullscreen] .svp-controls .svp-main {
+  flex: 0 1 auto; background: #e5efda; border-color: #e5efda; color: #19392f;
+}
+.sv-player[data-fullscreen] .svp-controls .svp-light {
+  background: transparent; border-color: #759184; color: #f7fbf5;
+}
+.sv-player[data-fullscreen] .svp-tools > .svp-tool { color: #f4f8ef; }
+.sv-player[data-fullscreen] .svp-tools > .svp-tool:hover,
+.sv-player[data-fullscreen] .svp-tools > .svp-tool:focus-visible,
+.sv-player[data-fullscreen] .svp-controls .svp-light:hover:enabled { background: #315345; }
+.sv-player[data-fullscreen] :focus-visible { outline-color: #f5c675; }
+.sv-player[data-fullscreen] .svp-controls button:disabled { opacity: .64; }
+.sv-player[data-fullscreen] .svp-extras {
+  position: absolute; z-index: 1; bottom: calc(100% + .35rem);
+  right: max(.65rem, env(safe-area-inset-right, 0px));
+  width: min(23rem, calc(100% - 1.3rem - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)));
+  max-height: 60vh; max-height: min(62dvh, 24rem); overflow-y: auto; overscroll-behavior: contain;
+  border: 1px solid #c9d3c4; border-radius: 1rem; background: #fcfaf5; color: #19362c;
+  padding: .85rem; box-shadow: 0 .5rem 2rem #0d251f4a;
+}
+.sv-player[data-fullscreen] .svp-extras :focus-visible { outline-color: #935019; }
+.sv-player .svp-picker { display: grid; gap: .35rem; font-size: .96rem; font-weight: 650; }
+.sv-player .svp-picker select {
+  font: inherit; width: 100%; min-width: 0; min-height: 44px; padding: .45rem .4rem;
+  border: 1px solid #829686; border-radius: .5rem; color: #19362c; background: #fffefb;
+}
+.sv-player[data-fullscreen] .svp-extras .svp-media-tools { margin-top: .45rem; }
+.sv-player[data-fullscreen] [data-ref="leaveOption"] { margin-top: .35rem; }
+.sv-player[data-fullscreen] .svp-notice, .sv-player[data-fullscreen] .svp-warning {
+  color: #fff0c9; width: 100%; font-size: .9rem; text-align: center;
+}
+.sv-player[data-fullscreen] .svp-notice { margin: 0; }
+.sv-player[data-fullscreen] dialog { color: #19362c; }
+
+@media (max-width: 640px) and (orientation: portrait) {
+  .sv-player[data-fullscreen] .svp-controls {
+    width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .sv-player[data-fullscreen] .svp-controls .svp-main { grid-column: 1 / -1; grid-row: 1; }
+  .sv-player[data-fullscreen] .svp-controls > button {
+    padding: .4rem .3rem; font-size: 1rem; line-height: 1.15; overflow-wrap: anywhere;
+  }
+  .sv-player[data-fullscreen] .svp-panel { gap: .1rem .5rem; }
+}
+@media (orientation: landscape) and (max-height: 540px) {
+  .sv-player[data-fullscreen] .svp-panel { gap: .15rem .4rem; padding-top: .15rem; }
+  .sv-player[data-fullscreen] .svp-controls > button,
+  .sv-player[data-fullscreen] .svp-tools > button { padding: .35rem .45rem; font-size: .95rem; }
 }
 
 .sv-report {
@@ -1480,7 +1582,10 @@ body[data-page="player"] #inhalt{padding-top:max(16px,env(safe-area-inset-top));
     leave: '<path d="M10 5H5v14h5m0-7h11m-4-4 4 4-4 4"/>',
     check: '<path d="m5 12 4.5 4.5L19 7"/>',
     captions: '<rect x="2.5" y="4.5" width="19" height="15" rx="3"/><path d="M10.5 10c-2.8-3-6.5 2.5-3 4 1 .5 2.1.2 3-.6m7-3.4c-2.8-3-6.5 2.5-3 4 1 .5 2.1.2 3-.6"/>',
-    replay: '<path d="M3.5 4.5v5h5M4 9a8.5 8.5 0 1 1-.3 6"/>'
+    replay: '<path d="M3.5 4.5v5h5M4 9a8.5 8.5 0 1 1-.3 6"/>',
+    expand: '<path d="M9 4H4v5m11-5h5v5M4 15v5h5m11-5v5h-5"/>',
+    collapse: '<path d="M4 9h5V4m6 0v5h5M9 20v-5H4m16 0h-5v5"/>',
+    settings: '<path d="M3 7h5m6 0h7M3 17h10m6 0h2"/><circle cx="11" cy="7" r="3"/><circle cx="16" cy="17" r="3"/>'
   };
   function icon(name) {
     return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${symbols[name]}</svg>`;
@@ -1497,7 +1602,7 @@ body[data-page="player"] #inhalt{padding-top:max(16px,env(safe-area-inset-top));
     <div class="svp-heading"><div><p data-ref="edition" class="svp-kicker"></p><h1 tabindex="-1"></h1></div>
       <button data-ref="exit" class="svp-light" type="button">${icon("leave")}Training verlassen</button></div>
     <div data-ref="body">
-      <div class="svp-stage">
+      <div data-ref="stage" class="svp-stage">
         <video data-ref="video" playsinline preload="auto" aria-label="Video zum aktuellen Trainingsabschnitt"></video>
         <div data-ref="rest" class="svp-rest" hidden>
           <div class="svp-rest-copy"><span data-ref="restStatus" class="svp-rest-status">Kurze Pause</span>
@@ -1519,10 +1624,19 @@ body[data-page="player"] #inhalt{padding-top:max(16px,env(safe-area-inset-top));
           <button data-ref="toggle" class="svp-main" type="button"></button>
           <button data-ref="next" class="svp-light" type="button">${icon("next")}Weiter</button>
         </div>
-        <div data-ref="mediaTools" class="svp-media-tools">
-          <button data-ref="volume" class="svp-tool" type="button"></button>
-          <button data-ref="captions" class="svp-tool" type="button" aria-label="Deutsche Untertitel" aria-pressed="false" hidden></button>
-          <button data-ref="rewind" class="svp-tool" type="button">${icon("replay")}10 Sek. zur\xFCck</button>
+        <div class="svp-tools">
+          <button data-ref="fullscreen" class="svp-tool" type="button" aria-pressed="false">${icon("expand")}Vollbild</button>
+          <button data-ref="options" class="svp-tool" type="button" aria-expanded="false" aria-controls="svp-extra-options" hidden>${icon("settings")}Optionen</button>
+          <div data-ref="extras" id="svp-extra-options" class="svp-extras">
+            <label data-ref="pickerGroup" class="svp-picker" hidden>Abschnitt ausw\xE4hlen
+              <select data-ref="sectionPicker"></select></label>
+            <div data-ref="mediaTools" class="svp-media-tools">
+              <button data-ref="volume" class="svp-tool" type="button"></button>
+              <button data-ref="captions" class="svp-tool" type="button" aria-label="Deutsche Untertitel" aria-pressed="false" hidden></button>
+              <button data-ref="rewind" class="svp-tool" type="button">${icon("replay")}10 Sek. zur\xFCck</button>
+            </div>
+            <button data-ref="leaveOption" class="svp-tool" type="button" hidden>${icon("leave")}Training verlassen</button>
+          </div>
         </div>
         <p data-ref="captionNotice" role="status" class="svp-notice" hidden></p>
         <div data-ref="upNext" class="svp-next"><span>Als N\xE4chstes</span><strong data-ref="nextTitle"></strong></div>
@@ -1548,6 +1662,18 @@ body[data-page="player"] #inhalt{padding-top:max(16px,env(safe-area-inset-top));
     const video = ref("video");
     const toggle = ref("toggle");
     const dialog = ref("dialog");
+    const fullscreen = ref("fullscreen");
+    const screenOptions = ref("options");
+    const picker = ref("sectionPicker");
+    const playerDocument = document;
+    const playerScreen = shell;
+    for (const [i, item] of plan2.segments.entries()) {
+      const option = document.createElement("option");
+      option.value = String(i);
+      const following = plan2.segments[i + 1];
+      option.textContent = item.type === "rest" && following ? `${i + 1}. Pause vor ${following.title}` : `${i + 1}. ${item.title}`;
+      picker.append(option);
+    }
     shell.querySelector("h1").textContent = plan2.title;
     ref("edition").textContent = plan2.mediaMode === "original" ? "Gef\xFChrtes Training" : plan2.mediaMode === "mixed" ? "Training mit Originalaufnahmen und Democlips" : "Training mit kurzen Democlips";
     container.replaceChildren(shell);
@@ -1575,6 +1701,72 @@ body[data-page="player"] #inhalt{padding-top:max(16px,env(safe-area-inset-top));
     let captionFailed = false;
     let screenLock;
     let lockPending = false;
+    let expanded = false;
+    let optionsOpen = false;
+    let nativeScreen = false;
+    let requestingScreen = false;
+    function setOptions(open) {
+      optionsOpen = open;
+      screenOptions.setAttribute("aria-expanded", String(open));
+      ref("extras").hidden = expanded && !open;
+    }
+    function showFullscreen(active, focusButton) {
+      if (expanded === active) return;
+      expanded = active;
+      if (active) shell.setAttribute("data-fullscreen", "");
+      else shell.removeAttribute("data-fullscreen");
+      fullscreen.innerHTML = icon(active ? "collapse" : "expand") + (active ? "Vollbild beenden" : "Vollbild");
+      fullscreen.setAttribute("aria-pressed", String(active));
+      screenOptions.hidden = !active;
+      ref("pickerGroup").hidden = !active;
+      ref("leaveOption").hidden = !active;
+      setOptions(false);
+      if (focusButton) fullscreen.focus({ preventScroll: true });
+    }
+    const fullscreenOwner = () => playerDocument.fullscreenElement ?? playerDocument.webkitFullscreenElement;
+    function releaseNativeScreen() {
+      if (fullscreenOwner() !== shell) return;
+      const exitScreen = playerDocument.exitFullscreen ?? playerDocument.webkitExitFullscreen;
+      if (exitScreen) {
+        try {
+          Promise.resolve(exitScreen.call(playerDocument)).catch(() => {
+          });
+        } catch {
+        }
+      }
+    }
+    function leaveFullscreen(focusButton) {
+      nativeScreen = false;
+      showFullscreen(false, focusButton);
+      releaseNativeScreen();
+    }
+    function onScreenChange() {
+      if (fullscreenOwner() === shell) {
+        if (expanded && !disposed) nativeScreen = true;
+        else releaseNativeScreen();
+      } else if (nativeScreen) {
+        nativeScreen = false;
+        showFullscreen(false, !disposed && state !== "finished");
+      }
+    }
+    async function toggleFullscreen() {
+      if (expanded) {
+        leaveFullscreen(true);
+        return;
+      }
+      if (disposed || state === "finished") return;
+      showFullscreen(true, true);
+      const request2 = playerScreen.requestFullscreen ?? playerScreen.webkitRequestFullscreen;
+      if (!request2 || requestingScreen || fullscreenOwner()) return;
+      requestingScreen = true;
+      try {
+        await request2.call(playerScreen);
+        onScreenChange();
+      } catch {
+      } finally {
+        requestingScreen = false;
+      }
+    }
     const needsScreen = () => autoContinue && !disposed && !leaving && !document.hidden && !dialog.open;
     async function syncScreen() {
       if (!needsScreen()) {
@@ -1649,6 +1841,7 @@ body[data-page="player"] #inhalt{padding-top:max(16px,env(safe-area-inset-top));
     }
     function renderStatic() {
       const item = segment();
+      picker.value = String(index);
       const next = plan2.segments[index + 1];
       const exerciseNumber = plan2.segments.slice(0, index + 1).filter((s) => s.type === "video" && s.exerciseId).length;
       ref("phase").textContent = item.type === "video" && item.exerciseId ? (item.role === "exercise" ? "" : phaseLabel[item.role] + " \xB7 ") + "\xDCbung " + exerciseNumber + " von " + exerciseCount : phaseLabel[item.role];
@@ -1856,6 +2049,7 @@ body[data-page="player"] #inhalt{padding-top:max(16px,env(safe-area-inset-top));
     function finish(record) {
       tickClock();
       state = "finished";
+      leaveFullscreen(false);
       autoContinue = false;
       void syncScreen();
       ++segmentGeneration;
@@ -1881,6 +2075,33 @@ body[data-page="player"] #inhalt{padding-top:max(16px,env(safe-area-inset-top));
     }
     bind("toggle", togglePlay);
     bind("overlayAction", togglePlay);
+    bind("fullscreen", toggleFullscreen);
+    bind("options", () => setOptions(!optionsOpen));
+    picker.addEventListener("change", () => {
+      const target = Number(picker.value);
+      if (!expanded || !optionsOpen || !Number.isInteger(target) || target < 0 || target >= plan2.segments.length) return;
+      setOptions(false);
+      screenOptions.focus({ preventScroll: true });
+      if (target === index) return;
+      event("segment_skipped");
+      move(target, autoContinue);
+    }, { signal: lifetime.signal });
+    ref("stage").addEventListener("click", () => {
+      if (optionsOpen) {
+        setOptions(false);
+        screenOptions.focus({ preventScroll: true });
+      }
+    }, { signal: lifetime.signal });
+    document.addEventListener("fullscreenchange", onScreenChange, { signal: lifetime.signal });
+    document.addEventListener("webkitfullscreenchange", onScreenChange, { signal: lifetime.signal });
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape" || !expanded || dialog.open || e.defaultPrevented) return;
+      e.preventDefault();
+      if (optionsOpen) {
+        setOptions(false);
+        screenOptions.focus({ preventScroll: true });
+      } else leaveFullscreen(true);
+    }, { signal: lifetime.signal });
     let lastSkipAt = -Infinity;
     function manualMove(delta) {
       if (dialog.open || state === "finished" || delta < 0 && index === 0) return;
@@ -1910,11 +2131,17 @@ body[data-page="player"] #inhalt{padding-top:max(16px,env(safe-area-inset-top));
       renderTime();
       save();
     });
-    bind("exit", () => {
+    function openExitDialog() {
+      if (optionsOpen) {
+        setOptions(false);
+        screenOptions.focus({ preventScroll: true });
+      }
       dialogShouldResume = autoContinue;
       pause(true);
       dialog.showModal();
-    });
+    }
+    bind("exit", openExitDialog);
+    bind("leaveOption", openExitDialog);
     function closeDialog() {
       dialog.close();
       if (dialogShouldResume && !document.hidden) {
@@ -1981,6 +2208,7 @@ body[data-page="player"] #inhalt{padding-top:max(16px,env(safe-area-inset-top));
       if (disposed) return;
       if (!leaving && session.status === "active") pause(true);
       disposed = true;
+      leaveFullscreen(false);
       void syncScreen();
       lifetime.abort();
       mediaListeners.abort();
