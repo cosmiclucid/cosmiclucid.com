@@ -369,6 +369,7 @@ body:has(.sv-player[data-fullscreen]) .skip-link { display: none; }
   position: absolute; inset: 0; object-fit: contain;
   padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) 0 env(safe-area-inset-left, 0px);
 }
+.sv-player[data-fullscreen][data-playback="paused"] .svp-overlay { display: none; }
 .sv-player[data-fullscreen] .svp-rest {
   padding-left: max(clamp(16px, 7vw, 96px), env(safe-area-inset-left, 0px));
   padding-right: max(clamp(16px, 7vw, 96px), env(safe-area-inset-right, 0px));
@@ -1824,6 +1825,7 @@ body:has(.sv-player[data-fullscreen]) .skip-link { display: none; }
     function setState(next) {
       tickClock();
       state = next;
+      shell.setAttribute("data-playback", next);
       if (next === "loading") loadingSince = performance.now();
       const wait = next === "loading";
       const stalled = next === "error";
@@ -1951,7 +1953,8 @@ body:has(.sv-player[data-fullscreen]) .skip-link { display: none; }
         if (valid() && autoContinue && state === "playing") setState("loading");
       }, opts);
       video.addEventListener("pause", () => {
-        if (valid() && !video.ended && video.paused && state === "playing" && autoContinue) pause(true);
+        const wasPlaying = state === "playing" || state === "loading" && touchedVideo;
+        if (valid() && !video.ended && video.paused && wasPlaying && autoContinue) pause(true);
       }, opts);
       video.addEventListener("ended", () => {
         if (!valid() || !autoContinue || !video.ended || dialog.open || document.hidden) return;
@@ -1981,8 +1984,13 @@ body:has(.sv-player[data-fullscreen]) .skip-link { display: none; }
       setState("loading");
       video.play().catch((error) => {
         if (disposed || !autoContinue || generation !== playbackGeneration) return;
+        const reason = typeof error === "object" && error !== null && "name" in error ? error.name : void 0;
+        if (reason === "AbortError") {
+          pause(true);
+          return;
+        }
         autoContinue = false;
-        setState(error instanceof DOMException && error.name === "NotAllowedError" ? "blocked" : "error");
+        setState(reason === "NotAllowedError" ? "blocked" : "error");
       });
     }
     function load(playNow) {
